@@ -2,9 +2,8 @@
 <resources>
     <style name="Theme.Spotify.Splash" parent="Theme.Spotify">
         <item name="android:windowBackground">@color/background</item>
-        <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="Theme.Spotify" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.Spotify" parent="android:Theme.Material.NoActionBar">
     </style>
 </resources>

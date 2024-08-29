@@ -59,7 +59,7 @@ fun AuthScreen(
 ) {
     val transition = rememberInfiniteTransition(label = "transitionLabel")
     val primaryColor by transition.animateColor(
-        initialValue = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+        initialValue = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
         targetValue = MaterialTheme.colorScheme.background,
         animationSpec = infiniteRepeatable(
             animation = tween(6000, easing = LinearEasing),
@@ -67,7 +67,7 @@ fun AuthScreen(
         ), label = "primaryColorLabel"
     )
     val colors = listOf(
-        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
         primaryColor,
         MaterialTheme.colorScheme.background
     )
@@ -100,22 +100,5 @@ fun AuthScreen(
             )
         }
 
-    }
-}
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SpotifyTheme {
-        Greeting("Android")
     }
 }

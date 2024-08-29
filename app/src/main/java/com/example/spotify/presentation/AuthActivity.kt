@@ -1,14 +1,22 @@
 package com.example.spotify.presentation
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.example.spotify.BuildConfig
+import com.example.spotify.R
 import com.example.spotify.presentation.ui.screens.AuthScreen
 import com.example.spotify.presentation.ui.theme.SpotifyTheme
 import com.spotify.sdk.android.auth.AuthorizationClient
@@ -27,7 +35,6 @@ class AuthActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             SpotifyTheme {

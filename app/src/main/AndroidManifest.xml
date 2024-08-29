@@ -14,7 +14,7 @@
         <activity
             android:name=".presentation.AuthActivity"
             android:exported="true"
-            android:theme="@style/Theme.Spotify">
+            android:theme="@style/Theme.Spotify.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
