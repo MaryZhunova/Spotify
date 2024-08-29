@@ -12,7 +12,7 @@
         android:theme="@style/Theme.Spotify"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.AuthActivity"
+            android:name=".presentation.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Spotify.Splash">
             <intent-filter>
