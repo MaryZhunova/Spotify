@@ -8,21 +8,34 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.spotify.models.presentation.AuthError
+import com.example.spotify.models.presentation.AuthState
 import com.example.spotify.presentation.viewmodels.UserViewModel
 
 @Composable
-fun UserScreen(accessToken: String) {
+fun UserScreen(authState: State<AuthState>) {
+    when (authState.value) {
+        is AuthState.Success -> AuthSuccess(authState.value as AuthState.Success)
+        is AuthState.Fail -> AuthFail(authState.value as AuthState.Fail)
+        else -> {}
+    }
+
+}
+
+@Composable
+private fun AuthSuccess(state: AuthState.Success) {
     val viewModel: UserViewModel = hiltViewModel()
     val userProfile by viewModel.userProfile.collectAsState()
 
-    LaunchedEffect(accessToken) {
-        viewModel.loadUserProfile(accessToken)
+    LaunchedEffect(state.accessToken) {
+        viewModel.loadUserProfile(state.accessToken)
     }
 
     Column(
@@ -38,5 +51,12 @@ fun UserScreen(accessToken: String) {
             //todo user not found
             CircularProgressIndicator()
         }
+    }
+}
+@Composable
+private fun AuthFail(state: AuthState.Fail) {
+    when (state.error) {
+        AuthError.NO_SPOTIFY -> {}
+        AuthError.AUTH_FAIL -> {}
     }
 }

@@ -3,9 +3,10 @@ package com.example.spotify.presentation.viewmodels
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import com.example.spotify.BuildConfig
+import com.example.spotify.models.presentation.AuthError
+import com.example.spotify.models.presentation.AuthState
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
@@ -17,12 +18,12 @@ class AuthManager(
     private val authLauncher: ActivityResultLauncher<Intent>
 ) {
 
-    private val _accessToken = MutableStateFlow<AuthState>(AuthState.Idle)
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
 
-    val accessToken: StateFlow<AuthState?>
-        get() = _accessToken
+    val authState: StateFlow<AuthState>
+        get() = _authState
 
-    fun startAuth() {
+    init {
         try {
             activity.packageManager.getPackageInfo("com.spotify.music", 0)
 
@@ -33,16 +34,16 @@ class AuthManager(
             authLauncher.launch(authIntent)
 
         } catch (e: PackageManager.NameNotFoundException) {
-            _accessToken.value = AuthState.Fail(error = AuthError.NO_SPOTIFY)
+            _authState.value = AuthState.Fail(error = AuthError.NO_SPOTIFY)
         }
     }
 
     fun handleAuthResult(resultCode: Int, data: Intent?) {
         val response = AuthorizationClient.getResponse(resultCode, data)
         if (response.type == AuthorizationResponse.Type.TOKEN) {
-            _accessToken.value = AuthState.Success(accessToken = response.accessToken)
+            _authState.value = AuthState.Success(accessToken = response.accessToken)
         } else {
-            _accessToken.value = AuthState.Fail(error = AuthError.AUTH_FAIL)
+            _authState.value = AuthState.Fail(error = AuthError.AUTH_FAIL)
         }
     }
 
@@ -50,20 +51,4 @@ class AuthManager(
         private const val REDIRECT_URI = "android-app://stats/auth"
         private const val STREAMING_SCOPE = "streaming"
     }
-}
-
-
-sealed interface AuthState {
-
-    data object Idle: AuthState
-
-    data class Fail(val error: AuthError): AuthState
-
-    data class Success(val accessToken: String): AuthState
-}
-
-
-enum class AuthError {
-    NO_SPOTIFY,
-    AUTH_FAIL
 }
