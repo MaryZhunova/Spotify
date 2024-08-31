@@ -1,5 +1,6 @@
 package com.example.spotify.hilt
 
+import com.example.spotify.data.converter.UserProfileResponseToInfoConverter
 import com.example.spotify.data.net.SpotifyStatsApiService
 import dagger.Module
 import dagger.Provides
@@ -28,5 +29,11 @@ object NetworkModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): SpotifyStatsApiService {
         return retrofit.create(SpotifyStatsApiService::class.java)
+    }
+
+    //todo move
+    @Provides
+    fun provideUserProfileResponseToInfoConverter(): UserProfileResponseToInfoConverter {
+        return UserProfileResponseToInfoConverter()
     }
 }

@@ -11,6 +11,15 @@ data class UserProfileResponse(
     @SerializedName("product") val product: String
 )
 
+data class UserProfileInfo(
+    val id: String,
+    val displayName: String,
+    val email: String,
+    val images: String?,
+    val country: String,
+    val product: String
+)
+
 data class Image(
     @SerializedName("url") val url: String
 )

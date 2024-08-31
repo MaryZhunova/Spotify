@@ -4,32 +4,32 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.activity.result.ActivityResultLauncher
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import com.example.spotify.BuildConfig
 import com.example.spotify.models.presentation.AuthError
 import com.example.spotify.models.presentation.AuthState
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 class AuthManager(
     private val activity: Activity,
     private val authLauncher: ActivityResultLauncher<Intent>
 ) {
 
-    private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
+    private val _authState = mutableStateOf<AuthState>(AuthState.Idle)
 
-    val authState: StateFlow<AuthState>
+    val authState: State<AuthState>
         get() = _authState
 
-    init {
+    fun startAuth() {
         try {
-            activity.packageManager.getPackageInfo("com.spotify.music", 0)
+            activity.packageManager.getPackageInfo(PACKAGE_NAME, 0)
 
             val request = AuthorizationRequest.Builder(
                 BuildConfig.CLIENT_ID, AuthorizationResponse.Type.TOKEN, REDIRECT_URI
-            ).setScopes(arrayOf("user-read-private", "user-read-email")).build()
+            ).setScopes(arrayOf(USER_READ_PRIVATE, USER_READ_EMAIL)).build()
             val authIntent = AuthorizationClient.createLoginActivityIntent(activity, request)
             authLauncher.launch(authIntent)
 
@@ -47,8 +47,15 @@ class AuthManager(
         }
     }
 
+    fun logout() {
+        _authState.value = AuthState.Idle
+        AuthorizationClient.clearCookies(activity)
+    }
+
     companion object {
         private const val REDIRECT_URI = "android-app://stats/auth"
-        private const val STREAMING_SCOPE = "streaming"
+        private const val PACKAGE_NAME = "com.spotify.music"
+        private const val USER_READ_PRIVATE = "user-read-private"
+        private const val USER_READ_EMAIL = "user-read-email"
     }
 }
