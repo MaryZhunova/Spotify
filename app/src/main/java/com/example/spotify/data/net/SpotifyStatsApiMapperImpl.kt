@@ -63,8 +63,11 @@ class SpotifyStatsApiMapperImpl @Inject constructor(
         })
     }
 
-    override fun getNextPage(url: String, callback: (TopTracksResponse?) -> Unit) {
-        val call = apiService.getNextPage(url)
+    override fun getNextPage(accessToken: String, url: String, callback: (TopTracksResponse?) -> Unit) {
+        val call = apiService.getNextPage(
+            token = "Bearer $accessToken",
+            url = url
+        )
         call.enqueue(object : Callback<TopTracksResponse> {
             override fun onResponse(
                 call: Call<TopTracksResponse>,

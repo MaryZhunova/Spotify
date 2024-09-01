@@ -46,9 +46,10 @@ class AuthManager(
     fun handleAuthResult(resultCode: Int, data: Intent?) {
         CoroutineScope(Dispatchers.IO).launch {
             val response = AuthorizationClient.getResponse(resultCode, data)
-            if (response.type == AuthorizationResponse.Type.CODE) {
-                val code = securityRepository.getAuthAccessToken(response.code, REDIRECT_URI)
-                _authState.value = code?.let { AuthState.Success(accessToken = it) } ?: AuthState.Fail(error = AuthError.AUTH_FAIL)
+            if (response.type == AuthorizationResponse.Type.CODE &&
+                securityRepository.obtainAccessToken(response.code, REDIRECT_URI) != null
+            ) {
+                _authState.value = AuthState.Success
             } else {
                 _authState.value = AuthState.Fail(error = AuthError.AUTH_FAIL)
             }

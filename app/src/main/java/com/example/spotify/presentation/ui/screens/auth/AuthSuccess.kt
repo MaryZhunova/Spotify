@@ -1,5 +1,6 @@
 package com.example.spotify.presentation.ui.screens.auth
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,15 +34,18 @@ import com.example.spotify.presentation.viewmodels.AuthSuccessViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthSuccess(
-    token: String,
     onBackClick: () -> Unit,
     onTopClick: (String) -> Unit
 ) {
     val viewModel: AuthSuccessViewModel = hiltViewModel()
     val userProfile by viewModel.userProfile.collectAsState()
 
-    LaunchedEffect(token) {
-        viewModel.loadUserProfile(token)
+    LaunchedEffect(Unit) {
+        viewModel.loadUserProfile()
+    }
+
+    BackHandler {
+        onBackClick()
     }
 
     Column(

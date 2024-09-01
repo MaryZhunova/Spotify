@@ -27,9 +27,6 @@
                 <data android:scheme="android-app"
                     android:host="stats"
                     android:pathPrefix="/auth" />
-                <data android:scheme="android-app"
-                    android:host="stats"
-                    android:pathPrefix="/tracks" />
 
             </intent-filter>
         </activity>

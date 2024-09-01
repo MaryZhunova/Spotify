@@ -5,7 +5,7 @@ import com.example.spotify.models.data.UserProfileInfo
 
 interface SpotifyStatsRepository {
 
-    fun getCurrentUserProfile(accessToken: String, callback: (UserProfileInfo?) -> Unit)
+    fun getCurrentUserProfile(callback: (UserProfileInfo?) -> Unit)
 
     suspend fun getTopTracks(
         timeRange: String,

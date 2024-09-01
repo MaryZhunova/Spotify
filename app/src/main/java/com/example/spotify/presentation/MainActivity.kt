@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,31 +41,15 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SpotifyTheme {
-                SpotifyApp(authManager, intent)
+                SpotifyApp(authManager)
             }
         }
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        setIntent(intent) // Update the intent to handle new deep links
     }
 }
 
 @Composable
-fun SpotifyApp(authManager: AuthManager, intent: Intent?) {
+fun SpotifyApp(authManager: AuthManager) {
     val navController = rememberNavController()
-
-    // Check for deep links
-    LaunchedEffect(intent) {
-        intent?.data?.let { uri ->
-            when (uri.path) {
-                "/tracks" -> navController.navigate("tracks")
-                "/artists" -> navController.navigate("artists")
-                else -> navController.navigate("auth")
-            }
-        }
-    }
 
     NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {

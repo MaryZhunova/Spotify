@@ -29,6 +29,7 @@ interface SpotifyStatsApiService {
 
     @GET
     fun getNextPage(
-        @Url nextPageUrl: String
+        @Header("Authorization") token: String,
+        @Url url: String
     ): Call<TopTracksResponse>
 }

@@ -6,7 +6,7 @@ sealed interface AuthState {
 
     data class Fail(val error: AuthError): AuthState
 
-    data class Success(val accessToken: String): AuthState
+    data object Success: AuthState
 }
 
 enum class AuthError {

@@ -1,5 +1,6 @@
 package com.example.spotify.data.security
 
+import com.example.spotify.data.converter.AccessTokenResponseToInfoConverter
 import com.example.spotify.data.security.net.ClientCredentialsApiMapper
 import com.example.spotify.domain.security.SecurityRepository
 import kotlinx.coroutines.Dispatchers
@@ -8,14 +9,28 @@ import javax.inject.Inject
 
 class SecurityRepositoryImpl @Inject constructor(
     private val apiMapper: ClientCredentialsApiMapper,
-    private val accountHelper: TokenStorage
+    private val tokenStorage: TokenStorage,
+    private val accessTokenResponseConverter: AccessTokenResponseToInfoConverter
 ) : SecurityRepository {
 
-    override suspend fun getAuthAccessToken(accessCode: String, redirectUri: String): String? =
+    override suspend fun obtainAccessToken(accessCode: String, redirectUri: String): String? =
         withContext(Dispatchers.IO) {
-            accountHelper.getAccessToken()
-                ?: apiMapper.getAuthToken(accessCode, redirectUri)?.accessToken?.also { token ->
-                    accountHelper.storeAccessToken(token)
-                }
+            getAccessToken() ?: apiMapper.getAuthToken(accessCode, redirectUri)?.also { token ->
+                    tokenStorage.storeAccessToken(accessTokenResponseConverter.convert(token))
+                }?.accessToken
         }
+
+    override fun getAccessToken(): String? = tokenStorage.getAccessToken()?.accessToken
+
+    override suspend fun refreshAccessToken(): String? = withContext(Dispatchers.IO) {
+        val token = tokenStorage.getAccessToken() ?: return@withContext null
+        if (token.expiresAt < System.currentTimeMillis()) {
+            apiMapper.refreshAuthToken(token.refreshToken)?.also { newToken ->
+                tokenStorage.storeAccessToken(accessTokenResponseConverter.convert(newToken))
+            }?.accessToken
+        } else {
+            null
+        }
+
+    }
 }

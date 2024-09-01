@@ -17,4 +17,11 @@ interface ClientCredentialsApiService {
         @Field("code") code: String,
         @Field("redirect_uri") redirectUri: String
     ): Response<AccessTokenResponse>
+
+    @FormUrlEncoded
+    @POST("api/token")
+    suspend fun refreshAuthToken(
+        @Field("grant_type") grantType: String = "refresh_token",
+        @Field("refresh_token") token: String,
+    ): Response<AccessTokenResponse>
 }

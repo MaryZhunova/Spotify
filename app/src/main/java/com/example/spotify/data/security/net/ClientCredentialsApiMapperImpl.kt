@@ -27,4 +27,14 @@ class ClientCredentialsApiMapperImpl @Inject constructor(
             null
         }
     }
+
+    override suspend fun refreshAuthToken(refreshToken: String): AccessTokenResponse? =
+        withContext(Dispatchers.IO) {
+            val response = apiService.refreshAuthToken(token = refreshToken)
+            return@withContext if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        }
 }

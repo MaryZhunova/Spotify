@@ -1,6 +1,7 @@
 package com.example.spotify.hilt
 
 import android.content.Context
+import com.example.spotify.data.converter.AccessTokenResponseToInfoConverter
 import com.example.spotify.data.converter.TopTracksResponseToInfoConverter
 import com.example.spotify.data.converter.UserProfileResponseToInfoConverter
 import com.example.spotify.data.net.SpotifyStatsApiService
@@ -67,6 +68,12 @@ object NetworkModule {
     @Singleton
     fun provideTopTracksResponseToInfoConverter(): TopTracksResponseToInfoConverter {
         return TopTracksResponseToInfoConverter()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAccessTokenResponseToInfoConverter(): AccessTokenResponseToInfoConverter {
+        return AccessTokenResponseToInfoConverter()
     }
 
     @Provides

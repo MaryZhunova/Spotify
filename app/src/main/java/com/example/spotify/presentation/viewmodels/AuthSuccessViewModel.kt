@@ -18,12 +18,10 @@ class AuthSuccessViewModel @Inject constructor(
     private val _userProfile = MutableStateFlow<UserProfileInfo?>(null)
     val userProfile: StateFlow<UserProfileInfo?> = _userProfile
 
-    fun loadUserProfile(accessToken: String) {
-        viewModelScope.launch {
-            statsRepository.getCurrentUserProfile(accessToken) { response ->
-                response?.let {
-                    _userProfile.value = it
-                }
+    fun loadUserProfile() = viewModelScope.launch {
+        statsRepository.getCurrentUserProfile { response ->
+            response?.let {
+                _userProfile.value = it
             }
         }
     }

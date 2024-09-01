@@ -14,5 +14,5 @@ interface SpotifyStatsApiMapper {
         callback: (TopTracksResponse?) -> Unit
     )
 
-    fun getNextPage(url: String, callback: (TopTracksResponse?) -> Unit)
+    fun getNextPage(accessToken: String, url: String, callback: (TopTracksResponse?) -> Unit)
 }

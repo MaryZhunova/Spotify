@@ -3,6 +3,9 @@ package com.example.spotify.data.security
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.example.spotify.models.data.AccessTokenInfo
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import javax.inject.Inject
 
 class TokenStorage @Inject constructor(context: Context) {
@@ -19,17 +22,20 @@ class TokenStorage @Inject constructor(context: Context) {
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
-    fun storeAccessToken(token: String) {
-        sharedPreferences.edit().putString(PREFS_KEY, token).apply()
+    private val gson = Gson()
+
+    fun storeAccessToken(response: AccessTokenInfo) {
+        val json = gson.toJson(response)
+        sharedPreferences.edit().putString(PREFS_KEY, json).apply()
     }
 
-    fun getAccessToken(): String? {
-        return sharedPreferences.getString(PREFS_KEY, null)
+    fun getAccessToken(): AccessTokenInfo? {
+        val json = sharedPreferences.getString(PREFS_KEY, null) ?: return null
+        return gson.fromJson(json, object : TypeToken<AccessTokenInfo>() {}.type)
     }
 
     companion object {
         private const val PREFS_KEY = "access_token"
         private const val PREFS_NAME = "secure_prefs"
     }
-
 }
