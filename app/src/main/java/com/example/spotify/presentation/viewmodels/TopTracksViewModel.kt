@@ -27,7 +27,7 @@ class TopTracksViewModel @Inject constructor(
 
     fun fetchTopTracks() = viewModelScope.launch {
         _isLoading.value = true
-        val info = statsRepository.getTopTracks("short_term", 10)
+        val info = statsRepository.getTopTracks("short_term", 50)
         _isLoading.value = false
         if (info != null) {
             _topTracks.value = info.items

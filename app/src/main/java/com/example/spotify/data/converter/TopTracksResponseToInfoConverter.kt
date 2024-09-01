@@ -1,11 +1,9 @@
 package com.example.spotify.data.converter
 
 import com.example.spotify.models.data.AlbumInfo
-import com.example.spotify.models.data.ArtistInfo
 import com.example.spotify.models.data.TopTracksInfo
 import com.example.spotify.models.data.TrackInfo
 import com.example.spotify.models.data.net.Album
-import com.example.spotify.models.data.net.Artist
 import com.example.spotify.models.data.net.TopTracksResponse
 import com.example.spotify.models.data.net.Track
 

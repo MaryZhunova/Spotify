@@ -13,11 +13,6 @@ data class TrackInfo(
     val popularity: Int
 )
 
-data class ArtistInfo(
-    val id: String,
-    val name: String
-)
-
 data class AlbumInfo(
     val id: String,
     val name: String,

@@ -2,16 +2,18 @@ package com.example.spotify.presentation.ui.screens.top
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +34,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.spotify.R
 import com.example.spotify.models.data.TrackInfo
+import com.example.spotify.presentation.ui.components.AppBar
 import com.example.spotify.presentation.ui.components.ProgressIndicator
 import com.example.spotify.presentation.viewmodels.TopTracksViewModel
 
@@ -64,22 +67,30 @@ fun TopTracksScreen(
         }
     }
 
-    if (isLoading && topTracks.isEmpty()) {
-        ProgressIndicator()
-    } else {
-        LazyColumn(state = listState) {
-            items(items = topTracks, key = { it.id }) { track ->
-                TrackItem(track = track)
-            }
-            if (isLoading) {
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        CircularProgressIndicator()
+    Scaffold(
+        topBar = { AppBar {} },
+    ) {
+        if (isLoading && topTracks.isEmpty()) {
+            ProgressIndicator()
+        } else {
+            LazyColumn(
+                modifier = Modifier.padding(it),
+                state = listState,
+                contentPadding = PaddingValues(8.dp)
+            ) {
+                itemsIndexed(items = topTracks, key = { _, track -> track.id }) { index, track ->
+                    TrackItem(track = track, index = index)
+                }
+                if (isLoading) {
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
             }
@@ -88,11 +99,17 @@ fun TopTracksScreen(
 }
 
 @Composable
-fun TrackItem(track: TrackInfo) {
+fun TrackItem(track: TrackInfo, index: Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)
     ) {
+        Text(
+            modifier = Modifier.padding(end = 8.dp),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.bodyMedium,
+            text = "${index + 1}.",
+        )
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(track.album.image)
@@ -115,14 +132,14 @@ fun TrackItem(track: TrackInfo) {
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium,
                 text = track.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                color = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodySmall,
                 text = track.artists,
                 maxLines = 1,
