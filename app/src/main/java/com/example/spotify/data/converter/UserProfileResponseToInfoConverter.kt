@@ -10,7 +10,7 @@ class UserProfileResponseToInfoConverter {
             id = from.id,
             displayName = from.displayName,
             email = from.email,
-            images = from.images.takeIf { it.isNotEmpty() }?.last()?.url,
+            image = from.images.takeIf { it.isNotEmpty() }?.last()?.url,
             country = convertCountry(from.country).orEmpty(),
             product = from.product
         )

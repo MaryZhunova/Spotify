@@ -1,8 +1,13 @@
 package com.example.spotify.presentation.ui.screens.auth
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,7 +34,8 @@ import com.example.spotify.presentation.viewmodels.AuthSuccessViewModel
 @Composable
 fun AuthSuccess(
     token: String,
-    onClick: () -> Unit,
+    onBackClick: () -> Unit,
+    onTopClick: (String) -> Unit
 ) {
     val viewModel: AuthSuccessViewModel = hiltViewModel()
     val userProfile by viewModel.userProfile.collectAsState()
@@ -46,7 +52,7 @@ fun AuthSuccess(
             TopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(onClick = onClick) {
+                    IconButton(onClick = onBackClick) {
                         Icon(
                             painter = painterResource(id = R.drawable.arror),
                             contentDescription = null
@@ -57,7 +63,7 @@ fun AuthSuccess(
                     containerColor = MaterialTheme.colorScheme.primary.copy(0.5f)
                 )
             )
-            ParallaxUserImage(image = profile.images, name = profile.displayName)
+            ParallaxUserImage(image = profile.image, name = profile.displayName)
             Text(
                 modifier = Modifier.padding(top = 30.dp),
                 fontSize = 46.sp,
@@ -65,6 +71,19 @@ fun AuthSuccess(
                 color = MaterialTheme.colorScheme.onBackground,
                 text = profile.displayName
             )
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp) // Adds space between buttons
+            ) {
+                Button(onClick = { onTopClick.invoke("tracks") }) {
+                    Text(text = "Top Tracks")
+                }
+
+                Button(onClick = { onTopClick.invoke("artists") }) {
+                    Text(text = "Top Artists")
+                }
+            }
         } ?: ProgressIndicator()
     }
 }

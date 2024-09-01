@@ -1,5 +1,6 @@
 package com.example.spotify.data.net
 
+import com.example.spotify.models.data.net.TopTracksResponse
 import com.example.spotify.models.data.net.UserProfileResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,6 +29,55 @@ class SpotifyStatsApiMapperImpl @Inject constructor(
             }
 
             override fun onFailure(call: Call<UserProfileResponse>, t: Throwable) {
+                callback(null)
+            }
+        })
+    }
+
+    override fun getTopTracks(
+        accessToken: String,
+        timeRange: String,
+        limit: Int,
+        callback: (TopTracksResponse?) -> Unit
+    ) {
+        val call = apiService.getTopTracks(
+            token = "Bearer $accessToken",
+            timeRange = timeRange,
+            limit = limit
+        )
+        call.enqueue(object : Callback<TopTracksResponse> {
+            override fun onResponse(
+                call: Call<TopTracksResponse>,
+                response: Response<TopTracksResponse>
+            ) {
+                if (response.isSuccessful) {
+                    callback(response.body())
+                } else {
+                    callback(null)
+                }
+            }
+
+            override fun onFailure(call: Call<TopTracksResponse>, t: Throwable) {
+                callback(null)
+            }
+        })
+    }
+
+    override fun getNextPage(url: String, callback: (TopTracksResponse?) -> Unit) {
+        val call = apiService.getNextPage(url)
+        call.enqueue(object : Callback<TopTracksResponse> {
+            override fun onResponse(
+                call: Call<TopTracksResponse>,
+                response: Response<TopTracksResponse>
+            ) {
+                if (response.isSuccessful) {
+                    callback(response.body())
+                } else {
+                    callback(null)
+                }
+            }
+
+            override fun onFailure(call: Call<TopTracksResponse>, t: Throwable) {
                 callback(null)
             }
         })

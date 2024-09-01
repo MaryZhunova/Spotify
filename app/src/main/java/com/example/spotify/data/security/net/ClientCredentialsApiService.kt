@@ -1,7 +1,7 @@
 package com.example.spotify.data.security.net
 
 import com.example.spotify.models.data.net.AccessTokenResponse
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Header
@@ -11,8 +11,10 @@ interface ClientCredentialsApiService {
 
     @FormUrlEncoded
     @POST("api/token")
-    fun getClientCredentialsToken(
+    suspend fun exchangeCodeForToken(
         @Header("Authorization") authorization: String,
-        @Field("grant_type") grantType: String = "client_credentials"
-    ): Call<AccessTokenResponse>
+        @Field("grant_type") grantType: String = "authorization_code",
+        @Field("code") code: String,
+        @Field("redirect_uri") redirectUri: String
+    ): Response<AccessTokenResponse>
 }

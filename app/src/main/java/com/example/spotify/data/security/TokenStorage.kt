@@ -27,10 +27,6 @@ class TokenStorage @Inject constructor(context: Context) {
         return sharedPreferences.getString(PREFS_KEY, null)
     }
 
-    fun removeAccessToken() {
-        sharedPreferences.edit().remove(PREFS_KEY).apply()
-    }
-
     companion object {
         private const val PREFS_KEY = "access_token"
         private const val PREFS_NAME = "secure_prefs"

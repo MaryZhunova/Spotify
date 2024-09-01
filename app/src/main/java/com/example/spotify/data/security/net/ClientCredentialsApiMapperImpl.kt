@@ -5,26 +5,26 @@ import com.example.spotify.models.data.net.AccessTokenResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Credentials
-import retrofit2.await
 import javax.inject.Inject
 
 class ClientCredentialsApiMapperImpl @Inject constructor(
     private val apiService: ClientCredentialsApiService
 ) : ClientCredentialsApiMapper {
 
-    override suspend fun getClientCredentialsToken(): AccessTokenResponse? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val clientId = BuildConfig.CLIENT_ID
-                val clientSecret = BuildConfig.CLIENT_SECRET
+    override suspend fun getAuthToken(
+        accessCode: String, redirectUri: String
+    ): AccessTokenResponse? = withContext(Dispatchers.IO) {
+        val clientId = BuildConfig.CLIENT_ID
+        val clientSecret = BuildConfig.CLIENT_SECRET
 
-                val authHeader = Credentials.basic(clientId, clientSecret)
-                val request = apiService.getClientCredentialsToken(authHeader)
-                val response = request.await()
-                response
-            } catch (e: Exception) {
-                null
-            }
+        val authHeader = Credentials.basic(clientId, clientSecret)
+        val response = apiService.exchangeCodeForToken(
+            authorization = authHeader, code = accessCode, redirectUri = redirectUri
+        )
+        return@withContext if (response.isSuccessful) {
+            response.body()
+        } else {
+            null
         }
     }
 }

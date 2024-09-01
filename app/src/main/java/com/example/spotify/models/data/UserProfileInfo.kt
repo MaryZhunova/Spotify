@@ -4,7 +4,7 @@ data class UserProfileInfo(
     val id: String,
     val displayName: String,
     val email: String,
-    val images: String?,
+    val image: String?,
     val country: String,
     val product: String
 )

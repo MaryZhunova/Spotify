@@ -4,5 +4,5 @@ import com.example.spotify.models.data.net.AccessTokenResponse
 
 interface ClientCredentialsApiMapper {
 
-    suspend fun getClientCredentialsToken(): AccessTokenResponse?
+    suspend fun getAuthToken(accessCode: String, redirectUri: String): AccessTokenResponse?
 }
