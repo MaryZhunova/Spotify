@@ -5,14 +5,13 @@ import com.example.spotify.models.data.net.UserProfileResponse
 
 interface SpotifyStatsApiMapper {
 
-    fun getCurrentUserProfile(accessToken: String, callback: (UserProfileResponse?) -> Unit)
+    suspend fun getCurrentUserProfile(accessToken: String): UserProfileResponse?
 
-    fun getTopTracks(
+    suspend fun getTopTracks(
         accessToken: String,
         timeRange: String,
-        limit: Int,
-        callback: (TopTracksResponse?) -> Unit
-    )
+        limit: Int
+    ): TopTracksResponse?
 
-    fun getNextPage(accessToken: String, url: String, callback: (TopTracksResponse?) -> Unit)
+    suspend fun getNextPage(accessToken: String, url: String): TopTracksResponse?
 }

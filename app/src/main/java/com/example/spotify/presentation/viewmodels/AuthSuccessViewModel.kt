@@ -19,10 +19,8 @@ class AuthSuccessViewModel @Inject constructor(
     val userProfile: StateFlow<UserProfileInfo?> = _userProfile
 
     fun loadUserProfile() = viewModelScope.launch {
-        statsRepository.getCurrentUserProfile { response ->
-            response?.let {
+        statsRepository.getCurrentUserProfile()?.let {
                 _userProfile.value = it
             }
         }
-    }
 }

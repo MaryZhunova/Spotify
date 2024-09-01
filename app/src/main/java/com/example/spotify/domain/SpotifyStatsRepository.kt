@@ -5,13 +5,12 @@ import com.example.spotify.models.data.UserProfileInfo
 
 interface SpotifyStatsRepository {
 
-    fun getCurrentUserProfile(callback: (UserProfileInfo?) -> Unit)
+    suspend fun getCurrentUserProfile(): UserProfileInfo?
 
     suspend fun getTopTracks(
         timeRange: String,
-        limit: Int,
-        callback: (TopTracksInfo?) -> Unit
-    )
+        limit: Int
+    ): TopTracksInfo?
 
-    fun getNextPage(url: String, callback: (TopTracksInfo?) -> Unit)
+    suspend fun getNextPage(url: String): TopTracksInfo?
 }

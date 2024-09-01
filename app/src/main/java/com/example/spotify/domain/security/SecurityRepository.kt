@@ -4,7 +4,5 @@ interface SecurityRepository {
 
     suspend fun obtainAccessToken(accessCode: String, redirectUri: String): String?
 
-    fun getAccessToken(): String?
-
-    suspend fun refreshAccessToken(): String?
+    suspend fun getAccessToken(): String?
 }

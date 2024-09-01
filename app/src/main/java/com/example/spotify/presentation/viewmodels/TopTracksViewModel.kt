@@ -27,21 +27,19 @@ class TopTracksViewModel @Inject constructor(
 
     fun fetchTopTracks() = viewModelScope.launch {
         _isLoading.value = true
-        statsRepository.getTopTracks("short_term", 10) {
-            _isLoading.value = false
-            if (it != null) {
-                _topTracks.value = it.items
-                nextPageUrl = it.next
-            }
+        val info = statsRepository.getTopTracks("short_term", 10)
+        _isLoading.value = false
+        if (info != null) {
+            _topTracks.value = info.items
+            nextPageUrl = info.next
         }
     }
 
     fun fetchNextPage() = viewModelScope.launch {
         nextPageUrl?.let {
-            statsRepository.getNextPage(it) { info ->
-                _topTracks.value = (_topTracks.value) + info?.items.orEmpty()
-                nextPageUrl = info?.next
-            }
+            val info = statsRepository.getNextPage(it)
+            _topTracks.value = (_topTracks.value) + info?.items.orEmpty()
+            nextPageUrl = info?.next
         }
     }
 }

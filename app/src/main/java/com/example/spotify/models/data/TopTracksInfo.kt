@@ -8,7 +8,7 @@ val next: String?
 data class TrackInfo(
     val id: String,
     val name: String,
-    val artists: List<ArtistInfo>,
+    val artists: String,
     val album: AlbumInfo,
     val popularity: Int
 )

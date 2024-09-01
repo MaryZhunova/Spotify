@@ -7,6 +7,8 @@ import com.example.spotify.domain.SpotifyStatsRepository
 import com.example.spotify.domain.security.SecurityRepository
 import com.example.spotify.models.data.TopTracksInfo
 import com.example.spotify.models.data.UserProfileInfo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SpotifyStatsRepositoryImpl @Inject constructor(
@@ -16,37 +18,23 @@ class SpotifyStatsRepositoryImpl @Inject constructor(
     private val securityRepository: SecurityRepository
 ) : SpotifyStatsRepository {
 
-    override fun getCurrentUserProfile(callback: (UserProfileInfo?) -> Unit) {
-        securityRepository.getAccessToken()?.let { token ->
-            apiMapper.getCurrentUserProfile(token) { response ->
-                response?.let {
-                    callback(userProfileConverter.convert(it))
-                } ?: callback(null)
+    override suspend fun getCurrentUserProfile(): UserProfileInfo? = withContext(Dispatchers.IO) {
+            securityRepository.getAccessToken()?.let { token ->
+                apiMapper.getCurrentUserProfile(token)?.let { userProfileConverter.convert(it) }
             }
-        }
     }
 
-    override suspend fun getTopTracks(
-        timeRange: String,
-        limit: Int,
-        callback: (TopTracksInfo?) -> Unit
-    ) {
-        securityRepository.getAccessToken()?.let { token ->
-            apiMapper.getTopTracks(token, timeRange, limit) { response ->
-                response?.let { tracks ->
-                    callback(topTracksConverter.convert(tracks))
-                } ?: callback(null)
-            }
+    override suspend fun getTopTracks(timeRange: String, limit: Int): TopTracksInfo? =
+        withContext(Dispatchers.IO) {
+                securityRepository.getAccessToken()?.let { token ->
+                    apiMapper.getTopTracks(token, timeRange, limit)
+                        ?.let { topTracksConverter.convert(it) }
+                }
         }
-    }
 
-    override fun getNextPage(url: String, callback: (TopTracksInfo?) -> Unit) {
-        securityRepository.getAccessToken()?.let { token ->
-            apiMapper.getNextPage(token, url) { response ->
-                response?.let {
-                    callback(topTracksConverter.convert(it))
-                } ?: callback(null)
+    override suspend fun getNextPage(url: String): TopTracksInfo? = withContext(Dispatchers.IO) {
+            securityRepository.getAccessToken()?.let { token ->
+                apiMapper.getNextPage(token, url)?.let { topTracksConverter.convert(it) }
             }
-        }
     }
 }

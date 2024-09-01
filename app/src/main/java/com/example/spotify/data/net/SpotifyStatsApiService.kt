@@ -1,14 +1,10 @@
 package com.example.spotify.data.net
 
-import com.example.spotify.models.data.net.AccessTokenResponse
 import com.example.spotify.models.data.net.TopTracksResponse
 import com.example.spotify.models.data.net.UserProfileResponse
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.Url
 

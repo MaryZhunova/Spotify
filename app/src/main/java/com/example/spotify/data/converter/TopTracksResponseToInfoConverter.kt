@@ -20,15 +20,9 @@ class TopTracksResponseToInfoConverter {
         TrackInfo(
             id = from.id,
             name = from.name,
-            artists = from.artists.map { convertArtist(it) },
+            artists = from.artists.joinToString { it.name },
             album = convertAlbum(from.album),
             popularity = from.popularity
-        )
-
-    private fun convertArtist(from: Artist): ArtistInfo =
-        ArtistInfo(
-            id = from.id,
-            name = from.name
         )
 
     private fun convertAlbum(from: Album): AlbumInfo =
