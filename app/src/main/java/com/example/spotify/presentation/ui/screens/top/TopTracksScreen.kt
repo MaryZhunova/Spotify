@@ -38,6 +38,11 @@ import com.example.spotify.presentation.ui.components.AppBar
 import com.example.spotify.presentation.ui.components.ProgressIndicator
 import com.example.spotify.presentation.viewmodels.TopTracksViewModel
 
+/**
+ * Экран топа треков
+ *
+ * @param navController контроллер навигации
+ */
 @Composable
 fun TopTracksScreen(
     navController: NavController,

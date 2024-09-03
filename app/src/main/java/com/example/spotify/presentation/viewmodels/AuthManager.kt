@@ -17,6 +17,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * Менеджер аутентификации, управляющий состоянием аутентификации
+ *
+ * @constructor
+ * @param activity активити, в рамках которой выполняется аутентификация
+ * @param authLauncher лаунчер для запуска активити
+ * @param securityRepository репозиторий для хранения токенов доступа
+ */
 class AuthManager(
     private val activity: Activity,
     private val authLauncher: ActivityResultLauncher<Intent>,
@@ -27,6 +35,10 @@ class AuthManager(
 
     val authState: State<AuthState>
         get() = _authState
+
+    init {
+        logout()
+    }
 
     fun startAuth() {
         try {

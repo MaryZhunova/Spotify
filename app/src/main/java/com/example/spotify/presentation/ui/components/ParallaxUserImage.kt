@@ -42,6 +42,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+/**
+ * Компонент для отображения изображения пользователя с эффектом параллакса на фоне
+ *
+ * @param image URL изображения пользователя
+ * @param name имя пользователя, которое отображается, если изображение отсутствует
+ */
 @Composable
 fun ParallaxUserImage(image: String?, name: String) {
     val context = LocalContext.current

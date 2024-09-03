@@ -4,7 +4,16 @@ import com.example.spotify.models.data.UserProfileInfo
 import com.example.spotify.models.data.net.UserProfileResponse
 import java.util.Locale
 
+/**
+ * Конвертер сетевой модели [UserProfileResponse] в дата модель [UserProfileInfo]
+ */
 class UserProfileResponseToInfoConverter {
+
+    /**
+     * Конвертирует [UserProfileResponse] в [UserProfileInfo]
+     *
+     * @param from данные для конвертации
+     */
     fun convert(from: UserProfileResponse): UserProfileInfo =
         UserProfileInfo(
             id = from.id,

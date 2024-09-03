@@ -1,8 +1,8 @@
 package com.example.spotify.hilt
 
 import com.example.spotify.data.security.SecurityRepositoryImpl
-import com.example.spotify.data.security.net.ClientCredentialsApiMapper
-import com.example.spotify.data.security.net.ClientCredentialsApiMapperImpl
+import com.example.spotify.data.security.net.SpotifyAuthApiMapper
+import com.example.spotify.data.security.net.SpotifyAuthApiMapperImpl
 import com.example.spotify.domain.security.SecurityRepository
 import dagger.Binds
 import dagger.Module
@@ -10,15 +10,18 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * Модуль Dagger-Hilt
+ */
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class SecurityDataModule {
+abstract class AuthDataModule {
 
     @Binds
     @Singleton
-    abstract fun bindClientCredentialsApiMapper(
-        clientCredentialsApiMapperImpl: ClientCredentialsApiMapperImpl
-    ): ClientCredentialsApiMapper
+    abstract fun bindSpotifyAuthApiMapper(
+        spotifyAuthApiMapperImpl: SpotifyAuthApiMapperImpl
+    ): SpotifyAuthApiMapper
 
     @Binds
     @Singleton

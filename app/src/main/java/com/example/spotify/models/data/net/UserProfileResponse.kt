@@ -2,6 +2,16 @@ package com.example.spotify.models.data.net
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Ответ от API, содержащий информацию о профиле пользователя
+ *
+ * @property id уникальный идентификатор пользователя
+ * @property displayName имя пользователя
+ * @property email адрес электронной почты пользователя
+ * @property images список изображений профиля пользователя
+ * @property country код страны пользователя
+ * @property product продукт Spotify, который использует пользователь
+ */
 data class UserProfileResponse(
     @SerializedName("id") val id: String,
     @SerializedName("display_name") val displayName: String,
@@ -11,15 +21,11 @@ data class UserProfileResponse(
     @SerializedName("product") val product: String
 )
 
-data class UserProfileInfo(
-    val id: String,
-    val displayName: String,
-    val email: String,
-    val images: String?,
-    val country: String,
-    val product: String
-)
-
+/**
+ * Изображение
+ *
+ * @property url URL изображения
+ */
 data class Image(
     @SerializedName("url") val url: String
 )

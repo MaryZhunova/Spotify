@@ -5,7 +5,16 @@ import com.example.spotify.models.data.TopArtistsInfo
 import com.example.spotify.models.data.net.ArtistResponse
 import com.example.spotify.models.data.net.TopArtistsResponse
 
+/**
+ * Конвертер сетевой модели [TopArtistsResponse] в дата модель [TopArtistsInfo]
+ */
 class TopArtistsResponseToInfoConverter {
+
+    /**
+     * Конвертирует [TopArtistsResponse] в [TopArtistsInfo]
+     *
+     * @param from данные для конвертации
+     */
     fun convert(from: TopArtistsResponse): TopArtistsInfo =
         TopArtistsInfo(
             items = from.items.map { convertArtist(it) },

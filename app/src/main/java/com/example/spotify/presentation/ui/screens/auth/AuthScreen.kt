@@ -5,6 +5,12 @@ import androidx.navigation.NavController
 import com.example.spotify.models.presentation.AuthState
 import com.example.spotify.presentation.viewmodels.AuthManager
 
+/**
+ * Экран аутентификации
+ *
+ * @param authManager менеджер аутентификации, управляющий состоянием аутентификации
+ * @param navController контроллер навигации
+ */
 @Composable
 fun AuthScreen(
     authManager: AuthManager,

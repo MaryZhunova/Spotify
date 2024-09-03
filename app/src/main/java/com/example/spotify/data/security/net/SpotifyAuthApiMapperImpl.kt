@@ -7,9 +7,16 @@ import kotlinx.coroutines.withContext
 import okhttp3.Credentials
 import javax.inject.Inject
 
-class ClientCredentialsApiMapperImpl @Inject constructor(
-    private val apiService: ClientCredentialsApiService
-) : ClientCredentialsApiMapper {
+/**
+ * Реализация интерфейса [SpotifyAuthApiMapper],
+ * которая использует [SpotifyAuthApiService] для выполнения запросов
+ *
+ * @constructor
+ * @param apiService сервис для взаимодействия с API аутентификации Spotify
+ */
+class SpotifyAuthApiMapperImpl @Inject constructor(
+    private val apiService: SpotifyAuthApiService
+) : SpotifyAuthApiMapper {
 
     override suspend fun getAuthToken(
         accessCode: String, redirectUri: String

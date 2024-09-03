@@ -8,6 +8,13 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import javax.inject.Inject
 
+/**
+ * Хранилище для безопасного хранения и управления токенами доступа
+ * Использует шифрование для хранения токенов доступа в EncryptedSharedPreferences
+ *
+ * @constructor
+ * @param context Контекст приложени для доступа к SharedPreferences
+ */
 class TokenStorage @Inject constructor(context: Context) {
 
     private val masterKey = MasterKey.Builder(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
@@ -24,16 +31,29 @@ class TokenStorage @Inject constructor(context: Context) {
 
     private val gson = Gson()
 
+    /**
+     * Сохраняет токен доступа в хранилище
+     *
+     * @param response информация о токене доступа
+     */
     fun storeAccessToken(response: AccessTokenInfo) {
         val json = gson.toJson(response)
         sharedPreferences.edit().putString(PREFS_KEY, json).apply()
     }
 
+    /**
+     * Получает токен доступа из хранилища
+     *
+     * @return [AccessTokenInfo] токен доступа или null, если токен не найден
+     */
     fun getAccessToken(): AccessTokenInfo? {
         val json = sharedPreferences.getString(PREFS_KEY, null) ?: return null
         return gson.fromJson(json, object : TypeToken<AccessTokenInfo>() {}.type)
     }
 
+    /**
+     * Очищает все данные в хранилище
+     */
     fun clear() {
         sharedPreferences.edit().clear().apply()
     }

@@ -7,7 +7,16 @@ import com.example.spotify.models.data.net.Album
 import com.example.spotify.models.data.net.TopTracksResponse
 import com.example.spotify.models.data.net.Track
 
+/**
+ * Конвертер сетевой модели [TopTracksResponse] в дата модель [TopTracksInfo]
+ */
 class TopTracksResponseToInfoConverter {
+
+    /**
+     * Конвертирует [TopTracksResponse] в [TopTracksInfo]
+     *
+     * @param from данные для конвертации
+     */
     fun convert(from: TopTracksResponse): TopTracksInfo =
         TopTracksInfo(
             items = from.items.map { convertTrack(it) },

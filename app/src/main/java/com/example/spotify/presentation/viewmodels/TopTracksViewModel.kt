@@ -10,21 +10,38 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel для управления данными о топ треках.
+ *
+ * @constructor
+ * @param statsRepository репозиторий для получения информации о треках из Spotify
+ */
 @HiltViewModel
 class TopTracksViewModel @Inject constructor(
     private val statsRepository: SpotifyStatsRepository
 ) : ViewModel() {
 
     private val _topTracks = mutableStateOf<List<TrackInfo>>(emptyList())
+
+    /**
+     * Список треков
+     */
     val topTracks: State<List<TrackInfo>>
         get() = _topTracks
 
     private val _isLoading = mutableStateOf(false)
+
+    /**
+     * Состояние загрузки данных
+     */
     val isLoading: State<Boolean>
         get() = _isLoading
 
     private var nextPageUrl: String? = null
 
+    /**
+     * Загружает данные о топ треках
+     */
     fun fetchTopTracks() = viewModelScope.launch {
         _isLoading.value = true
         val info = statsRepository.getTopTracks("short_term", 50)
@@ -35,6 +52,9 @@ class TopTracksViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Загружает следующую страницу данных о топ треках
+     */
     fun fetchNextPage() = viewModelScope.launch {
         nextPageUrl?.let {
             val info = statsRepository.getTopTracksNextPage(it)

@@ -10,6 +10,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel для управления состоянием экрана успешной аутентификации
+ *
+ * @constructor
+ * @param statsRepository репозиторий для получения информации
+ * о пользователе и статистики по трекам и исполнителях из Spotify
+ */
 @HiltViewModel
 class AuthSuccessViewModel @Inject constructor(
     private val statsRepository: SpotifyStatsRepository
@@ -21,12 +28,20 @@ class AuthSuccessViewModel @Inject constructor(
     private val _showExitDialog = MutableStateFlow(false)
     val showExitDialog: StateFlow<Boolean> = _showExitDialog
 
+    /**
+     * Загружает профиль пользователя
+     */
     fun loadUserProfile() = viewModelScope.launch {
         statsRepository.getCurrentUserProfile()?.let {
-                _userProfile.value = it
-            }
+            _userProfile.value = it
         }
+    }
 
+    /**
+     * Изменяет статус показа диалога
+     *
+     * @param boolean следует ли показывать диалог (true) или нет (false)
+     */
     fun changeShowDialogStatus(boolean: Boolean) {
         _showExitDialog.value = boolean
     }

@@ -19,7 +19,12 @@ import androidx.compose.ui.unit.sp
 import com.example.spotify.models.presentation.AuthError
 import com.example.spotify.models.presentation.AuthState
 
-
+/**
+ * Экран ошибки
+ *
+ * @param state состояние ошибки аутентификации, содержащее информацию об ошибке
+ * @param tryAgain функция, вызываемая при попытке повторной аутентификации
+ */
 @Composable
  fun AuthFail(
     state: AuthState.Fail,

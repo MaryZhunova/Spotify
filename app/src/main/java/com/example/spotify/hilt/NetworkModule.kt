@@ -7,7 +7,7 @@ import com.example.spotify.data.converter.TopTracksResponseToInfoConverter
 import com.example.spotify.data.converter.UserProfileResponseToInfoConverter
 import com.example.spotify.data.net.SpotifyStatsApiService
 import com.example.spotify.data.security.TokenStorage
-import com.example.spotify.data.security.net.ClientCredentialsApiService
+import com.example.spotify.data.security.net.SpotifyAuthApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +19,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+/**
+ * Модуль Dagger-Hilt
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -50,13 +53,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideClientCredentialsApiService(okHttpClient: OkHttpClient): ClientCredentialsApiService {
+    fun provideClientCredentialsApiService(okHttpClient: OkHttpClient): SpotifyAuthApiService {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL_ACCOUNTS)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        return retrofit.create(ClientCredentialsApiService::class.java)
+        return retrofit.create(SpotifyAuthApiService::class.java)
     }
 
     //todo move

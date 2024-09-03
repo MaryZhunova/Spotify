@@ -7,6 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
+/**
+ * Компонент для отображения индикатора загрузки
+ */
 @Composable
 fun ProgressIndicator() {
     Box(

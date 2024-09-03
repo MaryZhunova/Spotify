@@ -10,6 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import com.example.spotify.R
 
+/**
+ * AppBar
+ *
+ * @param onClick обработка нажатия на иконку навигации
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(onClick: () -> Unit) {

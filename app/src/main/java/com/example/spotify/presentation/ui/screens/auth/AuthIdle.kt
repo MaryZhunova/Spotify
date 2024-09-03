@@ -24,7 +24,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.spotify.R
 
-
+/**
+ * Стартовый экран
+ *
+ * @param onClick обработка нажатия
+ */
 @Composable
 fun AuthIdle(onClick:() -> Unit) {
     val transition = rememberInfiniteTransition(label = "transitionLabel")

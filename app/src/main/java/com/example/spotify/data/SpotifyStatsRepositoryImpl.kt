@@ -13,6 +13,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * Реализация репозитория для получения статистики пользователя и информации о треках и исполнителях из Spotify
+ *
+ * @constructor
+ * @param apiMapper маппер для преобразования данных из API в модели
+ * @param userProfileConverter конвертер для преобразования ответа API о пользователе в модель [UserProfileInfo]
+ * @param topTracksConverter конвертер для преобразования ответа API о треках в модель [TopTracksInfo]
+ * @param topArtistsConverter конвертер для преобразования ответа API об исполнителях в модель [TopArtistsInfo]
+ * @param securityRepository репозиторий для работы с токенами доступа
+ */
 class SpotifyStatsRepositoryImpl @Inject constructor(
     private val apiMapper: SpotifyStatsApiMapper,
     private val userProfileConverter: UserProfileResponseToInfoConverter,

@@ -7,6 +7,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * Реализация интерфейса [SpotifyStatsApiMapper],
+ * которая использует [SpotifyStatsApiService] для выполнения запросов к API Spotify
+ *
+ * @constructor
+ * @param apiService Сервис для выполнения запросов к API Spotify
+ */
 class SpotifyStatsApiMapperImpl @Inject constructor(
     private val apiService: SpotifyStatsApiService
 ) : SpotifyStatsApiMapper {
