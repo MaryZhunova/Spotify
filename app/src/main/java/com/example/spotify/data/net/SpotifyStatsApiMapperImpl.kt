@@ -1,5 +1,6 @@
 package com.example.spotify.data.net
 
+import com.example.spotify.models.data.net.TopArtistsResponse
 import com.example.spotify.models.data.net.TopTracksResponse
 import com.example.spotify.models.data.net.UserProfileResponse
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,7 @@ class SpotifyStatsApiMapperImpl @Inject constructor(
             return@withContext if (response.isSuccessful) {
                 response.body()
             } else {
-               null
+                null
             }
         }
 
@@ -37,9 +38,12 @@ class SpotifyStatsApiMapperImpl @Inject constructor(
         }
     }
 
-    override suspend fun getNextPage(accessToken: String, url: String): TopTracksResponse? =
+    override suspend fun getTopTracksNextPage(
+        accessToken: String,
+        url: String
+    ): TopTracksResponse? =
         withContext(Dispatchers.IO) {
-            val response = apiService.getNextPage(
+            val response = apiService.getTopTracksNextPage(
                 token = "Bearer $accessToken",
                 url = url
             ).execute()
@@ -49,4 +53,36 @@ class SpotifyStatsApiMapperImpl @Inject constructor(
                 null
             }
         }
+
+    override suspend fun getTopArtists(
+        accessToken: String,
+        timeRange: String,
+        limit: Int
+    ): TopArtistsResponse? = withContext(Dispatchers.IO) {
+        val response = apiService.getTopArtists(
+            token = "Bearer $accessToken",
+            timeRange = timeRange,
+            limit = limit
+        ).execute()
+        return@withContext if (response.isSuccessful) {
+            response.body()
+        } else {
+            null
+        }
+    }
+
+    override suspend fun getTopArtistsNextPage(
+        accessToken: String,
+        url: String
+    ): TopArtistsResponse? = withContext(Dispatchers.IO) {
+        val response = apiService.getTopArtistsNextPage(
+            token = "Bearer $accessToken",
+            url = url
+        ).execute()
+        return@withContext if (response.isSuccessful) {
+            response.body()
+        } else {
+            null
+        }
+    }
 }

@@ -33,31 +33,31 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.spotify.R
-import com.example.spotify.models.data.TrackInfo
+import com.example.spotify.models.data.ArtistInfo
 import com.example.spotify.presentation.ui.components.AppBar
 import com.example.spotify.presentation.ui.components.ProgressIndicator
-import com.example.spotify.presentation.viewmodels.TopTracksViewModel
+import com.example.spotify.presentation.viewmodels.TopArtistsViewModel
 
 @Composable
-fun TopTracksScreen(
+fun TopArtistsScreen(
     navController: NavController,
 ) {
-    val viewModel: TopTracksViewModel = hiltViewModel()
+    val viewModel: TopArtistsViewModel = hiltViewModel()
 
-    val topTracks by viewModel.topTracks
+    val topArtists by viewModel.topArtists
     val isLoading by viewModel.isLoading
 
     val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchTopTracks()
+        viewModel.fetchTopArtists()
     }
 
     val shouldFetchNextPage by remember {
         derivedStateOf {
             val lastVisibleItemIndex =
                 listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-            !isLoading && lastVisibleItemIndex >= topTracks.size - 1
+            !isLoading && lastVisibleItemIndex >= topArtists.size - 1
         }
     }
 
@@ -70,7 +70,7 @@ fun TopTracksScreen(
     Scaffold(
         topBar = { AppBar { navController.popBackStack() } },
     ) {
-        if (isLoading && topTracks.isEmpty()) {
+        if (isLoading && topArtists.isEmpty()) {
             ProgressIndicator()
         } else {
             LazyColumn(
@@ -78,8 +78,8 @@ fun TopTracksScreen(
                 state = listState,
                 contentPadding = PaddingValues(8.dp)
             ) {
-                itemsIndexed(items = topTracks, key = { _, track -> track.id }) { index, track ->
-                    TrackItem(track = track, index = index)
+                itemsIndexed(items = topArtists, key = { _, artist -> artist.id }) { index, artist ->
+                    ArtistItem(artist = artist, index = index)
                 }
                 if (isLoading) {
                     item {
@@ -99,7 +99,7 @@ fun TopTracksScreen(
 }
 
 @Composable
-fun TrackItem(track: TrackInfo, index: Int) {
+fun ArtistItem(artist: ArtistInfo, index: Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)
@@ -112,7 +112,7 @@ fun TrackItem(track: TrackInfo, index: Int) {
         )
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(track.album.image)
+                .data(artist.image)
                 .crossfade(true)
                 .build(),
             placeholder = painterResource(R.drawable.music_icon),
@@ -134,14 +134,14 @@ fun TrackItem(track: TrackInfo, index: Int) {
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium,
-                text = track.name,
+                text = artist.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodySmall,
-                text = track.artists,
+                text = artist.genres,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

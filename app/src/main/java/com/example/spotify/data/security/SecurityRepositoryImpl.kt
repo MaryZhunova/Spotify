@@ -16,8 +16,7 @@ class SecurityRepositoryImpl @Inject constructor(
 
     override suspend fun obtainAccessToken(accessCode: String, redirectUri: String): String? =
         withContext(Dispatchers.IO) {
-//            getAccessToken() ?:
-            apiMapper.getAuthToken(accessCode, redirectUri)?.also { token ->
+            getAccessToken() ?: apiMapper.getAuthToken(accessCode, redirectUri)?.also { token ->
                     tokenStorage.storeAccessToken(accessTokenResponseConverter.convert(token))
                 }?.accessToken
         }

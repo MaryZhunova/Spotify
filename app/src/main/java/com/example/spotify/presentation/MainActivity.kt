@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.spotify.domain.security.SecurityRepository
 import com.example.spotify.presentation.ui.screens.auth.AuthScreen
+import com.example.spotify.presentation.ui.screens.top.TopArtistsScreen
 import com.example.spotify.presentation.ui.screens.top.TopTracksScreen
 import com.example.spotify.presentation.ui.theme.SpotifyTheme
 import com.example.spotify.presentation.viewmodels.AuthManager
@@ -71,6 +72,6 @@ fun SpotifyApp(authManager: AuthManager) {
             )
         }
         composable("tracks") { TopTracksScreen(navController = navController) }
-        composable("artists") { TopTracksScreen(navController = navController) }
+        composable("artists") { TopArtistsScreen(navController = navController) }
     }
 }
