@@ -16,6 +16,7 @@ import com.example.spotify.presentation.ui.screens.auth.AuthScreen
 import com.example.spotify.presentation.ui.screens.top.TopTracksScreen
 import com.example.spotify.presentation.ui.theme.SpotifyTheme
 import com.example.spotify.presentation.viewmodels.AuthManager
+import com.example.spotify.presentation.viewmodels.SessionTimerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -27,6 +28,8 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var securityRepository: SecurityRepository
+    @Inject
+    lateinit var sessionTimerViewModel: SessionTimerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -39,11 +42,20 @@ class MainActivity : ComponentActivity() {
 
         authManager = AuthManager(activity = this, authLauncher = authLauncher, securityRepository)
 
+        sessionTimerViewModel.startTimer {
+            authManager.logout()
+        }
+
         setContent {
             SpotifyTheme {
                 SpotifyApp(authManager)
             }
         }
+    }
+
+    override fun onUserInteraction() {
+        super.onUserInteraction()
+        sessionTimerViewModel.resetTimer()
     }
 }
 

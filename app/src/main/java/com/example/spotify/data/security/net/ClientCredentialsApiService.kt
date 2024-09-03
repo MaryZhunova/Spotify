@@ -21,6 +21,7 @@ interface ClientCredentialsApiService {
     @FormUrlEncoded
     @POST("api/token")
     suspend fun refreshAuthToken(
+        @Header("Authorization") authorization: String,
         @Field("grant_type") grantType: String = "refresh_token",
         @Field("refresh_token") token: String,
     ): Response<AccessTokenResponse>

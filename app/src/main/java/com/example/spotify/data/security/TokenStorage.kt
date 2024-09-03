@@ -34,6 +34,10 @@ class TokenStorage @Inject constructor(context: Context) {
         return gson.fromJson(json, object : TypeToken<AccessTokenInfo>() {}.type)
     }
 
+    fun clear() {
+        sharedPreferences.edit().clear().apply()
+    }
+
     companion object {
         private const val PREFS_KEY = "access_token"
         private const val PREFS_NAME = "secure_prefs"

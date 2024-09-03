@@ -16,7 +16,8 @@ class SecurityRepositoryImpl @Inject constructor(
 
     override suspend fun obtainAccessToken(accessCode: String, redirectUri: String): String? =
         withContext(Dispatchers.IO) {
-            getAccessToken() ?: apiMapper.getAuthToken(accessCode, redirectUri)?.also { token ->
+//            getAccessToken() ?:
+            apiMapper.getAuthToken(accessCode, redirectUri)?.also { token ->
                     tokenStorage.storeAccessToken(accessTokenResponseConverter.convert(token))
                 }?.accessToken
         }
@@ -27,10 +28,14 @@ class SecurityRepositoryImpl @Inject constructor(
     override suspend fun getAccessToken(): String? = withContext(Dispatchers.IO) {
         val token = tokenStorage.getAccessToken() ?: return@withContext null
         return@withContext if (checkAccessToken(token)) {
-            refreshAccessToken(token.refreshToken)
+        token.refreshToken?.let { refreshAccessToken(it) }
         } else {
             token.accessToken
         }
+    }
+
+    override fun clear() {
+        tokenStorage.clear()
     }
 
     private suspend fun refreshAccessToken(refreshToken: String): String? =

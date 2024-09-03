@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,17 +30,18 @@ import com.example.spotify.presentation.viewmodels.AuthSuccessViewModel
 @Composable
 fun AuthSuccess(
     onBackClick: () -> Unit,
-    onTopClick: (String) -> Unit
+    onTopClick: (String) -> Unit,
 ) {
     val viewModel: AuthSuccessViewModel = hiltViewModel()
     val userProfile by viewModel.userProfile.collectAsState()
+    val showExitDialog by viewModel.showExitDialog.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.loadUserProfile()
     }
 
     BackHandler {
-        onBackClick()
+        viewModel.changeShowDialogStatus(true)
     }
 
     Column(
@@ -46,7 +49,7 @@ fun AuthSuccess(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         userProfile?.let { profile ->
-            AppBar(onBackClick)
+            AppBar { viewModel.changeShowDialogStatus(true) }
             ParallaxUserImage(image = profile.image, name = profile.displayName)
             Text(
                 modifier = Modifier.padding(top = 30.dp),
@@ -69,5 +72,29 @@ fun AuthSuccess(
                 }
             }
         } ?: ProgressIndicator()
+    }
+
+    if (showExitDialog) {
+        AlertDialog(
+            title = { Text(text = "Are you sure you want to exit?") },
+            onDismissRequest = { viewModel.changeShowDialogStatus(false) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.changeShowDialogStatus(false)
+                        onBackClick.invoke()
+                    }
+                ) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { viewModel.changeShowDialogStatus(false) }
+                ) {
+                    Text("Dismiss")
+                }
+            }
+        )
     }
 }

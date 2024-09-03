@@ -57,8 +57,9 @@ class AuthManager(
     }
 
     fun logout() {
-        _authState.value = AuthState.Idle
+        securityRepository.clear()
         AuthorizationClient.clearCookies(activity)
+        _authState.value = AuthState.Idle
     }
 
     companion object {

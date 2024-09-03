@@ -18,9 +18,16 @@ class AuthSuccessViewModel @Inject constructor(
     private val _userProfile = MutableStateFlow<UserProfileInfo?>(null)
     val userProfile: StateFlow<UserProfileInfo?> = _userProfile
 
+    private val _showExitDialog = MutableStateFlow(false)
+    val showExitDialog: StateFlow<Boolean> = _showExitDialog
+
     fun loadUserProfile() = viewModelScope.launch {
         statsRepository.getCurrentUserProfile()?.let {
                 _userProfile.value = it
             }
         }
+
+    fun changeShowDialogStatus(boolean: Boolean) {
+        _showExitDialog.value = boolean
+    }
 }
