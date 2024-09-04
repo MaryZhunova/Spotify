@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyStatsRepository
 import com.example.spotify.models.data.ArtistInfo
+import com.example.spotify.models.presentation.TimePeriods
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -32,41 +33,31 @@ class TopArtistsViewModel @Inject constructor(
 
     private val _isLoading = mutableStateOf(false)
 
+    private val artistsInfoItems = mutableMapOf<TimePeriods, List<ArtistInfo>>()
+
     /**
      * Состояние загрузки данных
      */
     val isLoading: State<Boolean>
         get() = _isLoading
 
-    private var nextPageUrl: String? = null
-
     /**
      * Загружает данные о топ исполнителях
      */
-    fun fetchTopArtists() = viewModelScope.launch(
+    fun fetchTopArtists(period: TimePeriods) = viewModelScope.launch(
         CoroutineExceptionHandler { _, err ->
             //todo
         }
     ) {
-        _isLoading.value = true
-        val info = statsRepository.getTopArtists("short_term", 50)
-        _isLoading.value = false
-        _topArtists.value = info.items
-        nextPageUrl = info.next
-    }
-
-    /**
-     * Загружает следующую страницу данных о топ исполнителях
-     */
-    fun fetchNextPage() = viewModelScope.launch(
-        CoroutineExceptionHandler { _, err ->
-            //todo
-        }
-    ) {
-        nextPageUrl?.let {
-            val info = statsRepository.getTopArtistsNextPage(it)
-            _topArtists.value = (_topArtists.value) + info.items
-            nextPageUrl = info.next
+        val savedInfo = artistsInfoItems[period]
+        if (savedInfo != null) {
+            _topArtists.value = savedInfo
+        } else {
+            _isLoading.value = true
+            val items = statsRepository.getTopArtists(period.strValue).items
+            artistsInfoItems.putIfAbsent(period, items)
+            _topArtists.value = items
+            _isLoading.value = false
         }
     }
 }

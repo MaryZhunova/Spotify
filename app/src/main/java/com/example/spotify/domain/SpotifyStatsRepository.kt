@@ -41,7 +41,7 @@ interface SpotifyStatsRepository {
      * @param limit количество исполнителей, которые нужно вернуть
      * @return информация о топ исполнителях в виде объекта [TopArtistsInfo]
      */
-    suspend fun getTopArtists(timeRange: String, limit: Int): TopArtistsInfo
+    suspend fun getTopArtists(timeRange: String, limit: Int = 50): TopArtistsInfo
 
     /**
      * Получает следующую страницу результатов топа исполнителей
