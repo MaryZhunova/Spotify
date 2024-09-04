@@ -8,24 +8,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.spotify.models.presentation.DialogState
 import com.example.spotify.presentation.ui.components.AppBar
 import com.example.spotify.presentation.ui.components.ParallaxUserImage
 import com.example.spotify.presentation.ui.components.ProgressIndicator
+import com.example.spotify.presentation.ui.components.SimpleDialog
 import com.example.spotify.presentation.viewmodels.AuthSuccessViewModel
 
 @Composable
@@ -35,22 +34,21 @@ fun AuthSuccess(
 ) {
     val viewModel: AuthSuccessViewModel = hiltViewModel()
     val userProfile by viewModel.userProfile.collectAsState()
-    val showExitDialog by viewModel.showExitDialog.collectAsState()
+    val dialogState by viewModel.dialogState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.loadUserProfile()
     }
 
     BackHandler {
-        viewModel.changeShowDialogStatus(true)
+        viewModel.showExitDialog { onBackClick.invoke() }
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         userProfile?.let { profile ->
-            AppBar { viewModel.changeShowDialogStatus(true) }
+            AppBar { viewModel.showExitDialog { onBackClick.invoke() } }
             ParallaxUserImage(image = profile.image, name = profile.displayName)
             Text(
                 modifier = Modifier.padding(top = 30.dp),
@@ -75,27 +73,8 @@ fun AuthSuccess(
         } ?: ProgressIndicator()
     }
 
-    if (showExitDialog) {
-        AlertDialog(
-            title = { Text(text = "Are you sure you want to exit?") },
-            onDismissRequest = { viewModel.changeShowDialogStatus(false) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.changeShowDialogStatus(false)
-                        onBackClick.invoke()
-                    }
-                ) {
-                    Text("Confirm")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { viewModel.changeShowDialogStatus(false) }
-                ) {
-                    Text("Dismiss")
-                }
-            }
-        )
+    when (val state = dialogState) {
+        is DialogState.Simple -> SimpleDialog(data = state)
+        is DialogState.Idle -> {}
     }
 }

@@ -18,13 +18,13 @@ class SpotifyStatsApiMapperImpl @Inject constructor(
     private val apiService: SpotifyStatsApiService
 ) : SpotifyStatsApiMapper {
 
-    override suspend fun getCurrentUserProfile(accessToken: String): UserProfileResponse? =
+    override suspend fun getCurrentUserProfile(accessToken: String): UserProfileResponse =
         withContext(Dispatchers.IO) {
             val response = apiService.getCurrentUserProfile("Bearer $accessToken").execute()
             return@withContext if (response.isSuccessful) {
-                response.body()
+                checkNotNull(response.body())
             } else {
-                null
+                throw Exception()
             }
         }
 
@@ -32,32 +32,32 @@ class SpotifyStatsApiMapperImpl @Inject constructor(
         accessToken: String,
         timeRange: String,
         limit: Int
-    ): TopTracksResponse? = withContext(Dispatchers.IO) {
+    ): TopTracksResponse = withContext(Dispatchers.IO) {
         val response = apiService.getTopTracks(
             token = "Bearer $accessToken",
             timeRange = timeRange,
             limit = limit
         ).execute()
         return@withContext if (response.isSuccessful) {
-            response.body()
+            checkNotNull(response.body())
         } else {
-            null
+            throw Exception()
         }
     }
 
     override suspend fun getTopTracksNextPage(
         accessToken: String,
         url: String
-    ): TopTracksResponse? =
+    ): TopTracksResponse =
         withContext(Dispatchers.IO) {
             val response = apiService.getTopTracksNextPage(
                 token = "Bearer $accessToken",
                 url = url
             ).execute()
             return@withContext if (response.isSuccessful) {
-                response.body()
+                checkNotNull(response.body())
             } else {
-                null
+                throw Exception()
             }
         }
 
@@ -65,31 +65,31 @@ class SpotifyStatsApiMapperImpl @Inject constructor(
         accessToken: String,
         timeRange: String,
         limit: Int
-    ): TopArtistsResponse? = withContext(Dispatchers.IO) {
+    ): TopArtistsResponse = withContext(Dispatchers.IO) {
         val response = apiService.getTopArtists(
             token = "Bearer $accessToken",
             timeRange = timeRange,
             limit = limit
         ).execute()
         return@withContext if (response.isSuccessful) {
-            response.body()
+            checkNotNull(response.body())
         } else {
-            null
+            throw Exception()
         }
     }
 
     override suspend fun getTopArtistsNextPage(
         accessToken: String,
         url: String
-    ): TopArtistsResponse? = withContext(Dispatchers.IO) {
+    ): TopArtistsResponse = withContext(Dispatchers.IO) {
         val response = apiService.getTopArtistsNextPage(
             token = "Bearer $accessToken",
             url = url
         ).execute()
         return@withContext if (response.isSuccessful) {
-            response.body()
+            checkNotNull(response.body())
         } else {
-            null
+            throw Exception()
         }
     }
 }

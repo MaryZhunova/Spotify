@@ -2,38 +2,44 @@ package com.example.spotify.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * ViewModel для управления таймером сессии
  */
-class SessionTimerViewModel @Inject constructor(): ViewModel() {
+class SessionTimerViewModel @Inject constructor() : ViewModel() {
 
-    private var isTimerActive = false
+    private val _onSessionExpired = MutableSharedFlow<Unit>()
+
+    val onSessionExpired: SharedFlow<Unit>
+        get() = _onSessionExpired.asSharedFlow()
+
+    private var timerJob: Job? = null
 
     /**
      * Запускает таймер на 10 минут. При истечении таймера выполняется переданное действие.
-     *
-     * @param onTimerExpired лямбда-функция, которая будет выполнена, когда таймер истечет.
      * Если таймер уже активен, функция не будет запущена повторно.
      */
-    fun startTimer(onTimerExpired: () -> Unit) {
-        if (isTimerActive) return
+    fun startTimer() {
+        if (timerJob?.isActive == true) return
 
-        isTimerActive = true
-        viewModelScope.launch {
+        timerJob = viewModelScope.launch {
             delay(10 * 60 * 1000L)
-            onTimerExpired()
-            isTimerActive = false
+            _onSessionExpired.emit(Unit)
         }
     }
 
     /**
-     * Сбрасывает таймер
+     * Сбрасывает таймер, останавливая текущий и начиная новый.
      */
     fun resetTimer() {
-        isTimerActive = false
+        timerJob?.cancel()
+        startTimer()
     }
 }

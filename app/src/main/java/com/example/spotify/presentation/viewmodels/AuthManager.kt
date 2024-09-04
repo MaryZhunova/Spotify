@@ -31,6 +31,7 @@ class AuthManager(
     private val securityRepository: SecurityRepository
 ) {
 
+    private val scope = CoroutineScope(Dispatchers.IO)
     private val _authState = mutableStateOf<AuthState>(AuthState.Idle)
 
     val authState: State<AuthState>
@@ -56,7 +57,7 @@ class AuthManager(
     }
 
     fun handleAuthResult(resultCode: Int, data: Intent?) {
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             val response = AuthorizationClient.getResponse(resultCode, data)
             if (response.type == AuthorizationResponse.Type.CODE &&
                 securityRepository.obtainAccessToken(response.code, REDIRECT_URI) != null

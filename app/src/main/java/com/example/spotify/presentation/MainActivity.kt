@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +30,7 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var securityRepository: SecurityRepository
+
     @Inject
     lateinit var sessionTimerViewModel: SessionTimerViewModel
 
@@ -43,13 +45,14 @@ class MainActivity : ComponentActivity() {
 
         authManager = AuthManager(activity = this, authLauncher = authLauncher, securityRepository)
 
-        sessionTimerViewModel.startTimer {
-            authManager.logout()
-        }
+        sessionTimerViewModel.startTimer()
 
         setContent {
             SpotifyTheme {
-                SpotifyApp(authManager)
+                SpotifyApp(
+                    authManager = authManager,
+                    sessionTimerViewModel = sessionTimerViewModel
+                )
             }
         }
     }
@@ -61,8 +64,15 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SpotifyApp(authManager: AuthManager) {
+fun SpotifyApp(authManager: AuthManager, sessionTimerViewModel: SessionTimerViewModel) {
     val navController = rememberNavController()
+
+    LaunchedEffect(Unit) {
+        sessionTimerViewModel.onSessionExpired.collect {
+            authManager.logout()
+            navController.popBackStack("auth", false)
+        }
+    }
 
     NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {

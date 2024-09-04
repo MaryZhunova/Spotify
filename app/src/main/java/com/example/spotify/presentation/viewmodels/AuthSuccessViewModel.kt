@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyStatsRepository
 import com.example.spotify.models.data.UserProfileInfo
+import com.example.spotify.models.presentation.Button
+import com.example.spotify.models.presentation.DialogState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -25,24 +28,29 @@ class AuthSuccessViewModel @Inject constructor(
     private val _userProfile = MutableStateFlow<UserProfileInfo?>(null)
     val userProfile: StateFlow<UserProfileInfo?> = _userProfile
 
-    private val _showExitDialog = MutableStateFlow(false)
-    val showExitDialog: StateFlow<Boolean> = _showExitDialog
+    private val _dialogState = MutableStateFlow<DialogState>(DialogState.Idle)
+    val dialogState: StateFlow<DialogState> = _dialogState
 
     /**
      * Загружает профиль пользователя
      */
-    fun loadUserProfile() = viewModelScope.launch {
-        statsRepository.getCurrentUserProfile()?.let {
-            _userProfile.value = it
+    suspend fun loadUserProfile() = viewModelScope.launch(
+        CoroutineExceptionHandler { _, err ->
+            //todo
         }
+    ) {
+        _userProfile.value = statsRepository.getCurrentUserProfile()
     }
 
-    /**
-     * Изменяет статус показа диалога
-     *
-     * @param boolean следует ли показывать диалог (true) или нет (false)
-     */
-    fun changeShowDialogStatus(boolean: Boolean) {
-        _showExitDialog.value = boolean
+    fun showExitDialog(callback: () -> Unit) {
+        _dialogState.value = DialogState.Simple(
+            title = "Are you sure you want to exit?",
+            onPositive = Button(title = "Confirm") {
+                _dialogState.value = DialogState.Idle
+                callback.invoke()
+            },
+            onNegative = Button(title = "Dismiss") { _dialogState.value = DialogState.Idle },
+            onDismiss = { _dialogState.value = DialogState.Idle }
+        )
     }
 }

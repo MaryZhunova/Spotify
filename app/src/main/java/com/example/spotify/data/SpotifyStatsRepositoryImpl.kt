@@ -31,40 +31,38 @@ class SpotifyStatsRepositoryImpl @Inject constructor(
     private val securityRepository: SecurityRepository
 ) : SpotifyStatsRepository {
 
-    override suspend fun getCurrentUserProfile(): UserProfileInfo? = withContext(Dispatchers.IO) {
-        securityRepository.getAccessToken()?.let { token ->
-            apiMapper.getCurrentUserProfile(token)?.let { userProfileConverter.convert(it) }
-        }
-    }
-
-    override suspend fun getTopTracks(timeRange: String, limit: Int): TopTracksInfo? =
+    override suspend fun getCurrentUserProfile(): UserProfileInfo =
         withContext(Dispatchers.IO) {
-            securityRepository.getAccessToken()?.let { token ->
-                apiMapper.getTopTracks(token, timeRange, limit)
-                    ?.let { topTracksConverter.convert(it) }
-            }
+            val token = securityRepository.getAccessToken()
+            val userProfileResponse = apiMapper.getCurrentUserProfile(token)
+            userProfileConverter.convert(userProfileResponse)
         }
 
-    override suspend fun getTopTracksNextPage(url: String): TopTracksInfo? =
+    override suspend fun getTopTracks(timeRange: String, limit: Int): TopTracksInfo =
         withContext(Dispatchers.IO) {
-            securityRepository.getAccessToken()?.let { token ->
-                apiMapper.getTopTracksNextPage(token, url)?.let { topTracksConverter.convert(it) }
-            }
+            val token = securityRepository.getAccessToken()
+            val topTracksResponse = apiMapper.getTopTracks(token, timeRange, limit)
+            topTracksConverter.convert(topTracksResponse)
         }
 
-    override suspend fun getTopArtists(timeRange: String, limit: Int): TopArtistsInfo? =
+    override suspend fun getTopTracksNextPage(url: String): TopTracksInfo =
         withContext(Dispatchers.IO) {
-            securityRepository.getAccessToken()?.let { token ->
-                apiMapper.getTopArtists(token, timeRange, limit)
-                    ?.let { topArtistsConverter.convert(it) }
-            }
+            val token = securityRepository.getAccessToken()
+            val topTracksResponse = apiMapper.getTopTracksNextPage(token, url)
+            topTracksConverter.convert(topTracksResponse)
         }
 
-    override suspend fun getTopArtistsNextPage(url: String): TopArtistsInfo? =
+    override suspend fun getTopArtists(timeRange: String, limit: Int): TopArtistsInfo =
         withContext(Dispatchers.IO) {
-            securityRepository.getAccessToken()?.let { token ->
-                apiMapper.getTopArtistsNextPage(token, url)?.let { topArtistsConverter.convert(it) }
-            }
+            val token = securityRepository.getAccessToken()
+            val topArtistsResponse = apiMapper.getTopArtists(token, timeRange, limit)
+            topArtistsConverter.convert(topArtistsResponse)
         }
 
+    override suspend fun getTopArtistsNextPage(url: String): TopArtistsInfo =
+        withContext(Dispatchers.IO) {
+            val token = securityRepository.getAccessToken()
+            val topArtistsResponse = apiMapper.getTopArtistsNextPage(token, url)
+            topArtistsConverter.convert(topArtistsResponse)
+        }
 }

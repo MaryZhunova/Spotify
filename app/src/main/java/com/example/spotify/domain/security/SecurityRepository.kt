@@ -18,9 +18,9 @@ interface SecurityRepository {
     /**
      * Получает текущий токен доступа
      *
-     * @return текущий токен доступа в виде строки или `null`, если токен не найден
+     * @return текущий токен доступа в виде строки
      */
-    suspend fun getAccessToken(): String?
+    suspend fun getAccessToken(): String
 
     /**
      * Очищает все данные, связанные с токенами доступа

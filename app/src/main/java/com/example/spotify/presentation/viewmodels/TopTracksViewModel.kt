@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyStatsRepository
 import com.example.spotify.models.data.TrackInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,24 +43,30 @@ class TopTracksViewModel @Inject constructor(
     /**
      * Загружает данные о топ треках
      */
-    fun fetchTopTracks() = viewModelScope.launch {
+    fun fetchTopTracks() = viewModelScope.launch(
+        CoroutineExceptionHandler { _, err ->
+            //todo
+        }
+    ) {
         _isLoading.value = true
         val info = statsRepository.getTopTracks("short_term", 50)
         _isLoading.value = false
-        if (info != null) {
-            _topTracks.value = info.items
-            nextPageUrl = info.next
-        }
+        _topTracks.value = info.items
+        nextPageUrl = info.next
     }
 
     /**
      * Загружает следующую страницу данных о топ треках
      */
-    fun fetchNextPage() = viewModelScope.launch {
+    fun fetchNextPage() = viewModelScope.launch(
+        CoroutineExceptionHandler { _, err ->
+            //todo
+        }
+    ) {
         nextPageUrl?.let {
             val info = statsRepository.getTopTracksNextPage(it)
-            _topTracks.value = (_topTracks.value) + info?.items.orEmpty()
-            nextPageUrl = info?.next
+            _topTracks.value = (_topTracks.value) + info.items
+            nextPageUrl = info.next
         }
     }
 }

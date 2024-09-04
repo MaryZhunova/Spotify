@@ -24,7 +24,7 @@ class SecurityRepositoryImpl @Inject constructor(
 
     override suspend fun obtainAccessToken(accessCode: String, redirectUri: String): String? =
         withContext(Dispatchers.IO) {
-            getAccessToken() ?: apiMapper.getAuthToken(accessCode, redirectUri)?.also { token ->
+            getAccessTokenInternal() ?: apiMapper.getAuthToken(accessCode, redirectUri)?.also { token ->
                     tokenStorage.storeAccessToken(accessTokenResponseConverter.convert(token))
                 }?.accessToken
         }
@@ -32,17 +32,21 @@ class SecurityRepositoryImpl @Inject constructor(
     private fun checkAccessToken(token: AccessTokenInfo): Boolean =
         token.expiresAt < System.currentTimeMillis()
 
-    override suspend fun getAccessToken(): String? = withContext(Dispatchers.IO) {
-        val token = tokenStorage.getAccessToken() ?: return@withContext null
-        return@withContext if (checkAccessToken(token)) {
-        token.refreshToken?.let { refreshAccessToken(it) }
-        } else {
-            token.accessToken
-        }
+    override suspend fun getAccessToken(): String = withContext(Dispatchers.IO) {
+        getAccessTokenInternal() ?: throw NullAccessTokenException
     }
 
     override fun clear() {
         tokenStorage.clear()
+    }
+
+    private suspend fun getAccessTokenInternal(): String? {
+        val token = tokenStorage.getAccessToken() ?: return null
+        return if (checkAccessToken(token)) {
+            token.refreshToken?.let { refreshAccessToken(it) }
+        } else {
+            token.accessToken
+        }
     }
 
     private suspend fun refreshAccessToken(refreshToken: String): String? =
@@ -50,3 +54,5 @@ class SecurityRepositoryImpl @Inject constructor(
             tokenStorage.storeAccessToken(accessTokenResponseConverter.convert(newToken))
         }?.accessToken
 }
+
+data object NullAccessTokenException: NullPointerException()
