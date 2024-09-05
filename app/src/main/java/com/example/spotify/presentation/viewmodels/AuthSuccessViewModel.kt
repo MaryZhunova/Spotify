@@ -1,11 +1,13 @@
 package com.example.spotify.presentation.viewmodels
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyStatsRepository
-import com.example.spotify.models.data.UserProfileInfo
 import com.example.spotify.models.presentation.Button
 import com.example.spotify.models.presentation.DialogState
+import com.example.spotify.models.presentation.UserProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,8 +27,8 @@ class AuthSuccessViewModel @Inject constructor(
     private val statsRepository: SpotifyStatsRepository
 ) : ViewModel() {
 
-    private val _userProfile = MutableStateFlow<UserProfileInfo?>(null)
-    val userProfile: StateFlow<UserProfileInfo?> = _userProfile
+    private val _userProfile = mutableStateOf<UserProfileState>(UserProfileState.Idle)
+    val userProfile: State<UserProfileState> = _userProfile
 
     private val _dialogState = MutableStateFlow<DialogState>(DialogState.Idle)
     val dialogState: StateFlow<DialogState> = _dialogState
@@ -36,10 +38,11 @@ class AuthSuccessViewModel @Inject constructor(
      */
     suspend fun loadUserProfile() = viewModelScope.launch(
         CoroutineExceptionHandler { _, err ->
-            //todo
+           _userProfile.value = UserProfileState.Error(err)
         }
     ) {
-        _userProfile.value = statsRepository.getCurrentUserProfile()
+        val userInfo = statsRepository.getCurrentUserProfile()
+        _userProfile.value = UserProfileState.Success(userInfo)
     }
 
     fun showExitDialog(callback: () -> Unit) {
