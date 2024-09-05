@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.spotify.BuildConfig
 import com.example.spotify.domain.security.SecurityRepository
 import com.example.spotify.models.presentation.AuthError
@@ -13,41 +15,37 @@ import com.example.spotify.models.presentation.AuthState
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
- * Менеджер аутентификации, управляющий состоянием аутентификации
+ * Вью модель, управляющая состоянием аутентификации
  *
  * @constructor
- * @param activity активити, в рамках которой выполняется аутентификация
- * @param authLauncher лаунчер для запуска активити
  * @param securityRepository репозиторий для хранения токенов доступа
  */
-class AuthManager(
-    private val activity: Activity,
-    private val authLauncher: ActivityResultLauncher<Intent>,
+
+@HiltViewModel
+class AuthViewModel @Inject constructor (
     private val securityRepository: SecurityRepository
-) {
+) : ViewModel() {
 
-    private val scope = CoroutineScope(Dispatchers.IO)
     private val _authState = mutableStateOf<AuthState>(AuthState.Idle)
-
-    val authState: State<AuthState>
-        get() = _authState
+    val authState: State<AuthState> get() = _authState
 
     init {
         logout()
     }
 
-    fun startAuth() {
+    fun startAuth(activity: Activity, authLauncher: ActivityResultLauncher<Intent>) {
         try {
             activity.packageManager.getPackageInfo(PACKAGE_NAME, 0)
 
             val request = AuthorizationRequest.Builder(
                 BuildConfig.CLIENT_ID, AuthorizationResponse.Type.CODE, REDIRECT_URI
             ).setScopes(arrayOf(USER_READ_PRIVATE, USER_READ_EMAIL, USER_TOP_READ)).build()
+
             val authIntent = AuthorizationClient.createLoginActivityIntent(activity, request)
             authLauncher.launch(authIntent)
 
@@ -57,7 +55,7 @@ class AuthManager(
     }
 
     fun handleAuthResult(resultCode: Int, data: Intent?) {
-        scope.launch {
+        viewModelScope.launch {
             val response = AuthorizationClient.getResponse(resultCode, data)
             if (response.type == AuthorizationResponse.Type.CODE &&
                 securityRepository.obtainAccessToken(response.code, REDIRECT_URI) != null
@@ -71,7 +69,6 @@ class AuthManager(
 
     fun logout() {
         securityRepository.clear()
-        AuthorizationClient.clearCookies(activity)
         _authState.value = AuthState.Idle
     }
 

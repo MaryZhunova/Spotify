@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
@@ -17,7 +18,7 @@ import com.example.spotify.presentation.ui.screens.auth.AuthScreen
 import com.example.spotify.presentation.ui.screens.top.TopArtistsScreen
 import com.example.spotify.presentation.ui.screens.top.TopTracksScreen
 import com.example.spotify.presentation.ui.theme.SpotifyTheme
-import com.example.spotify.presentation.viewmodels.AuthManager
+import com.example.spotify.presentation.viewmodels.AuthViewModel
 import com.example.spotify.presentation.viewmodels.SessionTimerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -25,14 +26,14 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var authManager: AuthManager
+    private val sessionTimerViewModel: SessionTimerViewModel by viewModels()
+
+    private val authViewModel: AuthViewModel by viewModels()
+
     private lateinit var authLauncher: ActivityResultLauncher<Intent>
 
     @Inject
     lateinit var securityRepository: SecurityRepository
-
-    @Inject
-    lateinit var sessionTimerViewModel: SessionTimerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -40,17 +41,16 @@ class MainActivity : ComponentActivity() {
 
         authLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                authManager.handleAuthResult(result.resultCode, result.data)
+                authViewModel.handleAuthResult(result.resultCode, result.data)
             }
-
-        authManager = AuthManager(activity = this, authLauncher = authLauncher, securityRepository)
 
         sessionTimerViewModel.startTimer()
 
         setContent {
             SpotifyTheme {
                 SpotifyApp(
-                    authManager = authManager,
+                    authViewModel = authViewModel,
+                    authLauncher = authLauncher,
                     sessionTimerViewModel = sessionTimerViewModel
                 )
             }
@@ -64,12 +64,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SpotifyApp(authManager: AuthManager, sessionTimerViewModel: SessionTimerViewModel) {
+fun SpotifyApp(
+    authViewModel: AuthViewModel,
+    authLauncher: ActivityResultLauncher<Intent>,
+    sessionTimerViewModel: SessionTimerViewModel
+) {
     val navController = rememberNavController()
 
     LaunchedEffect(Unit) {
         sessionTimerViewModel.onSessionExpired.collect {
-            authManager.logout()
+            authViewModel.logout()
             navController.popBackStack("auth", false)
         }
     }
@@ -77,7 +81,8 @@ fun SpotifyApp(authManager: AuthManager, sessionTimerViewModel: SessionTimerView
     NavHost(navController = navController, startDestination = "auth") {
         composable("auth") {
             AuthScreen(
-                authManager = authManager,
+                authViewModel = authViewModel,
+                authLauncher = authLauncher,
                 navController = navController
             )
         }

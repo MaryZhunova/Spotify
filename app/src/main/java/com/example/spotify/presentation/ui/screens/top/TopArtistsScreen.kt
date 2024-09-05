@@ -3,13 +3,11 @@ package com.example.spotify.presentation.ui.screens.top
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -18,9 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,7 +45,9 @@ fun TopArtistsScreen(
     navController: NavController,
 ) {
     val viewModel: TopArtistsViewModel = hiltViewModel()
-    var selectedPeriod by remember { mutableStateOf(TimePeriods.SHORT) }
+
+    val periods = listOf(TimePeriods.SHORT, TimePeriods.MEDIUM, TimePeriods.LONG)
+    val selectedPeriod by viewModel.selectedPeriod
 
     val topArtists by viewModel.topArtists
     val isLoading by viewModel.isLoading
@@ -64,29 +61,16 @@ fun TopArtistsScreen(
     ) {
         Column(modifier = Modifier.padding(it)) {
             TabRow(
-                selectedTabIndex = when (selectedPeriod) {
-                    TimePeriods.SHORT -> 0
-                    TimePeriods.MEDIUM -> 1
-                    TimePeriods.LONG -> 2
-                }
+                selectedTabIndex = periods.indexOf(selectedPeriod)
             ) {
-                Tab(
-                    modifier = Modifier.padding(top = 16.dp),
-                    selected = selectedPeriod == TimePeriods.SHORT,
-                    onClick = { selectedPeriod = TimePeriods.SHORT }) {
-                    Text("4 weeks")
-                }
-                Tab(
-                    modifier = Modifier.padding(top = 16.dp),
-                    selected = selectedPeriod == TimePeriods.MEDIUM,
-                    onClick = { selectedPeriod = TimePeriods.MEDIUM }) {
-                    Text("6 months")
-                }
-                Tab(
-                    modifier = Modifier.padding(top = 16.dp),
-                    selected = selectedPeriod == TimePeriods.LONG,
-                    onClick = { selectedPeriod = TimePeriods.LONG }) {
-                    Text("12 months")
+                periods.forEach { period ->
+                    Tab(
+                        modifier = Modifier.padding(top = 16.dp),
+                        selected = selectedPeriod == period,
+                        onClick = { viewModel.switchSelected(period) }
+                    ) {
+                        Text(period.nameValue)
+                    }
                 }
             }
             if (isLoading) {
@@ -99,16 +83,6 @@ fun TopArtistsScreen(
                 ) {
                     topArtists.forEachIndexed { index, artistInfo ->
                         ArtistItem(artist = artistInfo, index = index)
-                    }
-                    if (isLoading) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
                     }
                 }
             }

@@ -2,6 +2,7 @@ package com.example.spotify.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,6 +14,7 @@ import javax.inject.Inject
 /**
  * ViewModel для управления таймером сессии
  */
+@HiltViewModel
 class SessionTimerViewModel @Inject constructor() : ViewModel() {
 
     private val _onSessionExpired = MutableSharedFlow<Unit>()

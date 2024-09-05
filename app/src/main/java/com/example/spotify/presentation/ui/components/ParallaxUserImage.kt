@@ -117,33 +117,43 @@ fun ParallaxUserImage(image: String?, name: String) {
                     IntOffset(xOffsetFront.roundToInt(), 0)
                 }
         )
-        Box(
+        UserImage(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .offset(y = 40.dp)
-                .size(82.dp)
-                .border(4.dp, MaterialTheme.colorScheme.background, shape = CircleShape)
-                .padding(1.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.background),
-            contentAlignment = Alignment.Center
-        ) {
-            image?.let {
-                AsyncImage(
-                    modifier = Modifier.fillMaxSize(),
-                    model = it,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
-            } ?: Text(
-                fontSize = 46.sp,
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                text = name.substring(0, 1)
-            )
-        }
+                .offset(y = 40.dp),
+            image = image,
+            name = name
+        )
     }
 }
+
+@Composable
+fun UserImage(modifier: Modifier = Modifier, image: String?, name: String) {
+    Box(
+        modifier = modifier
+            .size(82.dp)
+            .border(4.dp, MaterialTheme.colorScheme.background, shape = CircleShape)
+            .padding(1.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        image?.let {
+            AsyncImage(
+                modifier = Modifier.fillMaxSize(),
+                model = it,
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+        } ?: Text(
+            fontSize = 46.sp,
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            text = name.substring(0, 1)
+        )
+    }
+}
+
 
 private const val ScaleFactorFront = 6f
 private const val ScaleFactorBack = 3f

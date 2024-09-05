@@ -1,5 +1,6 @@
 package com.example.spotify.presentation.ui.screens.auth
 
+import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +28,7 @@ import com.example.spotify.presentation.ui.components.AppBar
 import com.example.spotify.presentation.ui.components.ParallaxUserImage
 import com.example.spotify.presentation.ui.components.ProgressIndicator
 import com.example.spotify.presentation.ui.components.SimpleDialog
+import com.example.spotify.presentation.ui.components.UserImage
 import com.example.spotify.presentation.viewmodels.AuthSuccessViewModel
 
 @Composable
@@ -35,6 +39,8 @@ fun AuthSuccess(
     val viewModel: AuthSuccessViewModel = hiltViewModel()
     val userProfile by viewModel.userProfile.collectAsState()
     val dialogState by viewModel.dialogState.collectAsState()
+
+    val configuration = LocalConfiguration.current
 
     LaunchedEffect(Unit) {
         viewModel.loadUserProfile()
@@ -49,18 +55,28 @@ fun AuthSuccess(
     ) {
         userProfile?.let { profile ->
             AppBar { viewModel.showExitDialog { onBackClick.invoke() } }
-            ParallaxUserImage(image = profile.image, name = profile.displayName)
-            Text(
-                modifier = Modifier.padding(top = 30.dp),
-                fontSize = 46.sp,
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                text = profile.displayName
-            )
+            if (configuration.orientation == ORIENTATION_PORTRAIT) {
+                ParallaxUserImage(image = profile.image, name = profile.displayName)
+                Text(
+                    modifier = Modifier.padding(top = 40.dp),
+                    fontSize = 46.sp,
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = profile.displayName
+                )
+            } else {
+                UserImage(modifier = Modifier.offset(y = (-40).dp), image = profile.image, name = profile.displayName)
+                Text(
+                    fontSize = 46.sp,
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    text = profile.displayName
+                )
+            }
             Spacer(modifier = Modifier.height(20.dp))
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp) // Adds space between buttons
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Button(onClick = { onTopClick.invoke("tracks") }) {
                     Text(text = "Top Tracks")

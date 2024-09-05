@@ -23,6 +23,14 @@ class TopArtistsViewModel @Inject constructor(
     private val statsRepository: SpotifyStatsRepository
 ) : ViewModel() {
 
+    private val artistsInfoItems = mutableMapOf<TimePeriods, List<ArtistInfo>>()
+
+    private val _selectedPeriod = mutableStateOf(TimePeriods.SHORT)
+
+    val selectedPeriod: State<TimePeriods>
+        get() = _selectedPeriod
+
+
     private val _topArtists = mutableStateOf<List<ArtistInfo>>(emptyList())
 
     /**
@@ -32,8 +40,6 @@ class TopArtistsViewModel @Inject constructor(
         get() = _topArtists
 
     private val _isLoading = mutableStateOf(false)
-
-    private val artistsInfoItems = mutableMapOf<TimePeriods, List<ArtistInfo>>()
 
     /**
      * Состояние загрузки данных
@@ -59,5 +65,9 @@ class TopArtistsViewModel @Inject constructor(
             _topArtists.value = items
             _isLoading.value = false
         }
+    }
+
+    fun switchSelected(period: TimePeriods) {
+        _selectedPeriod.value = period
     }
 }
