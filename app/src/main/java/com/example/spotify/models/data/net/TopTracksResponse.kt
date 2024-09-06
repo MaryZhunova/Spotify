@@ -14,7 +14,7 @@ import com.google.gson.annotations.SerializedName
  * @property total общее количество треков, соответствующих запросу
  */
 data class TopTracksResponse(
-    @SerializedName("items") val items: List<Track>,
+    @SerializedName("items") val items: List<TrackResponse>,
     @SerializedName("href") val href: String,
     @SerializedName("limit") val limit: Int,
     @SerializedName("next") val next: String?,
@@ -32,7 +32,7 @@ data class TopTracksResponse(
  * @property album альбом, в который входит трек
  * @property popularity популярность трека
  */
-data class Track(
+data class TrackResponse(
     @SerializedName("id") val id: String,
     @SerializedName("name") val name: String,
     @SerializedName("preview_url") val previewUrl: String?,

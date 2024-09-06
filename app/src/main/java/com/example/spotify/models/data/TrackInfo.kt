@@ -1,17 +1,6 @@
 package com.example.spotify.models.data
 
 /**
- * Информация о топ-треках
- *
- * @property items список треков
- * @property next URL для получения следующей страницы данных, если таковая имеется
- */
-data class TopTracksInfo(
-    val items: List<TrackInfo>,
-    val next: String?
-)
-
-/**
  * Информация о треке
  *
  * @property id уникальный идентификатор трека

@@ -1,13 +1,10 @@
 package com.example.spotify.hilt
 
-import android.content.Context
-import com.example.spotify.data.net.SpotifyStatsApiService
-import com.example.spotify.data.security.TokenStorage
-import com.example.spotify.data.security.net.SpotifyAuthApiService
+import com.example.spotify.data.net.SpotifyInfoApiService
+import com.example.spotify.data.net.SpotifyUserStatsApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -23,7 +20,6 @@ import javax.inject.Singleton
 object NetworkModule {
 
     private const val BASE_URL_API = "https://api.spotify.com/"
-    private const val BASE_URL_ACCOUNTS = "https://accounts.spotify.com/"
 
     @Provides
     @Singleton
@@ -38,29 +34,24 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideSpotifyStatsApiService(okHttpClient: OkHttpClient): SpotifyStatsApiService {
+    fun provideSpotifyUserStatsApiService(okHttpClient: OkHttpClient): SpotifyUserStatsApiService {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL_API)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        return retrofit.create(SpotifyStatsApiService::class.java)
+        return retrofit.create(SpotifyUserStatsApiService::class.java)
     }
+
 
     @Provides
     @Singleton
-    fun provideSpotifyAuthApiService(okHttpClient: OkHttpClient): SpotifyAuthApiService {
+    fun provideSpotifyInfoApiService(okHttpClient: OkHttpClient): SpotifyInfoApiService {
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL_ACCOUNTS)
+            .baseUrl(BASE_URL_API)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        return retrofit.create(SpotifyAuthApiService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideTokenStorage(@ApplicationContext context: Context): TokenStorage {
-        return TokenStorage(context)
+        return retrofit.create(SpotifyInfoApiService::class.java)
     }
 }

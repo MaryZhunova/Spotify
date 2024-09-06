@@ -1,6 +1,6 @@
 package com.example.spotify.data.security.net
 
-import com.example.spotify.models.data.net.AccessTokenResponse
+import com.example.spotify.models.data.security.net.AccessTokenResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded

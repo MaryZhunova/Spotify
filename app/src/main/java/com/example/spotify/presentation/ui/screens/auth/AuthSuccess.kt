@@ -28,6 +28,8 @@ import com.example.spotify.data.security.NullAccessTokenException
 import com.example.spotify.models.data.UserProfileInfo
 import com.example.spotify.models.presentation.DialogState
 import com.example.spotify.models.presentation.UserProfileState
+import com.example.spotify.presentation.TOP_ARTISTS_SCREEN
+import com.example.spotify.presentation.TOP_TRACKS_SCREEN
 import com.example.spotify.presentation.ui.components.AppBar
 import com.example.spotify.presentation.ui.components.ErrorScreen
 import com.example.spotify.presentation.ui.components.ParallaxUserImage
@@ -124,11 +126,11 @@ fun UserProfileSuccessScreen(
         modifier = Modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Button(onClick = { onTopClick.invoke("tracks") }) {
+        Button(onClick = { onTopClick.invoke(TOP_TRACKS_SCREEN) }) {
             Text(text = "Top Tracks")
         }
 
-        Button(onClick = { onTopClick.invoke("artists") }) {
+        Button(onClick = { onTopClick.invoke(TOP_ARTISTS_SCREEN) }) {
             Text(text = "Top Artists")
         }
     }

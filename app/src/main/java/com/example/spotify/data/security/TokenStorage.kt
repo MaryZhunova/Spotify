@@ -3,7 +3,7 @@ package com.example.spotify.data.security
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.example.spotify.models.data.AccessTokenInfo
+import com.example.spotify.models.data.security.AccessTokenInfo
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import javax.inject.Inject

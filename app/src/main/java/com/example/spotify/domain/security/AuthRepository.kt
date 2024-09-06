@@ -4,7 +4,7 @@ package com.example.spotify.domain.security
 /**
  * Интерфейс репозитория для хранения токенов доступа
  */
-interface SecurityRepository {
+interface AuthRepository {
 
     /**
      * Получает токен доступа, используя авторизационный код и URI перенаправления

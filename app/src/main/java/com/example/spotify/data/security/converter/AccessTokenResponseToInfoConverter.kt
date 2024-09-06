@@ -1,7 +1,7 @@
-package com.example.spotify.data.converter
+package com.example.spotify.data.security.converter
 
-import com.example.spotify.models.data.AccessTokenInfo
-import com.example.spotify.models.data.net.AccessTokenResponse
+import com.example.spotify.models.data.security.AccessTokenInfo
+import com.example.spotify.models.data.security.net.AccessTokenResponse
 
 /**
  * Конвертер сетевой модели [AccessTokenResponse] в дата модель [AccessTokenInfo]

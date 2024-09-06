@@ -1,17 +1,6 @@
 package com.example.spotify.models.data
 
 /**
- * Топ исполнители
- *
- * @property items список исполнителей
- * @property next URL для получения следующей страницы данных, если таковая имеется
- */
-data class TopArtistsInfo(
-    val items: List<ArtistInfo>,
-    val next: String?
-)
-
-/**
  * Информация об отдельном исполнителе
  *
  * @property id уникальный идентификатор исполнителя

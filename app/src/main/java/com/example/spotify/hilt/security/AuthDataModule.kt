@@ -1,9 +1,9 @@
-package com.example.spotify.hilt
+package com.example.spotify.hilt.security
 
-import com.example.spotify.data.security.SecurityRepositoryImpl
+import com.example.spotify.data.security.AuthRepositoryImpl
 import com.example.spotify.data.security.net.SpotifyAuthApiMapper
 import com.example.spotify.data.security.net.SpotifyAuthApiMapperImpl
-import com.example.spotify.domain.security.SecurityRepository
+import com.example.spotify.domain.security.AuthRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -25,7 +25,7 @@ abstract class AuthDataModule {
 
     @Binds
     @Singleton
-    abstract fun bindSecurityRepository(
-        securityRepositoryImpl: SecurityRepositoryImpl
-    ): SecurityRepository
+    abstract fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
+    ): AuthRepository
 }

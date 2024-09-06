@@ -4,7 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spotify.domain.SpotifyStatsRepository
+import com.example.spotify.domain.SpotifyInfoRepository
+import com.example.spotify.models.data.ArtistInfo
 import com.example.spotify.models.data.TrackInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -19,16 +20,20 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ArtistViewModel @Inject constructor(
-    private val statsRepository: SpotifyStatsRepository
+    private val infoRepository: SpotifyInfoRepository
 ) : ViewModel() {
 
     private val _topTracks = mutableStateOf<List<TrackInfo>>(emptyList())
+
+    private val _artist = mutableStateOf<ArtistInfo?>(null)
 
     /**
      * Список треков
      */
     val topTracks: State<List<TrackInfo>>
         get() = _topTracks
+    val artist: State<ArtistInfo?>
+        get() = _artist
 
     private val _isLoading = mutableStateOf(false)
 
@@ -42,13 +47,14 @@ class ArtistViewModel @Inject constructor(
     /**
      * Загружает данные о топ треках
      */
-    fun fetchTracks(id: String) = viewModelScope.launch(
+    fun fetchTracksAndArtist(id: String) = viewModelScope.launch(
         CoroutineExceptionHandler { _, err ->
             //todo
         }
     ) {
         _isLoading.value = true
-        _topTracks.value = statsRepository.getArtistsTopTracks(id)
+        _topTracks.value = infoRepository.getArtistsTopTracks(id)
+        _artist.value = infoRepository.getArtistsInfo(id)
         _isLoading.value = false
     }
 }

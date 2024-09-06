@@ -1,9 +1,9 @@
 package com.example.spotify.data.security
 
-import com.example.spotify.data.converter.AccessTokenResponseToInfoConverter
+import com.example.spotify.data.security.converter.AccessTokenResponseToInfoConverter
 import com.example.spotify.data.security.net.SpotifyAuthApiMapper
-import com.example.spotify.domain.security.SecurityRepository
-import com.example.spotify.models.data.AccessTokenInfo
+import com.example.spotify.domain.security.AuthRepository
+import com.example.spotify.models.data.security.AccessTokenInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -16,11 +16,11 @@ import javax.inject.Inject
  * @param tokenStorage хранилище для безопасного хранения токенов
  * @param accessTokenResponseConverter конвертер для преобразования ответа на запрос токена доступа
  */
-class SecurityRepositoryImpl @Inject constructor(
+class AuthRepositoryImpl @Inject constructor(
     private val apiMapper: SpotifyAuthApiMapper,
     private val tokenStorage: TokenStorage,
     private val accessTokenResponseConverter: AccessTokenResponseToInfoConverter
-) : SecurityRepository {
+) : AuthRepository {
 
     override suspend fun obtainAccessToken(accessCode: String, redirectUri: String): String? =
         withContext(Dispatchers.IO) {

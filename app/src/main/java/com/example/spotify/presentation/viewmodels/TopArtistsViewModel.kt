@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spotify.domain.SpotifyStatsRepository
+import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.models.data.ArtistInfo
 import com.example.spotify.models.presentation.TimePeriods
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +20,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class TopArtistsViewModel @Inject constructor(
-    private val statsRepository: SpotifyStatsRepository
+    private val statsRepository: SpotifyUserStatsRepository
 ) : ViewModel() {
 
     private val artistsInfoItems = mutableMapOf<TimePeriods, List<ArtistInfo>>()
@@ -60,9 +60,9 @@ class TopArtistsViewModel @Inject constructor(
             _topArtists.value = savedInfo
         } else {
             _isLoading.value = true
-            val items = statsRepository.getTopArtists(period.strValue).items
-            artistsInfoItems.putIfAbsent(period, items)
-            _topArtists.value = items
+            val info = statsRepository.getTopArtists(period.strValue)
+            artistsInfoItems.putIfAbsent(period, info)
+            _topArtists.value = info
             _isLoading.value = false
         }
     }

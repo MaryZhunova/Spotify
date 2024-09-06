@@ -1,6 +1,5 @@
 package com.example.spotify.data.net
 
-import com.example.spotify.models.data.net.ArtistsTopTracksResponse
 import com.example.spotify.models.data.net.TopArtistsResponse
 import com.example.spotify.models.data.net.TopTracksResponse
 import com.example.spotify.models.data.net.UserProfileResponse
@@ -8,7 +7,7 @@ import com.example.spotify.models.data.net.UserProfileResponse
 /**
  * Интерфейс для преобразования ответов API из Spotify Web API
  */
-interface SpotifyStatsApiMapper {
+interface SpotifyUserStatsApiMapper {
 
     /**
      * Получает текущий профиль пользователя из API Spotify.
@@ -55,6 +54,4 @@ interface SpotifyStatsApiMapper {
      * @return Объект [TopArtistsResponse], содержащий следующую страницу информации о топ исполнителях
      */
     suspend fun getTopArtistsNextPage(accessToken: String, url: String): TopArtistsResponse
-
-    suspend fun getArtistsTopTracks(accessToken: String, id: String): ArtistsTopTracksResponse
 }

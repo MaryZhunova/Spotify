@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spotify.domain.SpotifyStatsRepository
+import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.models.data.TrackInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -19,7 +19,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class TopTracksViewModel @Inject constructor(
-    private val statsRepository: SpotifyStatsRepository
+    private val statsRepository: SpotifyUserStatsRepository
 ) : ViewModel() {
 
     private val _topTracks = mutableStateOf<List<TrackInfo>>(emptyList())
@@ -38,8 +38,6 @@ class TopTracksViewModel @Inject constructor(
     val isLoading: State<Boolean>
         get() = _isLoading
 
-    private var nextPageUrl: String? = null
-
     /**
      * Загружает данные о топ треках
      */
@@ -51,22 +49,6 @@ class TopTracksViewModel @Inject constructor(
         _isLoading.value = true
         val info = statsRepository.getTopTracks("short_term", 50)
         _isLoading.value = false
-        _topTracks.value = info.items
-        nextPageUrl = info.next
-    }
-
-    /**
-     * Загружает следующую страницу данных о топ треках
-     */
-    fun fetchNextPage() = viewModelScope.launch(
-        CoroutineExceptionHandler { _, err ->
-            //todo
-        }
-    ) {
-        nextPageUrl?.let {
-            val info = statsRepository.getTopTracksNextPage(it)
-            _topTracks.value = (_topTracks.value) + info.items
-            nextPageUrl = info.next
-        }
+        _topTracks.value = info
     }
 }

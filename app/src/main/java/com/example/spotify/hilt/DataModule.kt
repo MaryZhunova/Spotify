@@ -1,9 +1,13 @@
 package com.example.spotify.hilt
 
-import com.example.spotify.data.net.SpotifyStatsApiMapper
-import com.example.spotify.data.net.SpotifyStatsApiMapperImpl
-import com.example.spotify.domain.SpotifyStatsRepository
-import com.example.spotify.data.SpotifyStatsRepositoryImpl
+import com.example.spotify.data.SpotifyInfoRepositoryImpl
+import com.example.spotify.data.net.SpotifyUserStatsApiMapper
+import com.example.spotify.data.net.SpotifyUserStatsApiMapperImpl
+import com.example.spotify.domain.SpotifyUserStatsRepository
+import com.example.spotify.data.SpotifyUserStatsRepositoryImpl
+import com.example.spotify.data.net.SpotifyInfoApiMapper
+import com.example.spotify.data.net.SpotifyInfoApiMapperImpl
+import com.example.spotify.domain.SpotifyInfoRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,15 +21,29 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class DataModule {
 
+    //user stats region
     @Binds
     @Singleton
-    abstract fun bindSpotifyStatsApiMapper(
-        spotifyStatsApiMapperImpl: SpotifyStatsApiMapperImpl
-    ): SpotifyStatsApiMapper
+    abstract fun bindSpotifyUserStatsApiMapper(
+        spotifyStatsApiMapperImpl: SpotifyUserStatsApiMapperImpl
+    ): SpotifyUserStatsApiMapper
 
     @Binds
     @Singleton
     abstract fun bindSpotifyStatsRepository(
-        spotifyStatsRepositoryImpl: SpotifyStatsRepositoryImpl
-    ): SpotifyStatsRepository
+        spotifyStatsRepositoryImpl: SpotifyUserStatsRepositoryImpl
+    ): SpotifyUserStatsRepository
+
+    //info region
+    @Binds
+    @Singleton
+    abstract fun bindSpotifyInfoRepository(
+        spotifyInfoRepositoryImpl: SpotifyInfoRepositoryImpl
+    ): SpotifyInfoRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSpotifyInfoApiMapper(
+        spotifyInfoApiMapperImpl: SpotifyInfoApiMapperImpl
+    ): SpotifyInfoApiMapper
 }

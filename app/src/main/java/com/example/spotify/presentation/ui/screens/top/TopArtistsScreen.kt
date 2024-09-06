@@ -32,6 +32,7 @@ import coil.request.ImageRequest
 import com.example.spotify.R
 import com.example.spotify.models.data.ArtistInfo
 import com.example.spotify.models.presentation.TimePeriods
+import com.example.spotify.presentation.ARTIST_SCREEN
 import com.example.spotify.presentation.ui.components.AppBar
 import com.example.spotify.presentation.ui.components.ProgressIndicator
 import com.example.spotify.presentation.viewmodels.TopArtistsViewModel
@@ -84,7 +85,7 @@ fun TopArtistsScreen(
                 ) {
                     topArtists.forEachIndexed { index, artistInfo ->
                         ArtistItem(artist = artistInfo, index = index) { id ->
-                            navController.navigate("artist/$id")
+                            navController.navigate("$ARTIST_SCREEN/$id")
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 package com.example.spotify.data.security.net
 
-import com.example.spotify.models.data.net.AccessTokenResponse
+import com.example.spotify.models.data.security.net.AccessTokenResponse
 
 /**
  * Интерфейс для преобразования ответов API аутентификации Spotify.

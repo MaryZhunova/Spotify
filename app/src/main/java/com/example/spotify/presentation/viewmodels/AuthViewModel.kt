@@ -9,7 +9,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spotify.BuildConfig
-import com.example.spotify.domain.security.SecurityRepository
+import com.example.spotify.domain.SpotifyInfoRepository
+import com.example.spotify.domain.security.AuthRepository
 import com.example.spotify.models.presentation.AuthError
 import com.example.spotify.models.presentation.AuthState
 import com.spotify.sdk.android.auth.AuthorizationClient
@@ -23,12 +24,13 @@ import javax.inject.Inject
  * Вью модель, управляющая состоянием аутентификации
  *
  * @constructor
- * @param securityRepository репозиторий для хранения токенов доступа
+ * @param authRepository репозиторий для хранения токенов доступа
  */
 
 @HiltViewModel
-class AuthViewModel @Inject constructor (
-    private val securityRepository: SecurityRepository
+class AuthViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
+    private val infoRepository: SpotifyInfoRepository
 ) : ViewModel() {
 
     private val _authState = mutableStateOf<AuthState>(AuthState.Idle)
@@ -59,7 +61,7 @@ class AuthViewModel @Inject constructor (
         viewModelScope.launch {
             val response = AuthorizationClient.getResponse(resultCode, data)
             if (response.type == AuthorizationResponse.Type.CODE &&
-                securityRepository.obtainAccessToken(response.code, REDIRECT_URI) != null
+                authRepository.obtainAccessToken(response.code, REDIRECT_URI) != null
             ) {
                 _authState.value = AuthState.Success
             } else {
@@ -68,8 +70,9 @@ class AuthViewModel @Inject constructor (
         }
     }
 
-    fun logout() {
-        securityRepository.clear()
+    fun logout() = viewModelScope.launch {
+        authRepository.clear()
+        infoRepository.clear()
         _authState.value = AuthState.Idle
     }
 

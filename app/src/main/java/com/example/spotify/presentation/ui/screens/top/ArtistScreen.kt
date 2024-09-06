@@ -41,10 +41,11 @@ fun ArtistScreen(
     val viewModel: ArtistViewModel = hiltViewModel()
 
     val topTracks by viewModel.topTracks
+    val artist by viewModel.artist
     val isLoading by viewModel.isLoading
 
     LaunchedEffect(id) {
-        viewModel.fetchTracks(id)
+        viewModel.fetchTracksAndArtist(id)
     }
 
     Scaffold(
@@ -58,34 +59,36 @@ fun ArtistScreen(
                     .padding(it)
                     .padding(16.dp),
             ) {
-//                AsyncImage(
-//                    model = ImageRequest.Builder(LocalContext.current)
-//                        .data(artistInfo.image)
-//                        .crossfade(true)
-//                        .build(),
-//                    placeholder = painterResource(R.drawable.music_icon),
-//                    error = painterResource(R.drawable.music_icon),
-//                    alignment = Alignment.CenterStart,
-//                    contentDescription = null,
-//                    contentScale = ContentScale.FillBounds,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .aspectRatio(1f)
-//                        .clip(RoundedCornerShape(16.dp))
-//                        .padding(bottom = 16.dp)
-//                )
-//                Text(
-//                    fontSize = 36.sp,
-//                    style = MaterialTheme.typography.headlineLarge,
-//                    color = MaterialTheme.colorScheme.onBackground,
-//                    text = artistInfo.name
-//                )
-//                Text(
-//                    fontSize = 26.sp,
-//                    style = MaterialTheme.typography.displayLarge,
-//                    color = MaterialTheme.colorScheme.onBackground,
-//                    text = artistInfo.genres
-//                )
+                artist?.let {artistInfo ->
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(artistInfo.image)
+                            .crossfade(true)
+                            .build(),
+                        placeholder = painterResource(R.drawable.music_icon),
+                        error = painterResource(R.drawable.music_icon),
+                        alignment = Alignment.CenterStart,
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(16.dp))
+                            .padding(bottom = 16.dp)
+                    )
+                    Text(
+                        fontSize = 36.sp,
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = artistInfo.name
+                    )
+                    Text(
+                        fontSize = 26.sp,
+                        style = MaterialTheme.typography.displayLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        text = artistInfo.genres
+                    )
+                }
                 topTracks.forEach { track ->
                     TrackItem(track = track)
                 }

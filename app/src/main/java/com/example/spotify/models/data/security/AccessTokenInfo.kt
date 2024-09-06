@@ -1,4 +1,4 @@
-package com.example.spotify.models.data
+package com.example.spotify.models.data.security
 
 /**
  * Информация о токене доступа

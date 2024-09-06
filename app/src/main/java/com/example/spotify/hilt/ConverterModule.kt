@@ -1,8 +1,7 @@
 package com.example.spotify.hilt
 
-import com.example.spotify.data.converter.AccessTokenResponseToInfoConverter
-import com.example.spotify.data.converter.TopArtistsResponseToInfoConverter
-import com.example.spotify.data.converter.TopTracksResponseToInfoConverter
+import com.example.spotify.data.converter.ArtistEntityToInfoConverter
+import com.example.spotify.data.converter.ArtistResponseToEntityConverter
 import com.example.spotify.data.converter.TrackResponseToInfoConverter
 import com.example.spotify.data.converter.UserProfileResponseToInfoConverter
 import dagger.Module
@@ -32,21 +31,13 @@ object ConverterModule {
 
     @Provides
     @Singleton
-    fun provideTopTracksResponseToInfoConverter(
-        trackResponseToInfoConverter: TrackResponseToInfoConverter
-    ): TopTracksResponseToInfoConverter {
-        return TopTracksResponseToInfoConverter(trackResponseToInfoConverter)
+    fun provideTopArtistsEntityToInfoConverter(): ArtistEntityToInfoConverter {
+        return ArtistEntityToInfoConverter()
     }
 
     @Provides
     @Singleton
-    fun provideTopArtistsResponseToInfoConverter(): TopArtistsResponseToInfoConverter {
-        return TopArtistsResponseToInfoConverter()
-    }
-
-    @Provides
-    @Singleton
-    fun provideAccessTokenResponseToInfoConverter(): AccessTokenResponseToInfoConverter {
-        return AccessTokenResponseToInfoConverter()
+    fun provideArtistResponseToEntityConverter(): ArtistResponseToEntityConverter {
+        return ArtistResponseToEntityConverter()
     }
 }

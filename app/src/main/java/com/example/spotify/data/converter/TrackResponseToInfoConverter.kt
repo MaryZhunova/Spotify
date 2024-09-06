@@ -3,17 +3,19 @@ package com.example.spotify.data.converter
 import com.example.spotify.models.data.AlbumInfo
 import com.example.spotify.models.data.TrackInfo
 import com.example.spotify.models.data.net.Album
-import com.example.spotify.models.data.net.Track
+import com.example.spotify.models.data.net.TrackResponse
 
 /**
+ * Конвертер сетевой модели [TrackResponse] в дата модель [TrackInfo]
  */
 class TrackResponseToInfoConverter {
 
     /**
+     * Конвертирует [TrackResponse] в [TrackInfo]
      *
      * @param from данные для конвертации
      */
-    fun convert(from: Track): TrackInfo =
+    fun convert(from: TrackResponse): TrackInfo =
         TrackInfo(
             id = from.id,
             name = from.name,

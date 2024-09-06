@@ -10,13 +10,12 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
-import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.spotify.domain.security.SecurityRepository
+import com.example.spotify.domain.security.AuthRepository
 import com.example.spotify.presentation.ui.screens.auth.AuthScreen
 import com.example.spotify.presentation.ui.screens.top.ArtistScreen
 import com.example.spotify.presentation.ui.screens.top.TopArtistsScreen
@@ -37,7 +36,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var authLauncher: ActivityResultLauncher<Intent>
 
     @Inject
-    lateinit var securityRepository: SecurityRepository
+    lateinit var authRepository: AuthRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -78,27 +77,27 @@ fun SpotifyApp(
     LaunchedEffect(Unit) {
         sessionTimerViewModel.onSessionExpired.collect {
             authViewModel.logout()
-            navController.popBackStack("auth", false)
+            navController.popBackStack(AUTH_SCREEN, false)
         }
     }
 
-    NavHost(navController = navController, startDestination = "auth") {
-        composable("auth") {
+    NavHost(navController = navController, startDestination = AUTH_SCREEN) {
+        composable(AUTH_SCREEN) {
             AuthScreen(
                 authViewModel = authViewModel,
                 authLauncher = authLauncher,
                 navController = navController
             )
         }
-        composable("tracks") { TopTracksScreen(navController = navController) }
-        composable("artists") { TopArtistsScreen(navController = navController) }
+        composable(TOP_TRACKS_SCREEN) { TopTracksScreen(navController = navController) }
+        composable(TOP_ARTISTS_SCREEN) { TopArtistsScreen(navController = navController) }
         composable(
-            route = "artist/{info}",
-            arguments = listOf(navArgument("info") {
+            route = "$ARTIST_SCREEN/{$ID_PARAM}",
+            arguments = listOf(navArgument(ID_PARAM) {
                 type = NavType.StringType
             })
         ) {
-            it.arguments?.getString("info")?.let { id ->
+            it.arguments?.getString(ID_PARAM)?.let { id ->
                 ArtistScreen(navController = navController, id = id)
             }
         }

@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spotify.domain.SpotifyStatsRepository
+import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.models.presentation.Button
 import com.example.spotify.models.presentation.DialogState
 import com.example.spotify.models.presentation.UserProfileState
@@ -24,7 +24,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class AuthSuccessViewModel @Inject constructor(
-    private val statsRepository: SpotifyStatsRepository
+    private val statsRepository: SpotifyUserStatsRepository
 ) : ViewModel() {
 
     private val _userProfile = mutableStateOf<UserProfileState>(UserProfileState.Idle)
