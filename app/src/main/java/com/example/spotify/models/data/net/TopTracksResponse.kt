@@ -35,8 +35,12 @@ data class TopTracksResponse(
 data class Track(
     @SerializedName("id") val id: String,
     @SerializedName("name") val name: String,
+    @SerializedName("preview_url") val previewUrl: String?,
+    @SerializedName("duration_ms") val duration: Int,
     @SerializedName("artists") val artists: List<Artist>,
     @SerializedName("album") val album: Album,
+    @SerializedName("explicit") val isExplicit: Boolean,
+    @SerializedName("is_playable") val isPlayable: Boolean,
     @SerializedName("popularity") val popularity: Int
 )
 
@@ -61,5 +65,7 @@ data class Artist(
 data class Album(
     @SerializedName("id") val id: String,
     @SerializedName("name") val name: String,
-    @SerializedName("images") val images: List<Image>
+    @SerializedName("images") val images: List<Image>,
+    @SerializedName("release_date") val releaseDate: String,
+    @SerializedName("release_date_precision") val releaseDatePrecision: String
 )

@@ -23,8 +23,12 @@ data class TopTracksInfo(
 data class TrackInfo(
     val id: String,
     val name: String,
+    val previewUrl: String?,
+    val duration: Int,
     val artists: String,
     val album: AlbumInfo,
+    val isExplicit: Boolean,
+    val isPlayable: Boolean,
     val popularity: Int
 )
 

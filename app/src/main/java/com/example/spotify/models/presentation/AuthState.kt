@@ -10,6 +10,8 @@ sealed interface AuthState {
      */
     data object Idle : AuthState
 
+    data object Loading : AuthState
+
     /**
      * Состояние, когда произошла ошибка аутентификации
      *

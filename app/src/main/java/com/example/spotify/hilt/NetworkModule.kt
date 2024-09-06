@@ -1,10 +1,6 @@
 package com.example.spotify.hilt
 
 import android.content.Context
-import com.example.spotify.data.converter.AccessTokenResponseToInfoConverter
-import com.example.spotify.data.converter.TopArtistsResponseToInfoConverter
-import com.example.spotify.data.converter.TopTracksResponseToInfoConverter
-import com.example.spotify.data.converter.UserProfileResponseToInfoConverter
 import com.example.spotify.data.net.SpotifyStatsApiService
 import com.example.spotify.data.security.TokenStorage
 import com.example.spotify.data.security.net.SpotifyAuthApiService
@@ -53,38 +49,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideClientCredentialsApiService(okHttpClient: OkHttpClient): SpotifyAuthApiService {
+    fun provideSpotifyAuthApiService(okHttpClient: OkHttpClient): SpotifyAuthApiService {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL_ACCOUNTS)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         return retrofit.create(SpotifyAuthApiService::class.java)
-    }
-
-    //todo move
-    @Provides
-    @Singleton
-    fun provideUserProfileResponseToInfoConverter(): UserProfileResponseToInfoConverter {
-        return UserProfileResponseToInfoConverter()
-    }
-
-    @Provides
-    @Singleton
-    fun provideTopTracksResponseToInfoConverter(): TopTracksResponseToInfoConverter {
-        return TopTracksResponseToInfoConverter()
-    }
-
-    @Provides
-    @Singleton
-    fun provideTopArtistsResponseToInfoConverter(): TopArtistsResponseToInfoConverter {
-        return TopArtistsResponseToInfoConverter()
-    }
-
-    @Provides
-    @Singleton
-    fun provideAccessTokenResponseToInfoConverter(): AccessTokenResponseToInfoConverter {
-        return AccessTokenResponseToInfoConverter()
     }
 
     @Provides

@@ -10,11 +10,15 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.spotify.domain.security.SecurityRepository
 import com.example.spotify.presentation.ui.screens.auth.AuthScreen
+import com.example.spotify.presentation.ui.screens.top.ArtistScreen
 import com.example.spotify.presentation.ui.screens.top.TopArtistsScreen
 import com.example.spotify.presentation.ui.screens.top.TopTracksScreen
 import com.example.spotify.presentation.ui.theme.SpotifyTheme
@@ -88,5 +92,15 @@ fun SpotifyApp(
         }
         composable("tracks") { TopTracksScreen(navController = navController) }
         composable("artists") { TopArtistsScreen(navController = navController) }
+        composable(
+            route = "artist/{info}",
+            arguments = listOf(navArgument("info") {
+                type = NavType.StringType
+            })
+        ) {
+            it.arguments?.getString("info")?.let { id ->
+                ArtistScreen(navController = navController, id = id)
+            }
+        }
     }
 }

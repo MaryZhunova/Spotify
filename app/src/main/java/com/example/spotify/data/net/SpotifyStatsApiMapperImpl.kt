@@ -1,5 +1,6 @@
 package com.example.spotify.data.net
 
+import com.example.spotify.models.data.net.ArtistsTopTracksResponse
 import com.example.spotify.models.data.net.TopArtistsResponse
 import com.example.spotify.models.data.net.TopTracksResponse
 import com.example.spotify.models.data.net.UserProfileResponse
@@ -85,6 +86,21 @@ class SpotifyStatsApiMapperImpl @Inject constructor(
         val response = apiService.getTopArtistsNextPage(
             token = "Bearer $accessToken",
             url = url
+        ).execute()
+        return@withContext if (response.isSuccessful) {
+            checkNotNull(response.body())
+        } else {
+            throw Exception()
+        }
+    }
+
+    override suspend fun getArtistsTopTracks(
+        accessToken: String,
+        id: String
+    ): ArtistsTopTracksResponse = withContext(Dispatchers.IO) {
+        val response = apiService.getArtistsTopTracks(
+            token = "Bearer $accessToken",
+            id = id
         ).execute()
         return@withContext if (response.isSuccessful) {
             checkNotNull(response.body())

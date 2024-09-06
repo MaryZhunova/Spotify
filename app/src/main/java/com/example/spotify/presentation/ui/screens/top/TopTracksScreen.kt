@@ -124,10 +124,8 @@ fun TrackItem(track: TrackInfo, index: Int) {
             error = painterResource(R.drawable.music_icon),
             alignment = Alignment.CenterStart,
             contentDescription = null,
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .size(45.dp)
-                .clip(RoundedCornerShape(10.dp))
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.size(45.dp)
         )
         Column(
             modifier = Modifier

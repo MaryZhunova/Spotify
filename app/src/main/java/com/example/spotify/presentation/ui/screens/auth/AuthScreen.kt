@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.spotify.models.presentation.AuthState
+import com.example.spotify.presentation.ui.components.ProgressIndicator
 import com.example.spotify.presentation.viewmodels.AuthViewModel
 
 /**
@@ -28,6 +29,7 @@ fun AuthScreen(
 
     when (authState) {
         is AuthState.Idle -> AuthIdle { authViewModel.startAuth(activity, authLauncher) }
+        is AuthState.Loading -> ProgressIndicator()
         is AuthState.Success -> AuthSuccess(
                 onBackClick = { authViewModel.logout() },
                 onTopClick = { navController.navigate(it) }

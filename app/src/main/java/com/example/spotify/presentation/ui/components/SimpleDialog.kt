@@ -20,7 +20,7 @@ fun SimpleDialog(data: DialogState.Simple) {
         },
         dismissButton = data.onNegative?.let { onNegative ->
             {
-                TextButton(onClick = { onNegative.action }) {
+                TextButton(onClick = onNegative.action ) {
                     Text(text = onNegative.title)
                 }
             }

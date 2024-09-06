@@ -2,12 +2,14 @@ package com.example.spotify.data
 
 import com.example.spotify.data.converter.TopArtistsResponseToInfoConverter
 import com.example.spotify.data.converter.TopTracksResponseToInfoConverter
+import com.example.spotify.data.converter.TrackResponseToInfoConverter
 import com.example.spotify.data.converter.UserProfileResponseToInfoConverter
 import com.example.spotify.data.net.SpotifyStatsApiMapper
 import com.example.spotify.domain.SpotifyStatsRepository
 import com.example.spotify.domain.security.SecurityRepository
 import com.example.spotify.models.data.TopArtistsInfo
 import com.example.spotify.models.data.TopTracksInfo
+import com.example.spotify.models.data.TrackInfo
 import com.example.spotify.models.data.UserProfileInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -28,7 +30,8 @@ class SpotifyStatsRepositoryImpl @Inject constructor(
     private val userProfileConverter: UserProfileResponseToInfoConverter,
     private val topTracksConverter: TopTracksResponseToInfoConverter,
     private val topArtistsConverter: TopArtistsResponseToInfoConverter,
-    private val securityRepository: SecurityRepository
+    private val securityRepository: SecurityRepository,
+    private val trackConverter: TrackResponseToInfoConverter
 ) : SpotifyStatsRepository {
 
     override suspend fun getCurrentUserProfile(): UserProfileInfo =
@@ -64,5 +67,11 @@ class SpotifyStatsRepositoryImpl @Inject constructor(
             val token = securityRepository.getAccessToken()
             val topArtistsResponse = apiMapper.getTopArtistsNextPage(token, url)
             topArtistsConverter.convert(topArtistsResponse)
+        }
+
+    override suspend fun getArtistsTopTracks(id: String): List<TrackInfo> =
+        withContext(Dispatchers.IO) {
+            val token = securityRepository.getAccessToken()
+            apiMapper.getArtistsTopTracks(token,id).tracks.map(trackConverter::convert)
         }
 }

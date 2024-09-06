@@ -1,11 +1,13 @@
 package com.example.spotify.data.net
 
+import com.example.spotify.models.data.net.ArtistsTopTracksResponse
 import com.example.spotify.models.data.net.TopArtistsResponse
 import com.example.spotify.models.data.net.TopTracksResponse
 import com.example.spotify.models.data.net.UserProfileResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Url
 
@@ -84,4 +86,10 @@ interface SpotifyStatsApiService {
         @Header("Authorization") token: String,
         @Url url: String
     ): Call<TopArtistsResponse>
+
+    @GET("v1/artists/{id}/top-tracks")
+    fun getArtistsTopTracks(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Call<ArtistsTopTracksResponse>
 }

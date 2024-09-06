@@ -1,18 +1,15 @@
 package com.example.spotify.presentation.ui.screens.top
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,97 +22,94 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.spotify.R
-import com.example.spotify.models.data.ArtistInfo
-import com.example.spotify.models.presentation.TimePeriods
+import com.example.spotify.models.data.TrackInfo
 import com.example.spotify.presentation.ui.components.AppBar
 import com.example.spotify.presentation.ui.components.ProgressIndicator
-import com.example.spotify.presentation.viewmodels.TopArtistsViewModel
+import com.example.spotify.presentation.viewmodels.ArtistViewModel
 
-/**
- * Экран топа исполнителей
- *
- * @param navController контроллер навигации
- */
 @Composable
-fun TopArtistsScreen(
+fun ArtistScreen(
     navController: NavController,
+    id: String
 ) {
-    val viewModel: TopArtistsViewModel = hiltViewModel()
+    val viewModel: ArtistViewModel = hiltViewModel()
 
-    val periods = listOf(TimePeriods.SHORT, TimePeriods.MEDIUM, TimePeriods.LONG)
-    val selectedPeriod by viewModel.selectedPeriod
-
-    val topArtists by viewModel.topArtists
+    val topTracks by viewModel.topTracks
     val isLoading by viewModel.isLoading
 
-    LaunchedEffect(selectedPeriod) {
-        viewModel.fetchTopArtists(selectedPeriod)
+    LaunchedEffect(id) {
+        viewModel.fetchTracks(id)
     }
 
     Scaffold(
         topBar = { AppBar { navController.popBackStack() } },
     ) {
-        Column(modifier = Modifier.padding(it)) {
-            TabRow(
-                selectedTabIndex = periods.indexOf(selectedPeriod)
+        if (isLoading) {
+            ProgressIndicator()
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(it)
+                    .padding(16.dp),
             ) {
-                periods.forEach { period ->
-                    Tab(
-                        modifier = Modifier.padding(top = 16.dp),
-                        selected = selectedPeriod == period,
-                        onClick = { viewModel.switchSelected(period) }
-                    ) {
-                        Text(period.nameValue)
-                    }
-                }
-            }
-            if (isLoading) {
-                ProgressIndicator()
-            } else {
-                Column(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .verticalScroll(rememberScrollState()),
-                ) {
-                    topArtists.forEachIndexed { index, artistInfo ->
-                        ArtistItem(artist = artistInfo, index = index) { id ->
-                            navController.navigate("artist/$id")
-                        }
-                    }
+//                AsyncImage(
+//                    model = ImageRequest.Builder(LocalContext.current)
+//                        .data(artistInfo.image)
+//                        .crossfade(true)
+//                        .build(),
+//                    placeholder = painterResource(R.drawable.music_icon),
+//                    error = painterResource(R.drawable.music_icon),
+//                    alignment = Alignment.CenterStart,
+//                    contentDescription = null,
+//                    contentScale = ContentScale.FillBounds,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .aspectRatio(1f)
+//                        .clip(RoundedCornerShape(16.dp))
+//                        .padding(bottom = 16.dp)
+//                )
+//                Text(
+//                    fontSize = 36.sp,
+//                    style = MaterialTheme.typography.headlineLarge,
+//                    color = MaterialTheme.colorScheme.onBackground,
+//                    text = artistInfo.name
+//                )
+//                Text(
+//                    fontSize = 26.sp,
+//                    style = MaterialTheme.typography.displayLarge,
+//                    color = MaterialTheme.colorScheme.onBackground,
+//                    text = artistInfo.genres
+//                )
+                topTracks.forEach { track ->
+                    TrackItem(track = track)
                 }
             }
         }
     }
 }
 
-
 @Composable
-fun ArtistItem(artist: ArtistInfo, index: Int, onClick:(String) -> Unit) {
+private fun TrackItem(track: TrackInfo) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp).clickable { onClick.invoke(artist.id) }
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)
     ) {
-        Text(
-            modifier = Modifier.padding(end = 8.dp),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodyMedium,
-            text = "${index + 1}.",
-        )
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(artist.image)
+                .data(track.album.image)
                 .crossfade(true)
                 .build(),
             placeholder = painterResource(R.drawable.music_icon),
             error = painterResource(R.drawable.music_icon),
             alignment = Alignment.CenterStart,
             contentDescription = null,
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.FillBounds,
             modifier = Modifier.size(45.dp)
         )
         Column(
@@ -128,14 +122,14 @@ fun ArtistItem(artist: ArtistInfo, index: Int, onClick:(String) -> Unit) {
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium,
-                text = artist.name,
+                text = track.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodySmall,
-                text = artist.genres,
+                text = track.artists,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
