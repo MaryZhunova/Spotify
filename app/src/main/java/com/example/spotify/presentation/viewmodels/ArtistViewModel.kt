@@ -16,7 +16,7 @@ import javax.inject.Inject
  * ViewModel для управления данными о топ треках.
  *
  * @constructor
- * @param statsRepository репозиторий для получения информации о треках из Spotify
+ * @param infoRepository репозиторий для получения информации о треках из Spotify
  */
 @HiltViewModel
 class ArtistViewModel @Inject constructor(
