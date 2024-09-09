@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.models.data.TrackInfo
+import com.example.spotify.models.presentation.TimePeriods
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -22,10 +23,18 @@ class TopTracksViewModel @Inject constructor(
     private val statsRepository: SpotifyUserStatsRepository
 ) : ViewModel() {
 
+    private val trackInfoItems = mutableMapOf<TimePeriods, List<TrackInfo>>()
+
+    private val _selectedPeriod = mutableStateOf(TimePeriods.SHORT)
+
+    val selectedPeriod: State<TimePeriods>
+        get() = _selectedPeriod
+
+
     private val _topTracks = mutableStateOf<List<TrackInfo>>(emptyList())
 
     /**
-     * Список треков
+     * Список исполнителей
      */
     val topTracks: State<List<TrackInfo>>
         get() = _topTracks
@@ -39,16 +48,26 @@ class TopTracksViewModel @Inject constructor(
         get() = _isLoading
 
     /**
-     * Загружает данные о топ треках
+     * Загружает данные о топ исполнителях
      */
-    fun fetchTopTracks() = viewModelScope.launch(
+    fun fetchTopTracks(period: TimePeriods) = viewModelScope.launch(
         CoroutineExceptionHandler { _, err ->
             //todo
         }
     ) {
-        _isLoading.value = true
-        val info = statsRepository.getTopTracks("short_term", 50)
-        _isLoading.value = false
-        _topTracks.value = info
+        val savedInfo = trackInfoItems[period]
+        if (savedInfo != null) {
+            _topTracks.value = savedInfo
+        } else {
+            _isLoading.value = true
+            val info = statsRepository.getTopTracks(period.strValue)
+            trackInfoItems.putIfAbsent(period, info)
+            _topTracks.value = info
+            _isLoading.value = false
+        }
+    }
+
+    fun switchSelected(period: TimePeriods) {
+        _selectedPeriod.value = period
     }
 }

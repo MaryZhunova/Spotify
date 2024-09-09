@@ -2,10 +2,13 @@ package com.example.spotify.data
 
 import com.example.spotify.data.converter.ArtistEntityToInfoConverter
 import com.example.spotify.data.converter.ArtistResponseToEntityConverter
-import com.example.spotify.data.converter.TrackResponseToInfoConverter
+import com.example.spotify.data.converter.TrackEntityToInfoConverter
+import com.example.spotify.data.converter.TrackResponseToEntityConverter
 import com.example.spotify.data.converter.UserProfileResponseToInfoConverter
 import com.example.spotify.data.db.ArtistDao
 import com.example.spotify.data.db.ArtistEntity
+import com.example.spotify.data.db.TrackDao
+import com.example.spotify.data.db.TrackEntity
 import com.example.spotify.data.net.SpotifyUserStatsApiMapper
 import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.domain.security.AuthRepository
@@ -27,11 +30,13 @@ import javax.inject.Inject
 class SpotifyUserStatsRepositoryImpl @Inject constructor(
     private val apiMapper: SpotifyUserStatsApiMapper,
     private val userProfileConverter: UserProfileResponseToInfoConverter,
-    private val trackResponseConverter: TrackResponseToInfoConverter,
+    private val trackResponseConverter: TrackResponseToEntityConverter,
+    private val trackEntityConverter: TrackEntityToInfoConverter,
     private val artistResponseConverter: ArtistResponseToEntityConverter,
     private val artistEntityConverter: ArtistEntityToInfoConverter,
     private val authRepository: AuthRepository,
-    private val artistDao: ArtistDao
+    private val artistDao: ArtistDao,
+    private val trackDao: TrackDao,
 ) : SpotifyUserStatsRepository {
 
     override suspend fun getCurrentUserProfile(): UserProfileInfo =
@@ -48,7 +53,11 @@ class SpotifyUserStatsRepositoryImpl @Inject constructor(
             val nextPageItems = initResponse.next?.let { url ->
                 apiMapper.getTopTracksNextPage(token, url)
             }?.items.orEmpty()
-            (initResponse.items + nextPageItems).map(trackResponseConverter::convert)
+            val result = initResponse.items + nextPageItems
+            result
+                .map(trackResponseConverter::convert)
+                .putTracksToDB()
+                .map(trackEntityConverter::convert)
         }
 
     override suspend fun getTopArtists(timeRange: String, limit: Int): List<ArtistInfo> =
@@ -67,6 +76,11 @@ class SpotifyUserStatsRepositoryImpl @Inject constructor(
 
     private fun List<ArtistEntity>.putArtistsToDB(): List<ArtistEntity> {
         artistDao.insertAll(*this.toTypedArray())
+        return this
+    }
+
+    private fun List<TrackEntity>.putTracksToDB(): List<TrackEntity> {
+        trackDao.insertAll(*this.toTypedArray())
         return this
     }
 }

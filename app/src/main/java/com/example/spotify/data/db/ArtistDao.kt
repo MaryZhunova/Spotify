@@ -10,10 +10,10 @@ interface ArtistDao {
     @Query("SELECT * FROM $ARTIST_TABLE_NAME")
     fun getAll(): List<ArtistEntity>
 
-    @Query("SELECT * FROM $ARTIST_TABLE_NAME WHERE $FIELD_ID IN (:artistsIds)")
+    @Query("SELECT * FROM $ARTIST_TABLE_NAME WHERE $FIELD_ARTIST_ID IN (:artistsIds)")
     fun getByIds(vararg artistsIds: String): List<ArtistEntity>
 
-    @Query("SELECT * FROM $ARTIST_TABLE_NAME WHERE $FIELD_ID = :artistId")
+    @Query("SELECT * FROM $ARTIST_TABLE_NAME WHERE $FIELD_ARTIST_ID = :artistId")
     fun getById(artistId: String): ArtistEntity
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

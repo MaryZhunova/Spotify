@@ -24,7 +24,7 @@ interface SpotifyUserStatsRepository {
      * @param limit количество треков, которые нужно вернуть
      * @return информация о популярных треках в виде объекта  List<TrackInfo>
      */
-    suspend fun getTopTracks(timeRange: String, limit: Int): List<TrackInfo>
+    suspend fun getTopTracks(timeRange: String, limit: Int = 50): List<TrackInfo>
 
     /**
      * Получает список топа исполнителей пользователя

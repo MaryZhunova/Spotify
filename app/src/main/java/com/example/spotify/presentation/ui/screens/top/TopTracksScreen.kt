@@ -2,17 +2,15 @@ package com.example.spotify.presentation.ui.screens.top
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +28,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.spotify.R
 import com.example.spotify.models.data.TrackInfo
+import com.example.spotify.models.presentation.TimePeriods
 import com.example.spotify.presentation.ui.components.AppBar
 import com.example.spotify.presentation.ui.components.ProgressIndicator
 import com.example.spotify.presentation.viewmodels.TopTracksViewModel
@@ -44,41 +43,47 @@ fun TopTracksScreen(
     navController: NavController,
 ) {
     val viewModel: TopTracksViewModel = hiltViewModel()
+    val periods = listOf(TimePeriods.SHORT, TimePeriods.MEDIUM, TimePeriods.LONG)
+    val selectedPeriod by viewModel.selectedPeriod
+
 
     val topTracks by viewModel.topTracks
     val isLoading by viewModel.isLoading
 
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchTopTracks()
+    LaunchedEffect(selectedPeriod) {
+        viewModel.fetchTopTracks(selectedPeriod)
     }
 
     Scaffold(
         topBar = { AppBar { navController.popBackStack() } },
     ) {
-        if (isLoading && topTracks.isEmpty()) {
-            ProgressIndicator()
-        } else {
-            LazyColumn(
-                modifier = Modifier.padding(it),
-                state = listState,
-                contentPadding = PaddingValues(8.dp)
+        Column(modifier = Modifier.padding(it)) {
+            TabRow(
+                selectedTabIndex = periods.indexOf(selectedPeriod)
             ) {
-                itemsIndexed(items = topTracks, key = { _, track -> track.id }) { index, track ->
-                    TrackItem(track = track, index = index)
-                }
-                if (isLoading) {
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
+                periods.forEach { period ->
+                    Tab(
+                        modifier = Modifier.padding(top = 16.dp),
+                        selected = selectedPeriod == period,
+                        onClick = { viewModel.switchSelected(period) }
+                    ) {
+                        Text(period.nameValue)
                     }
+                }
+            }
+            if (isLoading) {
+                ProgressIndicator()
+            } else {
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .verticalScroll(rememberScrollState()),
+                ) {
+                    topTracks.forEachIndexed { index, track ->
+                        TrackItem(track = track, index = index)
+                    }
+
+
                 }
             }
         }

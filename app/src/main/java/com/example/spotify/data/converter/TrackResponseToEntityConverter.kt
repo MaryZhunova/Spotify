@@ -1,27 +1,28 @@
 package com.example.spotify.data.converter
 
+import com.example.spotify.data.db.TrackEntity
 import com.example.spotify.models.data.AlbumInfo
-import com.example.spotify.models.data.TrackInfo
 import com.example.spotify.models.data.net.Album
 import com.example.spotify.models.data.net.TrackResponse
 
 /**
- * Конвертер сетевой модели [TrackResponse] в дата модель [TrackInfo]
+ * Конвертер сетевой модели [TrackResponse] в дата модель [TrackEntity]
  */
-class TrackResponseToInfoConverter {
+class TrackResponseToEntityConverter {
 
     /**
-     * Конвертирует [TrackResponse] в [TrackInfo]
+     * Конвертирует [TrackResponse] в [TrackEntity]
      *
      * @param from данные для конвертации
      */
-    fun convert(from: TrackResponse): TrackInfo =
-        TrackInfo(
+    fun convert(from: TrackResponse): TrackEntity =
+        TrackEntity(
             id = from.id,
             name = from.name,
-            previewUrl = from.previewUrl,
+            previewUrl = from.previewUrl.orEmpty(),
             duration = from.duration,
-            artists = from.artists.joinToString { it.name },
+            artistsId = from.artists.map{ it.id },
+            artistsName = from.artists.map{ it.name },
             album = convertAlbum(from.album),
             isExplicit = from.isExplicit,
             isPlayable = from.isPlayable,

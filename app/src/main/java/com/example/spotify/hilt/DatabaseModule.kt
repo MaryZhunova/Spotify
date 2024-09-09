@@ -28,4 +28,8 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideArtistDao(db: SpotifyDatabase) = db.artistDao()
+
+    @Singleton
+    @Provides
+    fun provideTrackDao(db: SpotifyDatabase) = db.trackDao()
 }

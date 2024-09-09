@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -19,7 +18,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -96,10 +94,12 @@ fun TopArtistsScreen(
 
 
 @Composable
-fun ArtistItem(artist: ArtistInfo, index: Int, onClick:(String) -> Unit) {
+fun ArtistItem(artist: ArtistInfo, index: Int, onClick: (String) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp).clickable { onClick.invoke(artist.id) }
+        modifier = Modifier
+            .padding(vertical = 4.dp, horizontal = 16.dp)
+            .clickable { onClick.invoke(artist.id) }
     ) {
         Text(
             modifier = Modifier.padding(end = 8.dp),
