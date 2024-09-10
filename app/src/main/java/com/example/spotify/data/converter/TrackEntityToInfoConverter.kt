@@ -4,7 +4,7 @@ import com.example.spotify.data.db.TrackEntity
 import com.example.spotify.models.data.TrackInfo
 
 /**
- * Конвертер сетевой модели [TrackEntity] в дата модель [TrackInfo]
+ * Конвертер модели бд [TrackEntity] в дата модель [TrackInfo]
  */
 class TrackEntityToInfoConverter {
 

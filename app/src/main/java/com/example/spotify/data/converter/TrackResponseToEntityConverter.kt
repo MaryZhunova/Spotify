@@ -6,7 +6,7 @@ import com.example.spotify.models.data.net.Album
 import com.example.spotify.models.data.net.TrackResponse
 
 /**
- * Конвертер сетевой модели [TrackResponse] в дата модель [TrackEntity]
+ * Конвертер сетевой модели [TrackResponse] в модель бд [TrackEntity]
  */
 class TrackResponseToEntityConverter {
 

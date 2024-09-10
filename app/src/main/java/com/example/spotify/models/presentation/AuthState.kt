@@ -10,6 +10,9 @@ sealed interface AuthState {
      */
     data object Idle : AuthState
 
+    /**
+     * Состояние, когда аутентификация в процессе
+     */
     data object Loading : AuthState
 
     /**
