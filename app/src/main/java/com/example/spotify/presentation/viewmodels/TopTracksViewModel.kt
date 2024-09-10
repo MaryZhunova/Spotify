@@ -27,19 +27,21 @@ class TopTracksViewModel @Inject constructor(
 
     private val _selectedPeriod = mutableStateOf(TimePeriods.SHORT)
 
+    private val _topTracks = mutableStateOf<List<TrackInfo>>(emptyList())
+
+    private val _isLoading = mutableStateOf(false)
+
+    /**
+     * Выбранный период
+     */
     val selectedPeriod: State<TimePeriods>
         get() = _selectedPeriod
-
-
-    private val _topTracks = mutableStateOf<List<TrackInfo>>(emptyList())
 
     /**
      * Список исполнителей
      */
     val topTracks: State<List<TrackInfo>>
         get() = _topTracks
-
-    private val _isLoading = mutableStateOf(false)
 
     /**
      * Состояние загрузки данных
@@ -60,13 +62,16 @@ class TopTracksViewModel @Inject constructor(
             _topTracks.value = savedInfo
         } else {
             _isLoading.value = true
-            val info = statsRepository.getTopTracks(period.strValue)
+            val info = statsRepository.getTopTracks(timeRange = period.strValue)
             trackInfoItems.putIfAbsent(period, info)
             _topTracks.value = info
             _isLoading.value = false
         }
     }
 
+    /**
+     * Меняет текущий временной период
+     */
     fun switchSelected(period: TimePeriods) {
         _selectedPeriod.value = period
     }

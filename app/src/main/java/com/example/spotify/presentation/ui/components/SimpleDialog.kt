@@ -7,6 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.DialogProperties
 import com.example.spotify.models.presentation.DialogState
 
+/**
+ * Компонент, отображающий алерт
+ *
+ * @param data Данные для настройки диалогового окна, включая заголовок, текст, действия для кнопок
+ */
 @Composable
 fun SimpleDialog(data: DialogState.Simple) {
     AlertDialog(

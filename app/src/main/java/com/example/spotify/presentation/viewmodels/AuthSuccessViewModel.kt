@@ -28,9 +28,17 @@ class AuthSuccessViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _userProfile = mutableStateOf<UserProfileState>(UserProfileState.Idle)
+
+    /**
+     * Данные пользователя
+     */
     val userProfile: State<UserProfileState> = _userProfile
 
     private val _dialogState = MutableStateFlow<DialogState>(DialogState.Idle)
+
+    /**
+     * Состояние отображения алерта
+     */
     val dialogState: StateFlow<DialogState> = _dialogState
 
     /**
@@ -45,6 +53,11 @@ class AuthSuccessViewModel @Inject constructor(
         _userProfile.value = UserProfileState.Success(userInfo)
     }
 
+    /**
+     * Показывает алерт выхода из приложения
+     *
+     * @param callback обработка действия при подтверждении выхода
+     */
     fun showExitDialog(callback: () -> Unit) {
         _dialogState.value = DialogState.Simple(
             title = "Are you sure you want to exit?",

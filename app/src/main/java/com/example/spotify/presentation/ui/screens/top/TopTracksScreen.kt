@@ -40,7 +40,7 @@ import com.example.spotify.presentation.viewmodels.TopTracksViewModel
  */
 @Composable
 fun TopTracksScreen(
-    navController: NavController,
+    navController: NavController
 ) {
     val viewModel: TopTracksViewModel = hiltViewModel()
     val periods = listOf(TimePeriods.SHORT, TimePeriods.MEDIUM, TimePeriods.LONG)

@@ -42,7 +42,7 @@ import com.example.spotify.presentation.viewmodels.TopArtistsViewModel
  */
 @Composable
 fun TopArtistsScreen(
-    navController: NavController,
+    navController: NavController
 ) {
     val viewModel: TopArtistsViewModel = hiltViewModel()
 

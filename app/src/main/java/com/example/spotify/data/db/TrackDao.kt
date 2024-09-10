@@ -14,7 +14,7 @@ interface TrackDao {
     @Query("SELECT * FROM $TRACK_TABLE_NAME WHERE :artistId IN ($FIELD_TRACK_ARTISTS_ID)")
     fun findTracksByArtistId(artistId: String): List<TrackEntity>
 
-    @Query("SELECT EXISTS(SELECT 1 FROM $TRACK_TABLE_NAME WHERE $FIELD_TRACK_ID = :trackId)")
+    @Query("SELECT EXISTS(SELECT 1 FROM $TRACK_TABLE_NAME WHERE $FIELD_TRACK_NAME = :trackId)")
     fun isTrackInDatabase(trackId: String): Boolean
 
     @Query("SELECT * FROM $TRACK_TABLE_NAME")

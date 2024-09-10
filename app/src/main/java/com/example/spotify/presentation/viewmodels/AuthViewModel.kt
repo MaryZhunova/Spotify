@@ -25,8 +25,8 @@ import javax.inject.Inject
  *
  * @constructor
  * @param authRepository репозиторий для хранения токенов доступа
+ * @param infoRepository репозитория для получения информации о треках и исполнителях из Spotify
  */
-
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
@@ -34,12 +34,27 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _authState = mutableStateOf<AuthState>(AuthState.Idle)
+
+    /**
+     * Состояние процесса авторизации
+     */
     val authState: State<AuthState> get() = _authState
 
     init {
         logout()
     }
 
+    /**
+     * Инициирует процесс аутентификации в Spotify
+     *
+     * Эта функция пытается запустить активити для входа в Spotify, используя переданный `authLauncher`.
+     * Сначала она проверяет, установлено ли приложение Spotify на устройстве. Если оно установлено,
+     * создается запрос авторизации, и начинается процесс аутентификации. Если приложение не установлено,
+     * состояние аутентификации меняется на `Fail` с ошибкой, указывающей, что Spotify недоступен
+     *
+     * @param activity текущая активити, из которой будет запущен intent для входа в Spotify
+     * @param authLauncher лаунчер, который обрабатывает запуск intent для входа и получение результата
+     */
     fun startAuth(activity: Activity, authLauncher: ActivityResultLauncher<Intent>) {
         try {
             _authState.value = AuthState.Loading
@@ -57,6 +72,17 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Обрабатывает результат аутентификации в Spotify
+     *
+     * Эта функция обрабатывает результат активити для входа в Spotify. Если аутентификация
+     * прошла успешно и был получен код авторизации, она запрашивает токен доступа
+     * В случае успеха состояние аутентификации меняется на `Success`. В случае ошибки состояние
+     * меняется на `Fail` с соответствующей ошибкой
+     *
+     * @param resultCode код результата, указывающий на успех или неудачу входа
+     * @param data intent, возвращенный из активити, содержащий ответ авторизации
+     */
     fun handleAuthResult(resultCode: Int, data: Intent?) {
         viewModelScope.launch {
             val response = AuthorizationClient.getResponse(resultCode, data)
@@ -70,6 +96,9 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Выполняет выход пользователя, очищая данные аутентификации и информацию о пользователе
+     */
     fun logout() = viewModelScope.launch {
         authRepository.clear()
         infoRepository.clear()

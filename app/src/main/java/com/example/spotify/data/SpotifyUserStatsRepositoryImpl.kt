@@ -60,6 +60,11 @@ class SpotifyUserStatsRepositoryImpl @Inject constructor(
                 .map(trackEntityConverter::convert)
         }
 
+    override suspend fun getTopTracks(id: String): List<TrackInfo> =
+        withContext(Dispatchers.IO) {
+            trackDao.findTracksByArtistId(id).map(trackEntityConverter::convert)
+        }
+
     override suspend fun getTopArtists(timeRange: String, limit: Int): List<ArtistInfo> =
         withContext(Dispatchers.IO) {
             val token = authRepository.getAccessToken()

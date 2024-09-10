@@ -27,6 +27,15 @@ interface SpotifyUserStatsRepository {
     suspend fun getTopTracks(timeRange: String, limit: Int = 50): List<TrackInfo>
 
     /**
+     * Получает список любимых треков пользователя по идентификатору конкретного исполнителя
+     *
+     * @param id идентификатор исполнителя
+     *
+     * @return информация о любимых треках в виде объекта  List<TrackInfo>
+     */
+    suspend fun getTopTracks(id: String): List<TrackInfo>
+
+    /**
      * Получает список топа исполнителей пользователя
      *
      * @param timeRange период времени для получения топа исполнителей

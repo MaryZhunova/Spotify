@@ -27,19 +27,21 @@ class TopArtistsViewModel @Inject constructor(
 
     private val _selectedPeriod = mutableStateOf(TimePeriods.SHORT)
 
+    private val _topArtists = mutableStateOf<List<ArtistInfo>>(emptyList())
+
+    private val _isLoading = mutableStateOf(false)
+
+    /**
+     * Выбранный период
+     */
     val selectedPeriod: State<TimePeriods>
         get() = _selectedPeriod
-
-
-    private val _topArtists = mutableStateOf<List<ArtistInfo>>(emptyList())
 
     /**
      * Список исполнителей
      */
     val topArtists: State<List<ArtistInfo>>
         get() = _topArtists
-
-    private val _isLoading = mutableStateOf(false)
 
     /**
      * Состояние загрузки данных
@@ -67,6 +69,9 @@ class TopArtistsViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Меняет текущий временной период
+     */
     fun switchSelected(period: TimePeriods) {
         _selectedPeriod.value = period
     }

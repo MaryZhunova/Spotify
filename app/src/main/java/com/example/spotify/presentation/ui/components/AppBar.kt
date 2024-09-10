@@ -7,8 +7,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import com.example.spotify.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * AppBar
@@ -18,18 +25,25 @@ import com.example.spotify.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(onClick: () -> Unit) {
-    TopAppBar(
-        title = {},
-        navigationIcon = {
-            IconButton(onClick = onClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.arror),
-                    contentDescription = null
-                )
+    var isButtonEnabled by remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
+
+    TopAppBar(title = {}, navigationIcon = {
+        IconButton(onClick = {
+            if (isButtonEnabled) {
+                onClick.invoke()
+                isButtonEnabled = false
+                scope.launch {
+                    //Throttling
+                    delay(1000)
+                    isButtonEnabled = true
+                }
             }
-        },
-        colors = TopAppBarDefaults.topAppBarColors().copy(
-            containerColor = MaterialTheme.colorScheme.primary.copy(0.5f)
-        )
+        }) {
+            Icon(painter = painterResource(id = R.drawable.arrow), contentDescription = null)
+        }
+    }, colors = TopAppBarDefaults.topAppBarColors().copy(
+        containerColor = MaterialTheme.colorScheme.primary.copy(0.5f)
+    )
     )
 }

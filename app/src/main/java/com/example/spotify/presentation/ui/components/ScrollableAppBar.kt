@@ -31,6 +31,16 @@ import coil.request.ImageRequest
 import com.example.spotify.R
 import kotlin.math.roundToInt
 
+/**
+ * Компонент, отображающий прокручиваемый AppBar с фоновым изображением и заголовком
+ *
+ * @param modifier Модификатор, позволяющий изменять внешний вид или поведение компонента
+ * @param backgroundImage URL или ресурс фонового изображения, которое будет отображаться на AppBar
+ * @param title Текст заголовка, который отображается в нижней части AppBar
+ * @param scrollableAppBarHeight Высота AppBar в dp
+ * @param toolbarOffsetHeightPx Значение смещения AppBar в пикселях, которое используется для его перемещения во время прокрутки
+ * @param onClick Действие, которое выполняется при нажатии на кнопку (например, возврат к предыдущему экрану)
+ */
 @Composable
 fun ScrollableAppBar(
     modifier: Modifier = Modifier,
@@ -86,7 +96,7 @@ fun ScrollableAppBar(
             .padding(start = 4.dp, top = 35.dp), onClick = onClick) {
             Icon(
                 tint = Color.White,
-                painter = painterResource(id = R.drawable.arror),
+                painter = painterResource(id = R.drawable.arrow),
                 contentDescription = null
             )
         }

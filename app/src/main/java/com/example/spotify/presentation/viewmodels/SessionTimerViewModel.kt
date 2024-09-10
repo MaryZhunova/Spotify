@@ -17,12 +17,15 @@ import javax.inject.Inject
 @HiltViewModel
 class SessionTimerViewModel @Inject constructor() : ViewModel() {
 
+    private var timerJob: Job? = null
+
     private val _onSessionExpired = MutableSharedFlow<Unit>()
 
+    /**
+     * Триггер действия при истечении сессии
+     */
     val onSessionExpired: SharedFlow<Unit>
         get() = _onSessionExpired.asSharedFlow()
-
-    private var timerJob: Job? = null
 
     /**
      * Запускает таймер на 10 минут. При истечении таймера выполняется переданное действие.

@@ -18,6 +18,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 
+/**
+ * Компонент для отображения изображения пользователя или инициалов
+ *
+ * @param modifier Модификатор, позволяющий изменять внешний вид или поведение компонента
+ * @param image URL изображения пользователя. Если значение равно `null`, отображаются инициалы
+ * @param name Имя пользователя, используемое для отображения инициалов, если изображение не предоставлено
+ */
 @Composable
 fun UserImage(modifier: Modifier = Modifier, image: String?, name: String) {
     Box(

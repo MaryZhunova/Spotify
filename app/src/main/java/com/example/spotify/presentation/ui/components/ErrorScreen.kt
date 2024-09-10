@@ -15,7 +15,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
+/**
+ * Компонент, отображающий экран с ошибкой
+ *
+ * Этот экран содержит фоновую заливку с радиальным градиентом и текст, указывающий на наличие ошибки
+ *
+ * @param errorBlock Компонент, который будет отображён внутри экрана ошибки. Может использоваться для отображения
+ * дополнительной информации об ошибке
+ */
 @Composable
 fun ErrorScreen(errorBlock: @Composable () -> Unit) {
     val colors = listOf(

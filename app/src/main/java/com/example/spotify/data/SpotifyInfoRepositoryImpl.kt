@@ -52,7 +52,7 @@ class SpotifyInfoRepositoryImpl @Inject constructor(
                     isExplicit = from.isExplicit,
                     isPlayable = from.isPlayable,
                     popularity = from.popularity,
-                    isFavorite = trackDao.isTrackInDatabase(from.id)
+                    isFavorite = trackDao.isTrackInDatabase(from.name)
                 )
             }
         }

@@ -10,13 +10,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -42,10 +50,17 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.spotify.R
 import com.example.spotify.models.data.TopTrackInfo
+import com.example.spotify.models.data.TrackInfo
 import com.example.spotify.presentation.ui.components.ProgressIndicator
 import com.example.spotify.presentation.ui.components.ScrollableAppBar
 import com.example.spotify.presentation.viewmodels.ArtistViewModel
 
+/**
+ * Экран с информацией об исполнителе
+ *
+ * @param navController контроллер навигации
+ * @param id идентификатор исполнителя
+ */
 @Composable
 fun ArtistScreen(
     navController: NavController,
@@ -57,6 +72,7 @@ fun ArtistScreen(
     val artist by viewModel.artist
     val isLoading by viewModel.isLoading
     val isHighlighted by viewModel.isFavoriteHighlighted
+    val favoriteTracks by viewModel.favoriteTracks
 
     LaunchedEffect(id) {
         viewModel.fetchTracksAndArtist(id)
@@ -102,6 +118,7 @@ fun ArtistScreen(
     val maxOffsetHeightPx = with(LocalDensity.current) {
         toolbarHeight + toolbarOffsetHeightPx.floatValue.toDp()
     }
+
     Box(
         Modifier
             .fillMaxSize()
@@ -113,35 +130,22 @@ fun ArtistScreen(
                 .verticalScroll(scrollScope)
         ) {
             if (isLoading) {
+                Spacer(modifier = Modifier.height(12.dp))
                 ProgressIndicator()
             } else {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .padding(top = 20.dp, bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleLarge,
-                    text = "Most Popular Tracks",
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(start = 20.dp, bottom = 20.dp)
-                        .clickable {
-                            viewModel.changeIsHighlightedState()
-                        },
-                    color = if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyMedium,
-                    text = "highlight my favorites",
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                topTracks.forEach { track ->
-                    TrackItem(track = track, isHighlighted = isHighlighted)
+                if (favoriteTracks.isNotEmpty()) {
+                    TracksTabRow(
+                        topTracks = topTracks,
+                        favTracks = favoriteTracks,
+                        isHighlighted = isHighlighted,
+                        onHighlightedChange = { viewModel.changeIsHighlightedState() }
+                    )
+                } else {
+                    TopTracks(topTracks = topTracks)
                 }
             }
         }
+
         ScrollableAppBar(
             title = artist?.name.orEmpty(),
             backgroundImage = artist?.image.orEmpty(),
@@ -150,11 +154,77 @@ fun ArtistScreen(
             onClick = { navController.popBackStack() }
         )
     }
-
 }
 
 @Composable
-private fun TrackItem(track: TopTrackInfo, isHighlighted: Boolean) {
+private fun TracksTabRow(
+    topTracks: List<TopTrackInfo>,
+    favTracks: List<TrackInfo>,
+    isHighlighted: Boolean,
+    onHighlightedChange: () -> Unit
+) {
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val tabs = listOf("Most Popular Tracks", "My Faves")
+    TabRow(
+        selectedTabIndex = selectedTabIndex,
+        indicator = { tabPositions ->
+            SecondaryIndicator(
+                Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
+            )
+        }
+    ) {
+        tabs.forEachIndexed { index, title ->
+            Tab(
+                selected = selectedTabIndex == index,
+                onClick = { selectedTabIndex = index },
+                text = { Text(title) }
+            )
+        }
+    }
+
+    when (selectedTabIndex) {
+        0 -> {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                    .clickable { onHighlightedChange.invoke() },
+                color = if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyMedium,
+                text = "highlight my favorites",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            topTracks.forEach { track ->
+                TrackItem(track = track, isHighlighted = isHighlighted)
+            }
+        }
+
+        1 -> {
+            Spacer(modifier = Modifier.height(12.dp))
+            favTracks.forEachIndexed { index, track ->
+                TrackItem(track = track, index = index)
+            }
+        }
+    }
+}
+
+@Composable
+private fun TopTracks(topTracks: List<TopTrackInfo>) {
+    Text(
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+        color = MaterialTheme.colorScheme.onBackground,
+        style = MaterialTheme.typography.titleLarge,
+        text = "Most Popular Tracks",
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+    topTracks.forEach { track ->
+        TrackItem(track = track)
+    }
+}
+
+@Composable
+private fun TrackItem(track: TopTrackInfo, isHighlighted: Boolean = false) {
     val targetColor = if (isHighlighted && track.isFavorite) {
         MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
     } else {
