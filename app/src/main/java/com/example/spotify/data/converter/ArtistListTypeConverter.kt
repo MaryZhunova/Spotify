@@ -1,6 +1,7 @@
 package com.example.spotify.data.converter
 
 import androidx.room.TypeConverter
+
 /**
  * Конвертер для преобразования списка идентификаторов исполнителей в строку и обратно
  */

@@ -12,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.spotify.R
 
 /**
  * Компонент, отображающий экран с ошибкой
@@ -49,7 +51,7 @@ fun ErrorScreen(errorBlock: @Composable () -> Unit) {
             fontSize = 46.sp,
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.surfaceVariant,
-            text = "Oopsie..."
+            text = stringResource(id = R.string.oopsie)
         )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally

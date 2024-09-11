@@ -3,6 +3,7 @@ package com.example.spotify.data.converter
 import androidx.room.TypeConverter
 import com.example.spotify.models.data.AlbumInfo
 import com.google.gson.Gson
+
 /**
  * Конвертер для преобразования объекта `AlbumInfo` в строку и обратно
  */

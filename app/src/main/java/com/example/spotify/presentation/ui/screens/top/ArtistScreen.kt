@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
@@ -31,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -41,6 +44,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -54,6 +58,7 @@ import com.example.spotify.models.data.TrackInfo
 import com.example.spotify.presentation.ui.components.ProgressIndicator
 import com.example.spotify.presentation.ui.components.ScrollableAppBar
 import com.example.spotify.presentation.viewmodels.ArtistViewModel
+import kotlinx.coroutines.launch
 
 /**
  * Экран с информацией об исполнителе
@@ -119,6 +124,10 @@ fun ArtistScreen(
         toolbarHeight + toolbarOffsetHeightPx.floatValue.toDp()
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+
     Box(
         Modifier
             .fillMaxSize()
@@ -134,24 +143,36 @@ fun ArtistScreen(
                 ProgressIndicator()
             } else {
                 if (favoriteTracks.isNotEmpty()) {
+                    val snackbarMessage = stringResource(id = R.string.no_faves_snackbar)
                     TracksTabRow(
                         topTracks = topTracks,
                         favTracks = favoriteTracks,
                         isHighlighted = isHighlighted,
-                        onHighlightedChange = { viewModel.changeIsHighlightedState() }
+                        onHighlightedChange = {
+                            if (viewModel.changeIsHighlightedState()) {
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = snackbarMessage
+                                    )
+                                }
+                            }
+                        }
                     )
                 } else {
                     TopTracks(topTracks = topTracks)
                 }
             }
         }
-
         ScrollableAppBar(
             title = artist?.name.orEmpty(),
             backgroundImage = artist?.image.orEmpty(),
             scrollableAppBarHeight = toolbarHeight,
             toolbarOffsetHeightPx = toolbarOffsetHeightPx,
             onClick = { navController.popBackStack() }
+        )
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
 }
@@ -164,7 +185,10 @@ private fun TracksTabRow(
     onHighlightedChange: () -> Unit
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Most Popular Tracks", "My Faves")
+    val tabs = listOf(
+        stringResource(id = R.string.tab_most_popular_tracks),
+        stringResource(id = R.string.tab_faves)
+    )
     TabRow(
         selectedTabIndex = selectedTabIndex,
         indicator = { tabPositions ->
@@ -190,7 +214,7 @@ private fun TracksTabRow(
                     .clickable { onHighlightedChange.invoke() },
                 color = if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium,
-                text = "highlight my favorites",
+                text = stringResource(id = R.string.highlight),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -214,7 +238,7 @@ private fun TopTracks(topTracks: List<TopTrackInfo>) {
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
         color = MaterialTheme.colorScheme.onBackground,
         style = MaterialTheme.typography.titleLarge,
-        text = "Most Popular Tracks",
+        text = stringResource(id = R.string.tab_most_popular_tracks),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
     )

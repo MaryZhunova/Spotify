@@ -13,8 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.spotify.R
 import com.example.spotify.models.data.UserProfileInfo
 import com.example.spotify.presentation.TOP_ARTISTS_SCREEN
 import com.example.spotify.presentation.TOP_TRACKS_SCREEN
@@ -61,11 +63,11 @@ fun UserProfileSuccessScreen(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Button(onClick = { onTopClick.invoke(TOP_TRACKS_SCREEN) }) {
-            Text(text = "Top Tracks")
+            Text(text = stringResource(id = R.string.top_tracks))
         }
 
         Button(onClick = { onTopClick.invoke(TOP_ARTISTS_SCREEN) }) {
-            Text(text = "Top Artists")
+            Text(text = stringResource(id = R.string.top_artists))
         }
     }
 }

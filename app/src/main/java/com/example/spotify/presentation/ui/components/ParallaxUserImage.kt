@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.spotify.R
@@ -89,7 +90,7 @@ fun ParallaxUserImage(image: String?, name: String) {
         Image(
             painter = painterResource(id = R.drawable.wave_1),
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary.copy(0.3f)),
-            contentDescription = "Background Image",
+            contentDescription = stringResource(id = R.string.bg_image),
             modifier = Modifier
                 .wrapContentWidth(unbounded = true)
                 .offset {
@@ -100,7 +101,7 @@ fun ParallaxUserImage(image: String?, name: String) {
         Image(
             painter = painterResource(id = R.drawable.wave),
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary.copy(0.5f)),
-            contentDescription = "Foreground Image",
+            contentDescription = stringResource(id = R.string.bg_image),
             contentScale = ContentScale.None,
             modifier = Modifier
                 .wrapContentWidth(unbounded = true)

@@ -6,8 +6,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.spotify.R
 import com.example.spotify.models.presentation.AuthError
 import com.example.spotify.models.presentation.AuthState
 import com.example.spotify.presentation.ui.components.ErrorScreen
@@ -30,13 +32,13 @@ import com.example.spotify.presentation.ui.components.ErrorScreen
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.error,
-                    text = "Spotify not found"
+                    text = stringResource(id = R.string.spotify_not_found)
                 )
                 Text(
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.error,
-                    text = "You need to install Spotify first"
+                    text = stringResource(id = R.string.install_spotify_first)
                 )
             }
         }
@@ -48,11 +50,11 @@ import com.example.spotify.presentation.ui.components.ErrorScreen
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.error,
-                    text = "Authentication failed"
+                    text = stringResource(id = R.string.auth_failed)
                 )
                 Button(onClick = tryAgain) {
                     Text(
-                        text = "Try again",
+                        text = stringResource(id = R.string.try_again),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }

@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">Spotify</string>
+
+    //ArtistScreen
+    <string name="no_faves_snackbar">No faves among popular tracks</string>
+    <string name="tab_most_popular_tracks">Most Popular Tracks</string>
+    <string name="tab_faves">My Faves</string>
+    <string name="highlight">highlight my favorites</string>
+
+    //UserProfileSuccessScreen
+    <string name="top_tracks">Top Tracks</string>
+    <string name="top_artists">Top Artists</string>
+
+    //Errors
+    <string name="oopsie">Oopsie...</string>
+    <string name="no_data">Couldn\'t retrieve the data</string>
+    <string name="log_in_again">Log in again</string>
+    <string name="spotify_not_found">Spotify not found</string>
+    <string name="install_spotify_first">You need to install Spotify first</string>
+    <string name="auth_failed">Authentication failed</string>
+    <string name="try_again">Try again</string>
+
+    //AuthScreen
+    <string name="log_in">LOG IN</string>
+
+
+    //Content description
+    <string name="music_icon">music icon</string>
+    <string name="arrow_icon">arrow icon</string>
+    <string name="bg_image">background bmage</string>
+
+
 </resources>

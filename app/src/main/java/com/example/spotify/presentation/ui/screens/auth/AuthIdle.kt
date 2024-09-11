@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.spotify.R
 
@@ -50,26 +51,20 @@ fun AuthIdle(onClick:() -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .drawBehind {
-                drawRect(
-                    brush = Brush.verticalGradient(
-                        colors = colors,
-
-                        )
-                )
+                drawRect(brush = Brush.verticalGradient(colors = colors))
             },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
             painter = painterResource(id = R.drawable.music_icon),
-            contentDescription = "Music Icon",
+            contentDescription = stringResource(id = R.string.music_icon),
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .padding(top = 40.dp, bottom = 30.dp)
+            modifier = Modifier.padding(top = 40.dp, bottom = 30.dp)
         )
         Button(onClick = onClick) {
             Text(
-                text = "LOG IN",
+                text = stringResource(id = R.string.log_in),
                 style = MaterialTheme.typography.titleLarge
             )
         }

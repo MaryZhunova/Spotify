@@ -13,9 +13,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.spotify.R
 import com.example.spotify.data.security.NullAccessTokenException
 import com.example.spotify.models.presentation.DialogState
 import com.example.spotify.models.presentation.UserProfileState
@@ -65,14 +67,14 @@ fun AuthSuccess(
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.error,
-                    text = "Couldn't retrieve the data"
+                    text = stringResource(id = R.string.no_data)
                 )
                 if (profile.err is NullAccessTokenException) {
                     Button(onClick = {
                         onBackClick.invoke()
                     }) {
                         Text(
-                            text = "Log in again",
+                            text = stringResource(id = R.string.log_in_again),
                             style = MaterialTheme.typography.titleLarge
                         )
                     }

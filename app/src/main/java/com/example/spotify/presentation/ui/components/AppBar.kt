@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.example.spotify.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -40,7 +41,10 @@ fun AppBar(onClick: () -> Unit) {
                 }
             }
         }) {
-            Icon(painter = painterResource(id = R.drawable.arrow), contentDescription = null)
+            Icon(
+                painter = painterResource(id = R.drawable.arrow),
+                contentDescription = stringResource(id = R.string.arrow_icon)
+            )
         }
     }, colors = TopAppBarDefaults.topAppBarColors().copy(
         containerColor = MaterialTheme.colorScheme.primary.copy(0.5f)
