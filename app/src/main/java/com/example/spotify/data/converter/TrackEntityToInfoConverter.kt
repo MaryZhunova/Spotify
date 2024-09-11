@@ -19,7 +19,7 @@ class TrackEntityToInfoConverter {
             name = from.name,
             previewUrl = from.previewUrl,
             duration = from.duration,
-            artists = from.artistsName.joinToString(","),
+            artists = from.artistsName.joinToString(),
             album = from.album,
             isExplicit = from.isExplicit,
             isPlayable = from.isPlayable,

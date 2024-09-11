@@ -15,7 +15,7 @@ class ArtistListTypeConverter {
      */
     @TypeConverter
     fun fromArtistList(artists: List<String>): String {
-        return artists.joinToString(",")
+        return artists.joinToString()
     }
 
     /**
@@ -26,6 +26,6 @@ class ArtistListTypeConverter {
      */
     @TypeConverter
     fun toArtistList(artistString: String): List<String> {
-        return artistString.split(",")
+        return artistString.takeIf { it.isNotBlank() }?.split(", ").orEmpty()
     }
 }

@@ -19,13 +19,17 @@ class UserProfileResponseToInfoConverter {
             id = from.id,
             displayName = from.displayName,
             email = from.email,
-            image = from.images.takeIf { it.isNotEmpty() }?.last()?.url,
+            image = from.images.lastOrNull()?.url,
             country = convertCountry(from.country).orEmpty(),
             product = from.product
         )
 
     private fun convertCountry(code: String): String? {
         val locale = Locale("", code)
-        return locale.displayCountry
+        return locale.displayCountry.takeIf { it != UNKNOWN_REGION }
+    }
+
+    private companion object {
+        const val UNKNOWN_REGION = "Unknown Region"
     }
 }

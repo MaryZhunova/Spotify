@@ -27,7 +27,6 @@
     //Content description
     <string name="music_icon">music icon</string>
     <string name="arrow_icon">arrow icon</string>
-    <string name="bg_image">background bmage</string>
-
+    <string name="bg_image">background image</string>
 
 </resources>

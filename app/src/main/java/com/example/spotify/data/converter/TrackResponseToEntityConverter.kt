@@ -21,8 +21,8 @@ class TrackResponseToEntityConverter {
             name = from.name,
             previewUrl = from.previewUrl.orEmpty(),
             duration = from.duration,
-            artistsId = from.artists.map{ it.id },
-            artistsName = from.artists.map{ it.name },
+            artistsId = from.artists.map { it.id },
+            artistsName = from.artists.map { it.name },
             album = convertAlbum(from.album),
             isExplicit = from.isExplicit,
             isPlayable = from.isPlayable,
@@ -33,6 +33,6 @@ class TrackResponseToEntityConverter {
         AlbumInfo(
             id = from.id,
             name = from.name,
-            image = from.images.last().url
+            image = from.images.lastOrNull()?.url.orEmpty()
         )
 }
