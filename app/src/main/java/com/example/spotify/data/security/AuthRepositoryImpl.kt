@@ -4,6 +4,7 @@ import com.example.spotify.data.security.converter.AccessTokenResponseToInfoConv
 import com.example.spotify.data.security.net.SpotifyAuthApiMapper
 import com.example.spotify.domain.security.AuthRepository
 import com.example.spotify.models.data.security.AccessTokenInfo
+import com.example.spotify.utils.TimeSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -15,11 +16,13 @@ import javax.inject.Inject
  * @param apiMapper маппер для работы с API авторизации Spotify
  * @param tokenStorage хранилище для безопасного хранения токенов
  * @param accessTokenResponseConverter конвертер для преобразования ответа на запрос токена доступа
+ * @param timeSource класс для получения текущего времени
  */
 class AuthRepositoryImpl @Inject constructor(
     private val apiMapper: SpotifyAuthApiMapper,
     private val tokenStorage: TokenStorage,
-    private val accessTokenResponseConverter: AccessTokenResponseToInfoConverter
+    private val accessTokenResponseConverter: AccessTokenResponseToInfoConverter,
+    private val timeSource: TimeSource
 ) : AuthRepository {
 
     override suspend fun obtainAccessToken(accessCode: String, redirectUri: String): String? =
@@ -30,7 +33,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
 
     private fun checkAccessToken(token: AccessTokenInfo): Boolean =
-        token.expiresAt < System.currentTimeMillis()
+        token.expiresAt < timeSource.getCurrentTime()
 
     override suspend fun getAccessToken(): String = withContext(Dispatchers.IO) {
         getAccessTokenInternal() ?: throw NullAccessTokenException

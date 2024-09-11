@@ -2,12 +2,18 @@ package com.example.spotify.data.security.converter
 
 import com.example.spotify.models.data.security.AccessTokenInfo
 import com.example.spotify.models.data.security.net.AccessTokenResponse
+import com.example.spotify.utils.TimeSource
+import javax.inject.Inject
 
 /**
  * Конвертер сетевой модели [AccessTokenResponse] в дата модель [AccessTokenInfo]
+ *
+ * @constructor
+ * @param timeSource класс для получения текущего времени
  */
-class AccessTokenResponseToInfoConverter {
-
+class AccessTokenResponseToInfoConverter @Inject constructor(
+    private val timeSource: TimeSource
+) {
     /**
      * Конвертирует [AccessTokenResponse] в [AccessTokenInfo]
      *
@@ -18,6 +24,6 @@ class AccessTokenResponseToInfoConverter {
             accessToken = from.accessToken,
             refreshToken = from.refreshToken,
             tokenType = from.tokenType,
-            expiresAt = from.expiresIn * 1000 + System.currentTimeMillis()
+            expiresAt = from.expiresIn * 1000 + timeSource.getCurrentTime()
         )
 }

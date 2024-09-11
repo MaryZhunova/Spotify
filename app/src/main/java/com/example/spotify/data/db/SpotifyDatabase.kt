@@ -12,7 +12,7 @@ import com.example.spotify.data.converter.ArtistListTypeConverter
  * @property artistDao DAO для работы с таблицей исполнителей
  * @property trackDao DAO для работы с таблицей треков
  */
-@Database(entities = [TrackEntity::class, ArtistEntity::class], version = 1)
+@Database(entities = [TrackEntity::class, ArtistEntity::class], version = 1, exportSchema = false)
 @TypeConverters(AlbumInfoTypeConverter::class, ArtistListTypeConverter::class)
 abstract class SpotifyDatabase : RoomDatabase() {
 

@@ -32,11 +32,11 @@ interface TrackDao {
     /**
      * Проверяет, существует ли трек с указанным идентификатором в базе данных.
      *
-     * @param trackId Идентификатор трека, который нужно проверить.
+     * @param trackName название трека, который нужно проверить.
      * @return `true`, если трек с таким идентификатором существует, и `false` в противном случае.
      */
-    @Query("SELECT EXISTS(SELECT 1 FROM $TRACK_TABLE_NAME WHERE $FIELD_TRACK_NAME = :trackId)")
-    fun isTrackInDatabase(trackId: String): Boolean
+    @Query("SELECT EXISTS(SELECT 1 FROM $TRACK_TABLE_NAME WHERE $FIELD_TRACK_NAME = :trackName)")
+    fun isTrackInDatabase(trackName: String): Boolean
 
     /**
      * Получает все треки из таблицы.
