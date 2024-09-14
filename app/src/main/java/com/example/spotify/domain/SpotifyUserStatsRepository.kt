@@ -33,7 +33,7 @@ interface SpotifyUserStatsRepository {
      *
      * @return информация о любимых треках в виде объекта  List<TrackInfo>
      */
-    suspend fun getTopTracks(id: String): List<TrackInfo>
+    suspend fun getTopTracksByArtistId(id: String): List<TrackInfo>
 
     /**
      * Получает список топа исполнителей пользователя

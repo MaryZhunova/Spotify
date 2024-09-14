@@ -81,7 +81,7 @@ class ArtistViewModel @Inject constructor(
         _isLoading.value = true
         _topTracks.value = infoRepository.getArtistsTopTracks(id)
         _artist.value = infoRepository.getArtistsInfo(id)
-        _favoriteTracks.value = userRepository.getTopTracks(id)
+        _favoriteTracks.value = userRepository.getTopTracksByArtistId(id)
         _isLoading.value = false
     }
 
