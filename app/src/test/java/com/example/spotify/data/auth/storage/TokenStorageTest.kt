@@ -1,4 +1,4 @@
-package com.example.spotify.data.auth
+package com.example.spotify.data.auth.storage
 
 import android.content.Context
 import android.content.SharedPreferences
