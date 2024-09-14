@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.VisibleForTesting
 import javax.inject.Inject
 
 /**
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SessionTimerViewModel @Inject constructor() : ViewModel() {
 
-    private var timerJob: Job? = null
+    @VisibleForTesting
+    internal var timerJob: Job? = null
 
     private val _onSessionExpired = MutableSharedFlow<Unit>()
 
