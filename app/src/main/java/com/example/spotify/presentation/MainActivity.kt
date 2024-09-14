@@ -15,14 +15,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.spotify.domain.security.AuthRepository
-import com.example.spotify.presentation.ui.screens.auth.AuthScreen
-import com.example.spotify.presentation.ui.screens.top.ArtistScreen
-import com.example.spotify.presentation.ui.screens.top.TopArtistsScreen
-import com.example.spotify.presentation.ui.screens.top.TopTracksScreen
-import com.example.spotify.presentation.ui.theme.SpotifyTheme
-import com.example.spotify.presentation.viewmodels.AuthViewModel
-import com.example.spotify.presentation.viewmodels.SessionTimerViewModel
+import com.example.spotify.domain.auth.AuthRepository
+import com.example.spotify.presentation.auth.AuthScreen
+import com.example.spotify.presentation.artist.ArtistScreen
+import com.example.spotify.presentation.top.TopArtistsScreen
+import com.example.spotify.presentation.top.TopTracksScreen
+import com.example.spotify.presentation.theme.SpotifyTheme
+import com.example.spotify.presentation.auth.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

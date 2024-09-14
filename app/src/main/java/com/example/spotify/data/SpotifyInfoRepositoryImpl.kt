@@ -6,7 +6,7 @@ import com.example.spotify.data.db.ArtistDao
 import com.example.spotify.data.db.TrackDao
 import com.example.spotify.data.net.SpotifyInfoApiMapper
 import com.example.spotify.domain.SpotifyInfoRepository
-import com.example.spotify.domain.security.AuthRepository
+import com.example.spotify.domain.auth.AuthRepository
 import com.example.spotify.models.data.AlbumInfo
 import com.example.spotify.models.data.ArtistInfo
 import com.example.spotify.models.data.TopTrackInfo

@@ -11,7 +11,7 @@ import com.example.spotify.data.db.TrackDao
 import com.example.spotify.data.db.TrackEntity
 import com.example.spotify.data.net.SpotifyUserStatsApiMapper
 import com.example.spotify.domain.SpotifyUserStatsRepository
-import com.example.spotify.domain.security.AuthRepository
+import com.example.spotify.domain.auth.AuthRepository
 import com.example.spotify.models.data.ArtistInfo
 import com.example.spotify.models.data.TrackInfo
 import com.example.spotify.models.data.UserProfileInfo
