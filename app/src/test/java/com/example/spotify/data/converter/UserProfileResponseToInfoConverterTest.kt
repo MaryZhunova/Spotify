@@ -1,8 +1,8 @@
 package com.example.spotify.data.converter
 
-import com.example.spotify.models.data.UserProfileInfo
-import com.example.spotify.models.data.net.Image
-import com.example.spotify.models.data.net.UserProfileResponse
+import com.example.spotify.domain.models.UserProfileInfo
+import com.example.spotify.data.models.network.Image
+import com.example.spotify.data.models.network.UserProfileResponse
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

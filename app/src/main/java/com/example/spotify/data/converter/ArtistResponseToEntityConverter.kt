@@ -1,7 +1,7 @@
 package com.example.spotify.data.converter
 
-import com.example.spotify.data.db.ArtistEntity
-import com.example.spotify.models.data.net.ArtistResponse
+import com.example.spotify.data.models.db.ArtistEntity
+import com.example.spotify.data.models.network.ArtistResponse
 
 /**
  * Конвертер сетевой модели [ArtistResponse] в модель базы данных [ArtistEntity]

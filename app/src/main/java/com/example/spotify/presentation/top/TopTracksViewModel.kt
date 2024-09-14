@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyUserStatsRepository
-import com.example.spotify.models.data.TrackInfo
-import com.example.spotify.models.presentation.TimePeriods
+import com.example.spotify.domain.models.TrackInfo
+import com.example.spotify.presentation.models.TimePeriods
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch

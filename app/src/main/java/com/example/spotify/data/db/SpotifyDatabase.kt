@@ -5,6 +5,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.spotify.data.converter.AlbumInfoTypeConverter
 import com.example.spotify.data.converter.ArtistListTypeConverter
+import com.example.spotify.data.models.db.ArtistEntity
+import com.example.spotify.data.models.db.TrackEntity
 
 /**
  * База данных

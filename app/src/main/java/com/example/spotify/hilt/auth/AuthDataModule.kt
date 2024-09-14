@@ -1,8 +1,8 @@
 package com.example.spotify.hilt.auth
 
 import com.example.spotify.data.auth.AuthRepositoryImpl
-import com.example.spotify.data.auth.net.SpotifyAuthApiMapper
-import com.example.spotify.data.auth.net.SpotifyAuthApiMapperImpl
+import com.example.spotify.data.auth.network.SpotifyAuthApiMapper
+import com.example.spotify.data.auth.network.SpotifyAuthApiMapperImpl
 import com.example.spotify.domain.auth.AuthRepository
 import dagger.Binds
 import dagger.Module

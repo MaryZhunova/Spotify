@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.example.spotify.models.presentation.AuthState
+import com.example.spotify.presentation.models.AuthState
 import com.example.spotify.presentation.components.ProgressIndicator
 
 /**

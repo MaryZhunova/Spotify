@@ -1,7 +1,7 @@
 package com.example.spotify.hilt
 
-import com.example.spotify.data.net.SpotifyInfoApiService
-import com.example.spotify.data.net.SpotifyUserStatsApiService
+import com.example.spotify.data.network.api.SpotifyInfoApiService
+import com.example.spotify.data.network.api.SpotifyUserStatsApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

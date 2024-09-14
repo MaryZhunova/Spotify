@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spotify.R
-import com.example.spotify.models.data.UserProfileInfo
+import com.example.spotify.domain.models.UserProfileInfo
 import com.example.spotify.presentation.TOP_ARTISTS_SCREEN
 import com.example.spotify.presentation.TOP_TRACKS_SCREEN
 import com.example.spotify.presentation.components.AppBar

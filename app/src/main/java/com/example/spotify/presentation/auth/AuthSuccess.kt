@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.spotify.R
 import com.example.spotify.data.auth.NullAccessTokenException
-import com.example.spotify.models.presentation.DialogState
-import com.example.spotify.models.presentation.UserProfileState
+import com.example.spotify.presentation.models.DialogState
+import com.example.spotify.presentation.models.UserProfileState
 import com.example.spotify.presentation.components.ErrorScreen
 import com.example.spotify.presentation.components.ProgressIndicator
 import com.example.spotify.presentation.components.SimpleDialog

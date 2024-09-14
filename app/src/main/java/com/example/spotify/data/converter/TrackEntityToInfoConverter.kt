@@ -1,7 +1,7 @@
 package com.example.spotify.data.converter
 
-import com.example.spotify.data.db.TrackEntity
-import com.example.spotify.models.data.TrackInfo
+import com.example.spotify.data.models.db.TrackEntity
+import com.example.spotify.domain.models.TrackInfo
 
 /**
  * Конвертер модели бд [TrackEntity] в дата модель [TrackInfo]

@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyInfoRepository
 import com.example.spotify.domain.SpotifyUserStatsRepository
-import com.example.spotify.models.data.ArtistInfo
-import com.example.spotify.models.data.TopTrackInfo
-import com.example.spotify.models.data.TrackInfo
+import com.example.spotify.domain.models.ArtistInfo
+import com.example.spotify.domain.models.TopTrackInfo
+import com.example.spotify.domain.models.TrackInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch

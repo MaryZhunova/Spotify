@@ -53,8 +53,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.spotify.R
-import com.example.spotify.models.data.TopTrackInfo
-import com.example.spotify.models.data.TrackInfo
+import com.example.spotify.domain.models.TopTrackInfo
+import com.example.spotify.domain.models.TrackInfo
 import com.example.spotify.presentation.components.ProgressIndicator
 import com.example.spotify.presentation.components.ScrollableAppBar
 import kotlinx.coroutines.launch

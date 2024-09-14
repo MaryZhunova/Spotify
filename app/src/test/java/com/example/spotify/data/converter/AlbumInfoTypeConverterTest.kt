@@ -1,6 +1,6 @@
 package com.example.spotify.data.converter
 
-import com.example.spotify.models.data.AlbumInfo
+import com.example.spotify.domain.models.AlbumInfo
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import io.mockk.every

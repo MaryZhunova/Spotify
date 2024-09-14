@@ -4,6 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.spotify.data.models.db.FIELD_TRACK_ARTISTS_ID
+import com.example.spotify.data.models.db.FIELD_TRACK_NAME
+import com.example.spotify.data.models.db.TRACK_TABLE_NAME
+import com.example.spotify.data.models.db.TrackEntity
 
 /**
  * Data Access Object (DAO) для работы с таблицей треков в базе данных

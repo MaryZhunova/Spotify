@@ -1,9 +1,9 @@
 package com.example.spotify.data.converter
 
-import com.example.spotify.data.db.TrackEntity
-import com.example.spotify.models.data.AlbumInfo
-import com.example.spotify.models.data.net.Album
-import com.example.spotify.models.data.net.TrackResponse
+import com.example.spotify.data.models.db.TrackEntity
+import com.example.spotify.domain.models.AlbumInfo
+import com.example.spotify.data.models.network.Album
+import com.example.spotify.data.models.network.TrackResponse
 
 /**
  * Конвертер сетевой модели [TrackResponse] в модель бд [TrackEntity]

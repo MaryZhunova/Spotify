@@ -1,9 +1,9 @@
 package com.example.spotify.data.auth
 
 import com.example.spotify.data.auth.converter.AccessTokenResponseToInfoConverter
-import com.example.spotify.data.auth.net.SpotifyAuthApiMapper
-import com.example.spotify.models.data.auth.AccessTokenInfo
-import com.example.spotify.models.data.auth.net.AccessTokenResponse
+import com.example.spotify.data.auth.network.SpotifyAuthApiMapper
+import com.example.spotify.domain.models.auth.AccessTokenInfo
+import com.example.spotify.data.models.auth.network.AccessTokenResponse
 import com.example.spotify.utils.TimeSource
 import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs

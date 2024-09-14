@@ -2,7 +2,7 @@ package com.example.spotify.hilt.auth
 
 import android.content.Context
 import com.example.spotify.data.auth.TokenStorage
-import com.example.spotify.data.auth.net.SpotifyAuthApiService
+import com.example.spotify.data.auth.network.SpotifyAuthApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

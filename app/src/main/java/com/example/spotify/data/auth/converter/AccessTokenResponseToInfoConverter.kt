@@ -1,7 +1,7 @@
 package com.example.spotify.data.auth.converter
 
-import com.example.spotify.models.data.auth.AccessTokenInfo
-import com.example.spotify.models.data.auth.net.AccessTokenResponse
+import com.example.spotify.domain.models.auth.AccessTokenInfo
+import com.example.spotify.data.models.auth.network.AccessTokenResponse
 import com.example.spotify.utils.TimeSource
 import javax.inject.Inject
 

@@ -1,8 +1,8 @@
 package com.example.spotify.domain
 
-import com.example.spotify.models.data.ArtistInfo
-import com.example.spotify.models.data.TrackInfo
-import com.example.spotify.models.data.UserProfileInfo
+import com.example.spotify.domain.models.ArtistInfo
+import com.example.spotify.domain.models.TrackInfo
+import com.example.spotify.domain.models.UserProfileInfo
 
 /**
  * Интерфейс репозитория для получения информации

@@ -1,10 +1,10 @@
 package com.example.spotify.data.converter
 
-import com.example.spotify.models.data.AlbumInfo
-import com.example.spotify.models.data.net.Album
-import com.example.spotify.models.data.net.Artist
-import com.example.spotify.models.data.net.Image
-import com.example.spotify.models.data.net.TrackResponse
+import com.example.spotify.domain.models.AlbumInfo
+import com.example.spotify.data.models.network.Album
+import com.example.spotify.data.models.network.Artist
+import com.example.spotify.data.models.network.Image
+import com.example.spotify.data.models.network.TrackResponse
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

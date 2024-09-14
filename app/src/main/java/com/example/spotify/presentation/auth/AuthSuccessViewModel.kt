@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyUserStatsRepository
-import com.example.spotify.models.presentation.Button
-import com.example.spotify.models.presentation.DialogState
-import com.example.spotify.models.presentation.UserProfileState
+import com.example.spotify.presentation.models.Button
+import com.example.spotify.presentation.models.DialogState
+import com.example.spotify.presentation.models.UserProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow

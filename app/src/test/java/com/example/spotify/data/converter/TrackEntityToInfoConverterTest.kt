@@ -1,7 +1,7 @@
 package com.example.spotify.data.converter
 
-import com.example.spotify.data.db.TrackEntity
-import com.example.spotify.models.data.AlbumInfo
+import com.example.spotify.data.models.db.TrackEntity
+import com.example.spotify.domain.models.AlbumInfo
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

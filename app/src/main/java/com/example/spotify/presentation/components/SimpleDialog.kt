@@ -5,7 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.DialogProperties
-import com.example.spotify.models.presentation.DialogState
+import com.example.spotify.presentation.models.DialogState
 
 /**
  * Компонент, отображающий алерт

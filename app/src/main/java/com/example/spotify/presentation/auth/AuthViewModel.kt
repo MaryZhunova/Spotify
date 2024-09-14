@@ -11,8 +11,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.spotify.BuildConfig
 import com.example.spotify.domain.SpotifyInfoRepository
 import com.example.spotify.domain.auth.AuthRepository
-import com.example.spotify.models.presentation.AuthError
-import com.example.spotify.models.presentation.AuthState
+import com.example.spotify.presentation.models.AuthError
+import com.example.spotify.presentation.models.AuthState
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse

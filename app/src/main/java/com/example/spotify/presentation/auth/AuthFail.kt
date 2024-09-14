@@ -10,8 +10,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.spotify.R
-import com.example.spotify.models.presentation.AuthError
-import com.example.spotify.models.presentation.AuthState
+import com.example.spotify.presentation.models.AuthError
+import com.example.spotify.presentation.models.AuthState
 import com.example.spotify.presentation.components.ErrorScreen
 
 /**

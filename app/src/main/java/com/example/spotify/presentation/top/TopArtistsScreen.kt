@@ -28,8 +28,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.spotify.R
-import com.example.spotify.models.data.ArtistInfo
-import com.example.spotify.models.presentation.TimePeriods
+import com.example.spotify.domain.models.ArtistInfo
+import com.example.spotify.presentation.models.TimePeriods
 import com.example.spotify.presentation.ARTIST_SCREEN
 import com.example.spotify.presentation.components.AppBar
 import com.example.spotify.presentation.components.ProgressIndicator
