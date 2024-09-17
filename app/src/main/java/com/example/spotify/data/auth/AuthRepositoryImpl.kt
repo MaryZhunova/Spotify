@@ -4,7 +4,7 @@ import com.example.spotify.data.auth.converter.AccessTokenResponseToInfoConverte
 import com.example.spotify.data.auth.network.SpotifyAuthApiMapper
 import com.example.spotify.data.auth.storage.TokenStorage
 import com.example.spotify.domain.auth.AuthRepository
-import com.example.spotify.domain.models.auth.AccessTokenInfo
+import com.example.spotify.domain.auth.models.AccessTokenInfo
 import com.example.spotify.utils.TimeSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -83,16 +83,14 @@ class AuthViewModel @Inject constructor(
      * @param resultCode код результата, указывающий на успех или неудачу входа
      * @param data intent, возвращенный из активити, содержащий ответ авторизации
      */
-    fun handleAuthResult(resultCode: Int, data: Intent?) {
-        viewModelScope.launch {
-            val response = AuthorizationClient.getResponse(resultCode, data)
-            if (response.type == AuthorizationResponse.Type.CODE &&
-                authRepository.obtainAccessToken(response.code, REDIRECT_URI) != null
-            ) {
-                _authState.value = AuthState.Success
-            } else {
-                _authState.value = AuthState.Fail(error = AuthError.AUTH_FAIL)
-            }
+    fun handleAuthResult(resultCode: Int, data: Intent?) = viewModelScope.launch {
+        val response = AuthorizationClient.getResponse(resultCode, data)
+        if (response.type == AuthorizationResponse.Type.CODE &&
+            authRepository.obtainAccessToken(response.code, REDIRECT_URI) != null
+        ) {
+            _authState.value = AuthState.Success
+        } else {
+            _authState.value = AuthState.Fail(error = AuthError.AUTH_FAIL)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.example.spotify.domain.models.auth
+package com.example.spotify.domain.auth.models
 
 /**
  * Информация о токене доступа

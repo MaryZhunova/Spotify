@@ -1,7 +1,7 @@
 package com.example.spotify.data.auth.network
 
 import com.example.spotify.BuildConfig
-import com.example.spotify.data.models.auth.network.AccessTokenResponse
+import com.example.spotify.data.auth.models.AccessTokenResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Credentials

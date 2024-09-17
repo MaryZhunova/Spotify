@@ -3,7 +3,7 @@ package com.example.spotify.data.auth.storage
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
-import com.example.spotify.domain.models.auth.AccessTokenInfo
+import com.example.spotify.domain.auth.models.AccessTokenInfo
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import io.mockk.Runs
