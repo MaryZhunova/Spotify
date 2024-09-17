@@ -3,6 +3,7 @@ package com.example.spotify.presentation.top
 import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.domain.models.ArtistInfo
 import com.example.spotify.presentation.models.TimePeriods
+import com.example.spotify.presentation.models.TopArtistsState
 import com.google.common.truth.Truth
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -31,7 +32,6 @@ class TopArtistsViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
 
-
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
@@ -51,11 +51,30 @@ class TopArtistsViewModelTest {
 
         viewModel.fetchTopArtists(TimePeriods.LONG).join()
 
-        Truth.assertThat(viewModel.topArtists.value).isEqualTo(info)
-        Truth.assertThat(viewModel.isLoading.value).isEqualTo(false)
+        Truth.assertThat(viewModel.topArtistsState.value).isInstanceOf(TopArtistsState.Success::class.java)
+        (viewModel.topArtistsState.value as TopArtistsState.Success).also {
+            Truth.assertThat(it.topArtists).isEqualTo(info)
+        }
 
         viewModel.fetchTopArtists(TimePeriods.LONG).join()
         viewModel.fetchTopArtists(TimePeriods.LONG).join()
+
+        coVerify(exactly = 1) {
+            statsRepository.getTopArtists("long_term")
+        }
+    }
+
+    @Test
+    fun `fetchTopArtists error`() = runTest {
+        val error = Exception()
+        coEvery { statsRepository.getTopArtists("long_term") } throws error
+
+        viewModel.fetchTopArtists(TimePeriods.LONG).join()
+
+        Truth.assertThat(viewModel.topArtistsState.value).isInstanceOf(TopArtistsState.Fail::class.java)
+        (viewModel.topArtistsState.value as TopArtistsState.Fail).also {
+            Truth.assertThat(it.error).isEqualTo(error)
+        }
 
         coVerify(exactly = 1) {
             statsRepository.getTopArtists("long_term")

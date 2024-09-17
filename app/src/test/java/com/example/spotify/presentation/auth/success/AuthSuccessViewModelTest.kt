@@ -1,4 +1,4 @@
-package com.example.spotify.presentation.auth
+package com.example.spotify.presentation.auth.success
 
 import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.domain.models.UserProfileInfo

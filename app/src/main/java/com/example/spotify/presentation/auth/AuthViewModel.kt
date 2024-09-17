@@ -57,7 +57,6 @@ class AuthViewModel @Inject constructor(
      */
     fun startAuth(activity: Activity, authLauncher: ActivityResultLauncher<Intent>) {
         try {
-            _authState.value = AuthState.Loading
             activity.packageManager.getPackageInfo(PACKAGE_NAME, 0)
 
             val request = AuthorizationRequest.Builder(

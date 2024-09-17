@@ -1,4 +1,4 @@
-package com.example.spotify.presentation.auth
+package com.example.spotify.presentation.auth.success
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

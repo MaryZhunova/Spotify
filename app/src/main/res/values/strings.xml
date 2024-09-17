@@ -12,13 +12,14 @@
     <string name="top_artists">Top Artists</string>
 
     //Errors
-    <string name="oopsie">Oopsie...</string>
     <string name="no_data">Couldn\'t retrieve the data</string>
     <string name="log_in_again">Log in again</string>
     <string name="spotify_not_found">Spotify not found</string>
     <string name="install_spotify_first">You need to install Spotify first</string>
     <string name="auth_failed">Authentication failed</string>
+    <string name="request_failed">Request failed</string>
     <string name="try_again">Try again</string>
+    <string name="ok">Okay</string>
 
     //AuthScreen
     <string name="log_in">LOG IN</string>

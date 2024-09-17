@@ -1,8 +1,10 @@
 package com.example.spotify.presentation.top
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -20,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,7 +34,9 @@ import com.example.spotify.R
 import com.example.spotify.domain.models.TrackInfo
 import com.example.spotify.presentation.models.TimePeriods
 import com.example.spotify.presentation.components.AppBar
+import com.example.spotify.presentation.components.ErrorIcon
 import com.example.spotify.presentation.components.ProgressIndicator
+import com.example.spotify.presentation.models.TopTracksState
 
 /**
  * Экран топа треков
@@ -43,11 +49,9 @@ fun TopTracksScreen(
 ) {
     val viewModel: TopTracksViewModel = hiltViewModel()
     val periods = listOf(TimePeriods.SHORT, TimePeriods.MEDIUM, TimePeriods.LONG)
+
     val selectedPeriod by viewModel.selectedPeriod
-
-
-    val topTracks by viewModel.topTracks
-    val isLoading by viewModel.isLoading
+    val state by viewModel.topTracksState
 
     LaunchedEffect(selectedPeriod) {
         viewModel.fetchTopTracks(selectedPeriod)
@@ -70,20 +74,40 @@ fun TopTracksScreen(
                     }
                 }
             }
-            if (isLoading) {
-                ProgressIndicator()
-            } else {
-                Column(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .verticalScroll(rememberScrollState()),
-                ) {
-                    topTracks.forEachIndexed { index, track ->
-                        TrackItem(track = track, index = index)
+
+            Crossfade(targetState = state, label = "crossfadeLabel") { topTracksState ->
+                when (topTracksState) {
+                    is TopTracksState.Idle -> {}
+                    is TopTracksState.Loading -> ProgressIndicator()
+                    is TopTracksState.Fail -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            ErrorIcon()
+                            Text(
+                                modifier = Modifier.padding(bottom = 36.dp),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.headlineLarge,
+                                color = MaterialTheme.colorScheme.error,
+                                text = topTracksState.error.message ?: stringResource(id = R.string.request_failed)
+                            )
+                        }
                     }
-
-
+                    is TopTracksState.Success -> {
+                        Column(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .verticalScroll(rememberScrollState()),
+                        ) {
+                            topTracksState.topTracks.forEachIndexed { index, track ->
+                                TrackItem(track = track, index = index)
+                            }
+                        }
+                    }
                 }
+
             }
         }
     }

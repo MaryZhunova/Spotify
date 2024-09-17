@@ -93,7 +93,6 @@ class AuthViewModelTest {
 
         viewModel.startAuth(activity, authLauncher)
 
-        Truth.assertThat(viewModel.authState.value).isEqualTo(AuthState.Loading)
         verifySequence {
             activity.packageManager.getPackageInfo("com.spotify.music", 0)
             AuthorizationClient.createLoginActivityIntent(activity, request)

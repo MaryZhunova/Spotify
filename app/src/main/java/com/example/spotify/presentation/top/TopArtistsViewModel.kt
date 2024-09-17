@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.domain.models.ArtistInfo
 import com.example.spotify.presentation.models.TimePeriods
+import com.example.spotify.presentation.models.TopArtistsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -23,13 +24,11 @@ class TopArtistsViewModel @Inject constructor(
     private val statsRepository: SpotifyUserStatsRepository
 ) : ViewModel() {
 
+    private val _topArtistsState = mutableStateOf<TopArtistsState>(TopArtistsState.Idle)
+
     private val artistsInfoItems = mutableMapOf<TimePeriods, List<ArtistInfo>>()
 
     private val _selectedPeriod = mutableStateOf(TimePeriods.SHORT)
-
-    private val _topArtists = mutableStateOf<List<ArtistInfo>>(emptyList())
-
-    private val _isLoading = mutableStateOf(false)
 
     /**
      * Выбранный период
@@ -38,34 +37,28 @@ class TopArtistsViewModel @Inject constructor(
         get() = _selectedPeriod
 
     /**
-     * Список исполнителей
+     * Состояние загрузки
      */
-    val topArtists: State<List<ArtistInfo>>
-        get() = _topArtists
-
-    /**
-     * Состояние загрузки данных
-     */
-    val isLoading: State<Boolean>
-        get() = _isLoading
+    val topArtistsState: State<TopArtistsState>
+        get() = _topArtistsState
 
     /**
      * Загружает данные о топ исполнителях
      */
     fun fetchTopArtists(period: TimePeriods) = viewModelScope.launch(
         CoroutineExceptionHandler { _, err ->
-            //todo
+            _topArtistsState.value = TopArtistsState.Fail(err)
         }
     ) {
         val savedInfo = artistsInfoItems[period]
         if (savedInfo != null) {
-            _topArtists.value = savedInfo
+            _topArtistsState.value = TopArtistsState.Success(savedInfo)
         } else {
-            _isLoading.value = true
+            _topArtistsState.value = TopArtistsState.Loading
             val info = statsRepository.getTopArtists(period.strValue)
             artistsInfoItems.putIfAbsent(period, info)
-            _topArtists.value = info
-            _isLoading.value = false
+            _topArtistsState.value = TopArtistsState.Success(info)
+
         }
     }
 

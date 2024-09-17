@@ -1,9 +1,11 @@
 package com.example.spotify.presentation.top
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,7 +36,9 @@ import com.example.spotify.domain.models.ArtistInfo
 import com.example.spotify.presentation.models.TimePeriods
 import com.example.spotify.presentation.ARTIST_SCREEN
 import com.example.spotify.presentation.components.AppBar
+import com.example.spotify.presentation.components.ErrorIcon
 import com.example.spotify.presentation.components.ProgressIndicator
+import com.example.spotify.presentation.models.TopArtistsState
 
 /**
  * Экран топа исполнителей
@@ -48,8 +54,7 @@ fun TopArtistsScreen(
     val periods = listOf(TimePeriods.SHORT, TimePeriods.MEDIUM, TimePeriods.LONG)
     val selectedPeriod by viewModel.selectedPeriod
 
-    val topArtists by viewModel.topArtists
-    val isLoading by viewModel.isLoading
+    val state by viewModel.topArtistsState
 
     LaunchedEffect(selectedPeriod) {
         viewModel.fetchTopArtists(selectedPeriod)
@@ -72,25 +77,47 @@ fun TopArtistsScreen(
                     }
                 }
             }
-            if (isLoading) {
-                ProgressIndicator()
-            } else {
-                Column(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .verticalScroll(rememberScrollState()),
-                ) {
-                    topArtists.forEachIndexed { index, artistInfo ->
-                        ArtistItem(artist = artistInfo, index = index) { id ->
-                            navController.navigate("$ARTIST_SCREEN/$id")
+            Crossfade(targetState = state, label = "crossfadeLabel") { topArtistsState ->
+                when (topArtistsState) {
+                    is TopArtistsState.Idle -> {}
+                    is TopArtistsState.Loading -> ProgressIndicator()
+                    is TopArtistsState.Fail -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            ErrorIcon()
+                            Text(
+                                modifier = Modifier.padding(bottom = 36.dp),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.headlineLarge,
+                                color = MaterialTheme.colorScheme.error,
+                                text = topArtistsState.error.message
+                                    ?: stringResource(id = R.string.request_failed)
+                            )
                         }
                     }
+
+                    is TopArtistsState.Success -> {
+                        Column(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .verticalScroll(rememberScrollState()),
+                        ) {
+                            topArtistsState.topArtists.forEachIndexed { index, artistInfo ->
+                                ArtistItem(artist = artistInfo, index = index) { id ->
+                                    navController.navigate("$ARTIST_SCREEN/$id")
+                                }
+                            }
+                        }
+                    }
+
                 }
             }
         }
     }
 }
-
 
 @Composable
 fun ArtistItem(artist: ArtistInfo, index: Int, onClick: (String) -> Unit) {

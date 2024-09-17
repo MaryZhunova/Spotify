@@ -11,11 +11,6 @@ sealed interface AuthState {
     data object Idle : AuthState
 
     /**
-     * Состояние, когда аутентификация в процессе
-     */
-    data object Loading : AuthState
-
-    /**
      * Состояние, когда произошла ошибка аутентификации
      *
      * @property error тип ошибки аутентификации

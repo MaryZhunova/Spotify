@@ -1,8 +1,7 @@
-package com.example.spotify.presentation.auth
+package com.example.spotify.presentation.auth.success
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -11,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -24,7 +22,6 @@ import com.example.spotify.presentation.models.UserProfileState
 import com.example.spotify.presentation.components.ErrorScreen
 import com.example.spotify.presentation.components.ProgressIndicator
 import com.example.spotify.presentation.components.SimpleDialog
-import com.example.spotify.presentation.user.UserProfileSuccessScreen
 
 /**
  * Компонент, отображающий экран успешной авторизации
@@ -33,7 +30,7 @@ import com.example.spotify.presentation.user.UserProfileSuccessScreen
  * @param onTopClick Действие, выполняемое при нажатии на кнопки для перехода на экраны с топ-треков или топ-артистов
  */
 @Composable
-fun AuthSuccess(
+fun AuthSuccessScreen(
     onBackClick: () -> Unit,
     onTopClick: (String) -> Unit,
 ) {
@@ -49,12 +46,10 @@ fun AuthSuccess(
         viewModel.showExitDialog { onBackClick.invoke() }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        when (val profile = userProfile) {
+    Crossfade(targetState = userProfile, label = "crossfadeLabel") { profile ->
+        when (profile) {
             is UserProfileState.Idle -> ProgressIndicator()
-            is UserProfileState.Success -> UserProfileSuccessScreen(
+            is UserProfileState.Success -> AuthSuccess(
                 info = profile.info,
                 onBackClick = { viewModel.showExitDialog { onBackClick.invoke() } },
                 onTopClick = { onTopClick.invoke(it) }
@@ -62,7 +57,7 @@ fun AuthSuccess(
 
             is UserProfileState.Error -> ErrorScreen {
                 Text(
-                    modifier = Modifier.padding(bottom = 16.dp),
+                    modifier = Modifier.padding(bottom = 36.dp),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.error,
@@ -79,7 +74,6 @@ fun AuthSuccess(
                     }
                 }
             }
-
         }
     }
 

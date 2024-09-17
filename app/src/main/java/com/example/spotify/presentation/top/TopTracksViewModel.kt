@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.domain.models.TrackInfo
 import com.example.spotify.presentation.models.TimePeriods
+import com.example.spotify.presentation.models.TopTracksState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -23,13 +24,11 @@ class TopTracksViewModel @Inject constructor(
     private val statsRepository: SpotifyUserStatsRepository
 ) : ViewModel() {
 
+    private val _topTracksState = mutableStateOf<TopTracksState>(TopTracksState.Idle)
+
     private val trackInfoItems = mutableMapOf<TimePeriods, List<TrackInfo>>()
 
     private val _selectedPeriod = mutableStateOf(TimePeriods.SHORT)
-
-    private val _topTracks = mutableStateOf<List<TrackInfo>>(emptyList())
-
-    private val _isLoading = mutableStateOf(false)
 
     /**
      * Выбранный период
@@ -38,34 +37,27 @@ class TopTracksViewModel @Inject constructor(
         get() = _selectedPeriod
 
     /**
-     * Список исполнителей
+     * Состояние загрузки
      */
-    val topTracks: State<List<TrackInfo>>
-        get() = _topTracks
-
-    /**
-     * Состояние загрузки данных
-     */
-    val isLoading: State<Boolean>
-        get() = _isLoading
+    val topTracksState: State<TopTracksState>
+        get() = _topTracksState
 
     /**
      * Загружает данные о топ исполнителях
      */
     fun fetchTopTracks(period: TimePeriods) = viewModelScope.launch(
         CoroutineExceptionHandler { _, err ->
-            //todo
+            _topTracksState.value = TopTracksState.Fail(err)
         }
     ) {
         val savedInfo = trackInfoItems[period]
         if (savedInfo != null) {
-            _topTracks.value = savedInfo
+            _topTracksState.value = TopTracksState.Success(savedInfo)
         } else {
-            _isLoading.value = true
+            _topTracksState.value = TopTracksState.Loading
             val info = statsRepository.getTopTracks(timeRange = period.strValue)
             trackInfoItems.putIfAbsent(period, info)
-            _topTracks.value = info
-            _isLoading.value = false
+            _topTracksState.value = TopTracksState.Success(info)
         }
     }
 
