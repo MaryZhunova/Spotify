@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -117,12 +118,13 @@ fun TopTracksScreen(
 fun TrackItem(track: TrackInfo, index: Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp)
+        modifier = Modifier.padding(vertical = 4.dp).padding(end = 16.dp)
     ) {
         Text(
-            modifier = Modifier.padding(end = 8.dp),
+            modifier = Modifier.width(36.dp),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
             text = "${index + 1}.",
         )
         AsyncImage(
