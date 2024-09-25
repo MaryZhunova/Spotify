@@ -65,7 +65,8 @@ class SpotifyUserStatsRepositoryImpl @Inject constructor(
     override suspend fun getTopTracks(timeRange: String): List<TrackInfo> =
         withContext(Dispatchers.IO) {
             val entities = userStatsStorage.getIdsList(getTracksCacheKey(timeRange))?.let { ids ->
-                trackDao.getByIds(*ids.toTypedArray())
+                val tracks = trackDao.getByIds(*ids.toTypedArray())
+                tracks.sortedBy { ids.indexOf(it.id) }
             } ?: getTopTracksInternal(timeRange)
             return@withContext entities.map(trackEntityConverter::convert)
         }
@@ -78,7 +79,8 @@ class SpotifyUserStatsRepositoryImpl @Inject constructor(
     override suspend fun getTopArtists(timeRange: String): List<ArtistInfo> =
         withContext(Dispatchers.IO) {
             val entities = userStatsStorage.getIdsList(getArtistsCacheKey(timeRange))?.let { ids ->
-                artistDao.getByIds(*ids.toTypedArray())
+                val artists = artistDao.getByIds(*ids.toTypedArray())
+                artists.sortedBy { ids.indexOf(it.id) }
             } ?: getTopArtistsInternal(timeRange)
             return@withContext entities.map(artistEntityConverter::convert)
         }

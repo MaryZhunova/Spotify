@@ -113,8 +113,12 @@ class SpotifyUserStatsRepositoryImplTest {
     fun `getTopTracks from cache`() = runTest {
         val idsList = listOf("1", "2")
         val timeRange = "short_term"
-        val trackEntity = mockk<TrackEntity>()
-        val trackEntity2 = mockk<TrackEntity>()
+        val trackEntity = mockk<TrackEntity> {
+            every { id } returns "1"
+        }
+        val trackEntity2 = mockk<TrackEntity> {
+            every { id } returns "2"
+        }
         val trackInfo = mockk<TrackInfo>()
         val trackInfo2 = mockk<TrackInfo>()
 
@@ -222,8 +226,12 @@ class SpotifyUserStatsRepositoryImplTest {
     fun `getTopArtists from cache`() = runTest {
         val idsList = listOf("1", "2")
         val timeRange = "short_term"
-        val artistEntity = mockk<ArtistEntity>()
-        val artistEntity2 = mockk<ArtistEntity>()
+        val artistEntity = mockk<ArtistEntity> {
+            every { id } returns "1"
+        }
+        val artistEntity2 = mockk<ArtistEntity> {
+            every { id } returns "2"
+        }
         val artistInfo = mockk<ArtistInfo>()
         val artistInfo2 = mockk<ArtistInfo>()
 
