@@ -1,19 +1,15 @@
 package com.example.spotify.data
 
 import com.example.spotify.data.converter.ArtistEntityToInfoConverter
-import com.example.spotify.data.converter.TrackEntityToInfoConverter
+import com.example.spotify.data.converter.TrackResponseToInfoConverter
 import com.example.spotify.data.db.ArtistDao
-import com.example.spotify.data.db.TrackDao
 import com.example.spotify.data.models.db.ArtistEntity
-import com.example.spotify.data.models.network.Album
-import com.example.spotify.data.models.network.Artist
 import com.example.spotify.data.models.network.ArtistsTopTracksResponse
-import com.example.spotify.data.models.network.Image
 import com.example.spotify.data.models.network.TrackResponse
 import com.example.spotify.data.network.mappers.SpotifyInfoApiMapper
 import com.example.spotify.domain.auth.AuthRepository
-import com.example.spotify.domain.models.AlbumInfo
 import com.example.spotify.domain.models.ArtistInfo
+import com.example.spotify.domain.models.TrackInfo
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerifySequence
@@ -32,74 +28,39 @@ class SpotifyInfoRepositoryImplTest {
 
     private val apiMapper: SpotifyInfoApiMapper = mockk()
     private val authRepository: AuthRepository = mockk()
-    private val trackConverter: TrackEntityToInfoConverter = mockk()
+    private val trackInfoConverter: TrackResponseToInfoConverter = mockk()
     private val artistConverter: ArtistEntityToInfoConverter = mockk()
     private val artistDao: ArtistDao = mockk()
-    private val trackDao: TrackDao = mockk()
 
     private val spotifyInfoRepository = SpotifyInfoRepositoryImpl(
         apiMapper,
         authRepository,
-        trackConverter,
+        trackInfoConverter,
         artistConverter,
-        artistDao,
-        trackDao
+        artistDao
     )
 
     @Test
     fun getArtistsTopTracksTest() = runTest {
         val artistId = "artist-id"
         val accessToken = "access-token"
-        val trackName = "Track Name"
-        val apiResponse = ArtistsTopTracksResponse(
-            tracks = listOf(
-                TrackResponse(
-                    id = "track-id",
-                    name = trackName,
-                    previewUrl = "preview-url",
-                    duration = 200,
-                    artists = listOf(Artist(id = "artist-id", name = "Artist Name")),
-                    album = Album(
-                        id = "album-id",
-                        name = "Album Name",
-                        images = listOf(Image(url = "image-url")),
-                        releaseDate = "2024-01-01",
-                        releaseDatePrecision = "day"
-                    ),
-                    isExplicit = false,
-                    isPlayable = true,
-                    popularity = 100
-                )
-            )
-        )
+        val trackResponse = mockk<TrackResponse>()
+        val apiResponse = mockk<ArtistsTopTracksResponse> {
+            every { tracks } returns listOf(trackResponse)
+        }
+        val info = mockk<TrackInfo>()
         coEvery { authRepository.getAccessToken() } returns accessToken
         coEvery { apiMapper.getArtistsTopTracks(accessToken, artistId) } returns apiResponse
-        every { trackDao.isTrackInDatabase(any()) } returns true
+        every { trackInfoConverter.convert(any()) } returns info
 
         val result = spotifyInfoRepository.getArtistsTopTracks(artistId)
 
-        assertThat(result).hasSize(1)
-        assertThat(result[0].id).isEqualTo("track-id")
-        assertThat(result[0].name).isEqualTo(trackName)
-        assertThat(result[0].previewUrl).isEqualTo("preview-url")
-        assertThat(result[0].duration).isEqualTo(200)
-        assertThat(result[0].artists).isEqualTo("Artist Name")
-        assertThat(result[0].album).isEqualTo(
-            AlbumInfo(
-                id = "album-id",
-                name = "Album Name",
-                image = "image-url"
-            )
-        )
-        assertThat(result[0].isExplicit).isFalse()
-        assertThat(result[0].isPlayable).isTrue()
-        assertThat(result[0].popularity).isEqualTo(100)
-        assertThat(result[0].isFavorite).isTrue()
+        assertThat(result).isEqualTo(listOf(info))
 
         coVerifySequence {
             authRepository.getAccessToken()
             apiMapper.getArtistsTopTracks(accessToken, artistId)
-            trackDao.isTrackInDatabase(trackName)
+            trackInfoConverter.convert(trackResponse)
         }
     }
 

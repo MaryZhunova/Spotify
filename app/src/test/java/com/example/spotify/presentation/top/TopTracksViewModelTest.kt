@@ -4,12 +4,18 @@ import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.domain.models.TrackInfo
 import com.example.spotify.presentation.models.TimePeriods
 import com.example.spotify.presentation.models.TopTracksState
+import com.example.spotify.utils.AudioPlayerManager
 import com.google.common.truth.Truth
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -27,8 +33,9 @@ import org.junit.jupiter.params.provider.CsvSource
 class TopTracksViewModelTest {
 
     private val statsRepository: SpotifyUserStatsRepository = mockk()
+    private val audioPlayerManager: AudioPlayerManager = mockk()
 
-    private val viewModel = TopTracksViewModel(statsRepository)
+    private val viewModel = TopTracksViewModel(statsRepository, audioPlayerManager)
 
     private val testDispatcher = StandardTestDispatcher()
 
@@ -87,6 +94,34 @@ class TopTracksViewModelTest {
 
         viewModel.switchSelected(period)
         Truth.assertThat(viewModel.selectedPeriod.value).isEqualTo(period)
+    }
 
+    @Test
+    fun playTest() {
+        val trackInfo = mockk<TrackInfo>()
+        every { audioPlayerManager.play(trackInfo) } just Runs
+
+        viewModel.play(trackInfo)
+
+        verify(exactly = 1) { audioPlayerManager.play(trackInfo) }
+    }
+
+    @Test
+    fun stopTest() {
+        every { audioPlayerManager.stop() } just Runs
+
+        viewModel.stop()
+
+        verify(exactly = 1) { audioPlayerManager.stop() }
+    }
+
+    @Test
+    fun currentTrackTest() {
+        val track = mockk<TrackInfo>()
+        coEvery { audioPlayerManager.currentTrack } returns MutableStateFlow(track)
+
+        Truth.assertThat(viewModel.currentTrack.value).isEqualTo(track)
+
+        coVerify(exactly = 1) { audioPlayerManager.currentTrack }
     }
 }

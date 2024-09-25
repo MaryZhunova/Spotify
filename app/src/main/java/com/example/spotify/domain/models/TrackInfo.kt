@@ -13,6 +13,7 @@ package com.example.spotify.domain.models
  * @property isExplicit флаг, указывающий, содержит ли трек неприемлемый контент (нецензурные слова и т.п.)
  * @property isPlayable флаг, указывающий, можно ли воспроизвести трек
  * @property popularity популярность трека, представлена в виде числа (чем выше число, тем популярнее трек)
+ * @property isFavorite входит ли в список любимых треков текущего пользователя
  */
 data class TrackInfo(
     val id: String,
@@ -23,7 +24,8 @@ data class TrackInfo(
     val album: AlbumInfo,
     val isExplicit: Boolean,
     val isPlayable: Boolean,
-    val popularity: Int
+    val popularity: Int,
+    val isFavorite: Boolean = false
 )
 
 /**

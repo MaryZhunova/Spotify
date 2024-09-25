@@ -1,5 +1,6 @@
 package com.example.spotify.hilt
 
+import com.example.spotify.utils.AudioPlayerManager
 import com.example.spotify.utils.TimeSource
 import dagger.Module
 import dagger.Provides
@@ -18,5 +19,11 @@ object UtilsModule {
     @Singleton
     fun provideTimeSource(): TimeSource {
         return TimeSource()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAudioPlayerManager(): AudioPlayerManager {
+        return AudioPlayerManager()
     }
 }

@@ -7,10 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyInfoRepository
 import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.domain.models.ArtistInfo
-import com.example.spotify.domain.models.TopTrackInfo
 import com.example.spotify.domain.models.TrackInfo
+import com.example.spotify.utils.AudioPlayerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,14 +21,15 @@ import javax.inject.Inject
  * @constructor
  * @param infoRepository репозиторий для получения информации о треках и исполнителях из Spotify
  * @param userRepository репозиторий для получения информации о пользователе и его статистике
+ * @param audioPlayerManager управляет воспроизведением треков
  */
 @HiltViewModel
 class ArtistViewModel @Inject constructor(
     private val infoRepository: SpotifyInfoRepository,
-    private val userRepository: SpotifyUserStatsRepository
+    private val userRepository: SpotifyUserStatsRepository,
+    private val audioPlayerManager: AudioPlayerManager
 ) : ViewModel() {
-
-    private val _topTracks = mutableStateOf<List<TopTrackInfo>>(emptyList())
+    private val _topTracks = mutableStateOf<List<TrackInfo>>(emptyList())
 
     private val _favoriteTracks = mutableStateOf<List<TrackInfo>>(emptyList())
 
@@ -40,7 +42,7 @@ class ArtistViewModel @Inject constructor(
     /**
      * Список популярный треков исполнителя
      */
-    val topTracks: State<List<TopTrackInfo>>
+    val topTracks: State<List<TrackInfo>>
         get() = _topTracks
 
     /**
@@ -67,6 +69,16 @@ class ArtistViewModel @Inject constructor(
     val isFavoriteHighlighted: State<Boolean>
         get() = _isFavoriteHighlighted
 
+    /**
+     * Воспроизводимый трек
+     */
+    val currentTrack: StateFlow<TrackInfo?>
+        get() = audioPlayerManager.currentTrack
+
+    override fun onCleared() {
+        super.onCleared()
+        audioPlayerManager.release()
+    }
 
     /**
      * Загружает данные об исполнителе и популярных треках
@@ -97,4 +109,16 @@ class ArtistViewModel @Inject constructor(
             true
         }
     }
+
+    /**
+     * Начать воспроизведение
+     *
+     * @param track трек, который нужно воспроизвести
+     */
+    fun play(track: TrackInfo) = audioPlayerManager.play(track)
+
+    /**
+     * Остановить воспроизведение
+     */
+    fun stop() = audioPlayerManager.stop()
 }

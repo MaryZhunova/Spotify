@@ -1,6 +1,5 @@
 package com.example.spotify.domain.auth
 
-
 /**
  * Интерфейс репозитория для хранения токенов доступа
  */

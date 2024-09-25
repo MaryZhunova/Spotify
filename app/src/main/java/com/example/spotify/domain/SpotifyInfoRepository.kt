@@ -1,7 +1,6 @@
 package com.example.spotify.domain
 
 import com.example.spotify.domain.models.ArtistInfo
-import com.example.spotify.domain.models.TopTrackInfo
 import com.example.spotify.domain.models.TrackInfo
 
 /**
@@ -16,7 +15,7 @@ interface SpotifyInfoRepository {
      *
      * @return информация о топе треков исполнителя в виде списка объектов [TrackInfo]
      */
-    suspend fun getArtistsTopTracks(id: String): List<TopTrackInfo>
+    suspend fun getArtistsTopTracks(id: String): List<TrackInfo>
 
     /**
      * Получает информацию об исполнителе из бд

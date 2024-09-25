@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,10 +57,11 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.spotify.R
-import com.example.spotify.domain.models.TopTrackInfo
 import com.example.spotify.domain.models.TrackInfo
+import com.example.spotify.presentation.components.PlayButton
 import com.example.spotify.presentation.components.ProgressIndicator
 import com.example.spotify.presentation.components.ScrollableAppBar
+import com.example.spotify.presentation.components.TrackItem
 import kotlinx.coroutines.launch
 
 /**
@@ -80,6 +82,7 @@ fun ArtistScreen(
     val isLoading by viewModel.isLoading
     val isHighlighted by viewModel.isFavoriteHighlighted
     val favoriteTracks by viewModel.favoriteTracks
+    val currentTrack by viewModel.currentTrack.collectAsState()
 
     LaunchedEffect(id) {
         viewModel.fetchTracksAndArtist(id)
@@ -152,6 +155,7 @@ fun ArtistScreen(
                     TracksTabRow(
                         topTracks = topTracks,
                         favTracks = favoriteTracks,
+                        currentTrack = currentTrack,
                         isHighlighted = isHighlighted,
                         onHighlightedChange = {
                             if (!viewModel.changeIsHighlightedState()) {
@@ -164,10 +168,17 @@ fun ArtistScreen(
                                     }
                                 }
                             }
-                        }
+                        },
+                        onPlay = { viewModel.play(it) },
+                        onStop = { viewModel.stop() }
                     )
                 } else {
-                    TopTracks(topTracks = topTracks)
+                    TopTracks(
+                        topTracks = topTracks,
+                        currentTrack = currentTrack,
+                        onPlay = { viewModel.play(it) },
+                        onStop = { viewModel.stop() }
+                    )
                 }
             }
         }
@@ -189,10 +200,13 @@ fun ArtistScreen(
 
 @Composable
 private fun TracksTabRow(
-    topTracks: List<TopTrackInfo>,
+    topTracks: List<TrackInfo>,
     favTracks: List<TrackInfo>,
+    currentTrack: TrackInfo?,
     isHighlighted: Boolean,
-    onHighlightedChange: () -> Unit
+    onHighlightedChange: () -> Unit,
+    onPlay: (TrackInfo) -> Unit,
+    onStop: () -> Unit
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf(
@@ -230,24 +244,44 @@ private fun TracksTabRow(
                 overflow = TextOverflow.Ellipsis
             )
             topTracks.forEach { track ->
-                TrackItem(track = track, isHighlighted = isHighlighted)
+                val isPlaying = currentTrack == track
+                TrackItem(
+                    track = track,
+                    isHighlighted = isHighlighted,
+                    isPlaying = isPlaying
+                ) {
+                    if (isPlaying) {
+                        onStop.invoke()
+                    } else {
+                        onPlay.invoke(track)
+                    }
+                }
             }
         }
 
         1 -> {
             Spacer(modifier = Modifier.height(12.dp))
             favTracks.forEachIndexed { index, track ->
-                com.example.spotify.presentation.top.TrackItem(
-                    track = track,
-                    index = index
-                )
+                val isPlaying = currentTrack == track
+                TrackItem(track = track, index = index, isPlaying) {
+                    if (isPlaying) {
+                        onStop.invoke()
+                    } else {
+                        onPlay.invoke(track)
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun TopTracks(topTracks: List<TopTrackInfo>) {
+private fun TopTracks(
+    topTracks: List<TrackInfo>,
+    currentTrack: TrackInfo?,
+    onPlay: (TrackInfo) -> Unit,
+    onStop: () -> Unit
+) {
     Text(
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
         color = MaterialTheme.colorScheme.onBackground,
@@ -257,12 +291,24 @@ private fun TopTracks(topTracks: List<TopTrackInfo>) {
         overflow = TextOverflow.Ellipsis
     )
     topTracks.forEach { track ->
-        TrackItem(track = track)
+        val isPlaying = currentTrack == track
+        TrackItem(track = track, isPlaying = isPlaying) {
+            if (isPlaying) {
+                onStop.invoke()
+            } else {
+                onPlay.invoke(track)
+            }
+        }
     }
 }
 
 @Composable
-private fun TrackItem(track: TopTrackInfo, isHighlighted: Boolean = false) {
+private fun TrackItem(
+    track: TrackInfo,
+    isHighlighted: Boolean = false,
+    isPlaying: Boolean,
+    onClick: () -> Unit
+) {
     val targetColor = if (isHighlighted && track.isFavorite) {
         MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
     } else {
@@ -279,7 +325,7 @@ private fun TrackItem(track: TopTrackInfo, isHighlighted: Boolean = false) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .background(animatedColor)
-            .padding(vertical = 4.dp, horizontal = 16.dp)
+            .padding(vertical = 4.dp).padding(start = 16.dp)
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -313,6 +359,12 @@ private fun TrackItem(track: TopTrackInfo, isHighlighted: Boolean = false) {
                 text = track.artists,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
+            )
+        }
+        if (!track.previewUrl.isNullOrBlank()) {
+            PlayButton(
+                isPlaying = isPlaying,
+                onClick = onClick
             )
         }
     }

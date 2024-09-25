@@ -8,8 +8,10 @@ import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.domain.models.TrackInfo
 import com.example.spotify.presentation.models.TimePeriods
 import com.example.spotify.presentation.models.TopTracksState
+import com.example.spotify.utils.AudioPlayerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,10 +20,12 @@ import javax.inject.Inject
  *
  * @constructor
  * @param statsRepository репозиторий для получения информации о треках из Spotify
+ * @param audioPlayerManager управляет воспроизведением треков
  */
 @HiltViewModel
 class TopTracksViewModel @Inject constructor(
-    private val statsRepository: SpotifyUserStatsRepository
+    private val statsRepository: SpotifyUserStatsRepository,
+    private val audioPlayerManager: AudioPlayerManager
 ) : ViewModel() {
 
     private val _topTracksState = mutableStateOf<TopTracksState>(TopTracksState.Idle)
@@ -41,6 +45,17 @@ class TopTracksViewModel @Inject constructor(
      */
     val topTracksState: State<TopTracksState>
         get() = _topTracksState
+
+    /**
+     * Воспроизводимый трек
+     */
+    val currentTrack: StateFlow<TrackInfo?>
+        get() = audioPlayerManager.currentTrack
+
+    override fun onCleared() {
+        super.onCleared()
+        audioPlayerManager.release()
+    }
 
     /**
      * Загружает данные о топ исполнителях
@@ -67,4 +82,16 @@ class TopTracksViewModel @Inject constructor(
     fun switchSelected(period: TimePeriods) {
         _selectedPeriod.value = period
     }
+
+    /**
+     * Начать воспроизведение
+     *
+     * @param track трек, который нужно воспроизвести
+     */
+    fun play(track: TrackInfo) = audioPlayerManager.play(track)
+
+    /**
+     * Остановить воспроизведение
+     */
+    fun stop() = audioPlayerManager.stop()
 }

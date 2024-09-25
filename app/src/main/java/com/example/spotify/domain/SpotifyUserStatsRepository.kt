@@ -42,5 +42,8 @@ interface SpotifyUserStatsRepository {
      */
     suspend fun getTopArtists(timeRange: String):  List<ArtistInfo>
 
+    /**
+     * Очищает кэш и бд
+     */
     suspend fun clear()
 }

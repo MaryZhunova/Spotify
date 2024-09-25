@@ -4,7 +4,9 @@ import com.example.spotify.data.converter.ArtistEntityToInfoConverter
 import com.example.spotify.data.converter.ArtistResponseToEntityConverter
 import com.example.spotify.data.converter.TrackEntityToInfoConverter
 import com.example.spotify.data.converter.TrackResponseToEntityConverter
+import com.example.spotify.data.converter.TrackResponseToInfoConverter
 import com.example.spotify.data.converter.UserProfileResponseToInfoConverter
+import com.example.spotify.data.db.TrackDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,6 +36,12 @@ object ConverterModule {
     @Singleton
     fun provideTrackResponseToEntityConverter(): TrackResponseToEntityConverter {
         return TrackResponseToEntityConverter()
+    }
+
+    @Provides
+    @Singleton
+    fun provideTrackResponseToInfoConverter(trackDao: TrackDao): TrackResponseToInfoConverter {
+        return TrackResponseToInfoConverter(trackDao)
     }
 
     @Provides
