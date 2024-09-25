@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.spotify.data.models.db.FIELD_TRACK_ARTISTS_ID
+import com.example.spotify.data.models.db.FIELD_TRACK_ID
 import com.example.spotify.data.models.db.FIELD_TRACK_NAME
 import com.example.spotify.data.models.db.TRACK_TABLE_NAME
 import com.example.spotify.data.models.db.TrackEntity
@@ -32,6 +33,15 @@ interface TrackDao {
      */
     @Query("SELECT * FROM $TRACK_TABLE_NAME WHERE :artistId IN ($FIELD_TRACK_ARTISTS_ID)")
     fun findTracksByArtistId(artistId: String): List<TrackEntity>
+
+    /**
+     * Находит треки по списку идентификаторов треков.
+     *
+     * @param trackIds Список идентификаторов треков, по которым нужно найти треки.
+     * @return Список треков, соответствующих заданным идентификаторам.
+     */
+    @Query("SELECT * FROM $TRACK_TABLE_NAME WHERE $FIELD_TRACK_ID IN (:trackIds)")
+    fun getByIds(vararg trackIds: String): List<TrackEntity>
 
     /**
      * Проверяет, существует ли трек с указанным идентификатором в базе данных.

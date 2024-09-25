@@ -55,6 +55,23 @@ class TrackDaoTest {
     }
 
     @Test
+    fun getByIds() {
+        trackDao.insertAll(track1, track2)
+
+        val result = trackDao.getByIds("1", "2")
+
+        assertThat(result).hasSize(2)
+        assertThat(result).containsExactly(track1, track2)
+
+        val singleResult = trackDao.getByIds("1")
+        assertThat(singleResult).hasSize(1)
+        assertThat(singleResult[0]).isEqualTo(track1)
+
+        val nonExistingResult = trackDao.getByIds("3")
+        assertThat(nonExistingResult).isEmpty()
+    }
+
+    @Test
     fun isTrackInDatabase() {
 
         trackDao.insertAll(track1)

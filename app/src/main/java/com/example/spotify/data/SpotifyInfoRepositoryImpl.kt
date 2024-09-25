@@ -23,7 +23,8 @@ import javax.inject.Inject
  * @param authRepository репозиторий для работы с токенами доступа
  * @param trackConverter конвертер для преобразования ответа API о треке в модель [TrackInfo]
  * @param artistConverter конвертер для преобразования модели бд об исполнителе в модель [ArtistInfo]
- * @param artistDao
+ * @param artistDao DAO для работы с данными исполнителей
+ * @param trackDao DAO для работы с данными треков
  */
 class SpotifyInfoRepositoryImpl @Inject constructor(
     private val apiMapper: SpotifyInfoApiMapper,
@@ -59,10 +60,5 @@ class SpotifyInfoRepositoryImpl @Inject constructor(
 
     override suspend fun getArtistsInfo(id: String): ArtistInfo = withContext(Dispatchers.IO) {
         artistConverter.convert(artistDao.getById(id))
-    }
-
-    override suspend fun clear() = withContext(Dispatchers.IO) {
-        artistDao.deleteAll()
-        trackDao.deleteAll()
     }
 }

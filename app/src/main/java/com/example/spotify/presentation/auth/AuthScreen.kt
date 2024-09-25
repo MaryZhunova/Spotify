@@ -10,7 +10,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.spotify.presentation.auth.success.AuthSuccessScreen
 import com.example.spotify.presentation.models.AuthState
-import com.example.spotify.presentation.components.ProgressIndicator
 
 /**
  * Экран аутентификации
@@ -40,6 +39,7 @@ fun AuthScreen(
                 onTryAgainClick = { authViewModel.startAuth(activity, authLauncher) },
                 onBackClick = { authViewModel.logout() }
             )
+            is AuthState.Loading -> authViewModel.checkIsAuthActual()
         }
     }
 }

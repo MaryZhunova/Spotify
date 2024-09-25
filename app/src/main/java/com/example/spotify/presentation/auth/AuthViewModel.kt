@@ -9,7 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spotify.BuildConfig
-import com.example.spotify.domain.SpotifyInfoRepository
+import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.domain.auth.AuthRepository
 import com.example.spotify.presentation.models.AuthError
 import com.example.spotify.presentation.models.AuthState
@@ -17,6 +17,7 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,23 +26,31 @@ import javax.inject.Inject
  *
  * @constructor
  * @param authRepository репозиторий для хранения токенов доступа
- * @param infoRepository репозитория для получения информации о треках и исполнителях из Spotify
  */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val infoRepository: SpotifyInfoRepository
+    private val statsRepository: SpotifyUserStatsRepository
 ) : ViewModel() {
 
-    private val _authState = mutableStateOf<AuthState>(AuthState.Idle)
+    private val _authState = mutableStateOf<AuthState>(AuthState.Loading)
 
     /**
      * Состояние процесса авторизации
      */
     val authState: State<AuthState> get() = _authState
 
-    init {
-        logout()
+    /**
+     * Проверяет наличие актуального токена авторизации
+     */
+    fun checkIsAuthActual() = viewModelScope.launch(
+        CoroutineExceptionHandler { _, _ ->
+            _authState.value = AuthState.Idle
+
+        }
+    ) {
+        authRepository.getAccessToken()
+        _authState.value = AuthState.Success
     }
 
     /**
@@ -98,7 +107,7 @@ class AuthViewModel @Inject constructor(
      */
     fun logout() = viewModelScope.launch {
         authRepository.clear()
-        infoRepository.clear()
+        statsRepository.clear()
         _authState.value = AuthState.Idle
     }
 

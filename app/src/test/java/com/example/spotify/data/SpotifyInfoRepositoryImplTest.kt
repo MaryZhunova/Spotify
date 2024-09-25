@@ -15,11 +15,9 @@ import com.example.spotify.domain.auth.AuthRepository
 import com.example.spotify.domain.models.AlbumInfo
 import com.example.spotify.domain.models.ArtistInfo
 import com.google.common.truth.Truth.assertThat
-import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerifySequence
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verifySequence
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -137,19 +135,6 @@ class SpotifyInfoRepositoryImplTest {
         verifySequence {
             artistDao.getById(artistId)
             artistConverter.convert(artistEntity)
-        }
-    }
-
-    @Test
-    fun `clear removes all artists and tracks`() = runTest {
-        every { artistDao.deleteAll() } just Runs
-        every { trackDao.deleteAll() } just Runs
-
-        spotifyInfoRepository.clear()
-
-        verifySequence {
-            artistDao.deleteAll()
-            trackDao.deleteAll()
         }
     }
 }

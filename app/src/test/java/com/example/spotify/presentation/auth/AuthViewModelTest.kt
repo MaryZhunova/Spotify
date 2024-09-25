@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager.NameNotFoundException
 import androidx.activity.result.ActivityResultLauncher
-import com.example.spotify.domain.SpotifyInfoRepository
+import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.domain.auth.AuthRepository
 import com.example.spotify.presentation.models.AuthError
 import com.example.spotify.presentation.models.AuthState
@@ -16,10 +16,8 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import io.mockk.Runs
-import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -42,22 +40,16 @@ class AuthViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val authRepository: AuthRepository = mockk()
-    private val infoRepository: SpotifyInfoRepository = mockk()
+    private val statsRepository: SpotifyUserStatsRepository = mockk()
     private val activity: Activity = mockk()
     private val authLauncher: ActivityResultLauncher<Intent> = mockk()
     private val request = mockk<AuthorizationRequest>()
 
-    private lateinit var viewModel: AuthViewModel
+    private val viewModel = AuthViewModel(authRepository, statsRepository)
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        clearAllMocks()
-
-        every { authRepository.clear() } just Runs
-        coEvery { infoRepository.clear() } just Runs
-        viewModel = AuthViewModel(authRepository, infoRepository)
-
         mockkStatic(AuthorizationClient::createLoginActivityIntent)
         mockkConstructor(AuthorizationRequest.Builder::class)
         every { anyConstructed<AuthorizationRequest.Builder>().build() } returns request
@@ -70,12 +62,23 @@ class AuthViewModelTest {
     }
 
     @Test
-    fun initTest() = runTest {
-        coVerifySequence {
-            authRepository.clear()
-            infoRepository.clear()
-        }
-        Truth.assertThat(viewModel.authState.value).isEqualTo(AuthState.Idle)
+    fun `checkIsAuthActual success`() = runTest {
+
+        coEvery { authRepository.getAccessToken() } returns "token"
+
+        viewModel.checkIsAuthActual().join()
+
+        Truth.assertThat(viewModel.authState.value).isInstanceOf(AuthState.Success::class.java)
+    }
+
+    @Test
+    fun `checkIsAuthActual error`() = runTest {
+
+        coEvery { authRepository.getAccessToken() } throws Exception()
+
+        viewModel.checkIsAuthActual().join()
+
+        Truth.assertThat(viewModel.authState.value).isInstanceOf(AuthState.Idle::class.java)
     }
 
     @Test
@@ -162,7 +165,7 @@ class AuthViewModelTest {
     @Test
     fun `logout should clear repositories and set state to Idle`() = runTest(testDispatcher) {
         every { authRepository.clear() } just Runs
-        coEvery { infoRepository.clear() } just Runs
+        coEvery { statsRepository.clear() } just Runs
 
         viewModel.logout().join()
 
@@ -170,7 +173,7 @@ class AuthViewModelTest {
 
         coVerify {
             authRepository.clear()
-            infoRepository.clear()
+            statsRepository.clear()
         }
     }
 }

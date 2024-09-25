@@ -8,7 +8,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -28,8 +27,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val sessionTimerViewModel: SessionTimerViewModel by viewModels()
-
     private val authViewModel: AuthViewModel by viewModels()
 
     private lateinit var authLauncher: ActivityResultLauncher<Intent>
@@ -46,22 +43,14 @@ class MainActivity : ComponentActivity() {
                 authViewModel.handleAuthResult(result.resultCode, result.data)
             }
 
-        sessionTimerViewModel.startTimer()
-
         setContent {
             SpotifyTheme {
                 SpotifyApp(
                     authViewModel = authViewModel,
                     authLauncher = authLauncher,
-                    sessionTimerViewModel = sessionTimerViewModel
                 )
             }
         }
-    }
-
-    override fun onUserInteraction() {
-        super.onUserInteraction()
-        sessionTimerViewModel.resetTimer()
     }
 }
 
@@ -69,16 +58,8 @@ class MainActivity : ComponentActivity() {
 fun SpotifyApp(
     authViewModel: AuthViewModel,
     authLauncher: ActivityResultLauncher<Intent>,
-    sessionTimerViewModel: SessionTimerViewModel
 ) {
     val navController = rememberNavController()
-
-    LaunchedEffect(Unit) {
-        sessionTimerViewModel.onSessionExpired.collect {
-            authViewModel.logout()
-            navController.popBackStack(AUTH_SCREEN, false)
-        }
-    }
 
     NavHost(navController = navController, startDestination = AUTH_SCREEN) {
         composable(AUTH_SCREEN) {

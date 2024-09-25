@@ -27,8 +27,4 @@ interface SpotifyInfoRepository {
      */
     suspend fun getArtistsInfo(id: String): ArtistInfo
 
-    /**
-     * Очищает бд
-     */
-    suspend fun clear()
 }
