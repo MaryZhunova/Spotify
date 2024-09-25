@@ -89,10 +89,10 @@ class ArtistViewModelTest {
 
         viewModel.fetchTracksAndArtist(artistId).join()
 
-        assertThat(viewModel.changeIsHighlightedState()).isEqualTo(!isFav)
-        assertThat(viewModel.isFavoriteHighlighted.value).isTrue()
+        assertThat(viewModel.changeIsHighlightedState()).isEqualTo(isFav)
+        assertThat(viewModel.isFavoriteHighlighted.value).isEqualTo(isFav)
 
-        assertThat(viewModel.changeIsHighlightedState()).isFalse()
+        assertThat(viewModel.changeIsHighlightedState()).isEqualTo(isFav)
         assertThat(viewModel.isFavoriteHighlighted.value).isFalse()
 
 

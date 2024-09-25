@@ -29,25 +29,30 @@ fun AppBar(onClick: () -> Unit) {
     var isButtonEnabled by remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
 
-    TopAppBar(title = {}, navigationIcon = {
-        IconButton(onClick = {
-            if (isButtonEnabled) {
-                onClick.invoke()
-                isButtonEnabled = false
-                scope.launch {
-                    //Throttling
-                    delay(1000)
-                    isButtonEnabled = true
+    TopAppBar(
+        title = {},
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    if (isButtonEnabled) {
+                        onClick.invoke()
+                        isButtonEnabled = false
+                        scope.launch {
+                            //Throttling
+                            delay(1000)
+                            isButtonEnabled = true
+                        }
+                    }
                 }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.arrow),
+                    contentDescription = stringResource(id = R.string.arrow_icon)
+                )
             }
-        }) {
-            Icon(
-                painter = painterResource(id = R.drawable.arrow),
-                contentDescription = stringResource(id = R.string.arrow_icon)
-            )
-        }
-    }, colors = TopAppBarDefaults.topAppBarColors().copy(
-        containerColor = MaterialTheme.colorScheme.primary.copy(0.5f)
-    )
+        },
+        colors = TopAppBarDefaults.topAppBarColors().copy(
+            containerColor = MaterialTheme.colorScheme.primary.copy(0.5f)
+        )
     )
 }

@@ -10,6 +10,7 @@
     //UserProfileSuccessScreen
     <string name="top_tracks">Top Tracks</string>
     <string name="top_artists">Top Artists</string>
+    <string name="logout">Log out</string>
 
     //Errors
     <string name="no_data">Couldn\'t retrieve the data</string>

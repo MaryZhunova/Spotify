@@ -1,6 +1,7 @@
 package com.example.spotify.presentation.auth.success
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,8 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +27,6 @@ import com.example.spotify.R
 import com.example.spotify.domain.models.UserProfileInfo
 import com.example.spotify.presentation.TOP_ARTISTS_SCREEN
 import com.example.spotify.presentation.TOP_TRACKS_SCREEN
-import com.example.spotify.presentation.components.AppBar
 import com.example.spotify.presentation.components.ParallaxUserImage
 import com.example.spotify.presentation.components.UserImage
 
@@ -45,7 +48,7 @@ fun AuthSuccess(
     Column(
         modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AppBar { onBackClick.invoke() }
+        AppBarLogout { onBackClick.invoke() }
         if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             ParallaxUserImage(image = info.image, name = info.displayName)
             Text(
@@ -82,4 +85,24 @@ fun AuthSuccess(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppBarLogout(onClick: () -> Unit) {
+    TopAppBar(
+        title = {},
+        actions = {
+            Text(
+                modifier = Modifier
+                    .clickable { onClick.invoke() }
+                    .padding(16.dp),
+                text = stringResource(id = R.string.logout),
+                fontStyle = MaterialTheme.typography.bodyMedium.fontStyle
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors().copy(
+            containerColor = MaterialTheme.colorScheme.primary.copy(0.5f)
+        )
+    )
 }

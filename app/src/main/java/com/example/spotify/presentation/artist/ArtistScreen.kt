@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -33,6 +34,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -145,16 +147,21 @@ fun ArtistScreen(
             } else {
                 if (favoriteTracks.isNotEmpty()) {
                     val snackbarMessage = stringResource(id = R.string.no_faves_snackbar)
+                    var isSnackbarShowing by remember { mutableStateOf(false) }
+
                     TracksTabRow(
                         topTracks = topTracks,
                         favTracks = favoriteTracks,
                         isHighlighted = isHighlighted,
                         onHighlightedChange = {
-                            if (viewModel.changeIsHighlightedState()) {
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        message = snackbarMessage
-                                    )
+                            if (!viewModel.changeIsHighlightedState()) {
+                                if (!isSnackbarShowing) {
+                                    isSnackbarShowing = true
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar(snackbarMessage).also {
+                                            isSnackbarShowing = false
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -173,7 +180,9 @@ fun ArtistScreen(
         )
         SnackbarHost(
             hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter)
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
         )
     }
 }
@@ -211,8 +220,9 @@ private fun TracksTabRow(
         0 -> {
             Text(
                 modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 12.dp)
-                    .clickable { onHighlightedChange.invoke() },
+                    .fillMaxWidth()
+                    .clickable { onHighlightedChange.invoke() }
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
                 color = if (isHighlighted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium,
                 text = stringResource(id = R.string.highlight),

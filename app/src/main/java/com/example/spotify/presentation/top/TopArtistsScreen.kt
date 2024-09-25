@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -125,8 +126,9 @@ fun ArtistItem(artist: ArtistInfo, index: Int, onClick: (String) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .padding(vertical = 4.dp).padding(end = 16.dp)
+            .fillMaxWidth()
             .clickable { onClick.invoke(artist.id) }
+            .padding(vertical = 4.dp).padding(end = 16.dp)
     ) {
         Text(
             modifier = Modifier.width(36.dp),

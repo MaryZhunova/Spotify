@@ -89,7 +89,12 @@ class ArtistViewModel @Inject constructor(
      * Меняет статус выделения любимых треков пользователя среди популярных на противоположные
      */
     fun changeIsHighlightedState(): Boolean {
-        _isFavoriteHighlighted.value = !_isFavoriteHighlighted.value
-        return _isFavoriteHighlighted.value && _topTracks.value.none { it.isFavorite }
+        val newState = !_isFavoriteHighlighted.value
+        return if (newState && _topTracks.value.none { it.isFavorite }) {
+            false
+        } else {
+            _isFavoriteHighlighted.value = newState
+            true
+        }
     }
 }
