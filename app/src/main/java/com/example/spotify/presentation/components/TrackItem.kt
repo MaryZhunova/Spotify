@@ -1,23 +1,27 @@
 package com.example.spotify.presentation.components
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -30,69 +34,96 @@ import com.example.spotify.domain.models.TrackInfo
  *
  * @param track Информация о треке, который будет отображен.
  * @param index Индекс трека в списке.
+ * @param isHighlighted Подсвечен ли цветом.
  * @param isPlaying Флаг, указывающий, воспроизводится ли трек в данный момент.
  * @param onClick Лямбда-функция, которая будет вызвана при нажатии на элемент.
  */
 @Composable
 fun TrackItem(
     track: TrackInfo,
-    index: Int,
+    index: Int = -1,
+    isHighlighted: Boolean = false,
     isPlaying: Boolean,
     onClick: () -> Unit
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    val targetColor = if (isHighlighted && track.isFavorite) {
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+    } else {
+        MaterialTheme.colorScheme.background
+    }
+
+    val animatedColor by animateColorAsState(
+        targetValue = targetColor,
+        animationSpec = tween(durationMillis = 500),
+        label = "animatedColor"
+    )
+
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .background(animatedColor)
+            .clickable { onClick() }
+            .padding(vertical = 6.dp, horizontal = 16.dp),
+        elevation = CardDefaults.cardElevation(3.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ) {
-        Text(
-            modifier = Modifier.width(36.dp),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            text = "${index + 1}."
-        )
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(track.album.image)
-                .crossfade(true)
-                .build(),
-            placeholder = painterResource(R.drawable.music_icon),
-            error = painterResource(R.drawable.music_icon),
-            alignment = Alignment.CenterStart,
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier.size(45.dp)
-        )
-        Column(
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .weight(1f),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyMedium,
-                text = track.name,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall,
-                text = track.artists,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+            if (index > -1) {
+                Text(
+                    text = "${index + 1}.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
 
-        if (!track.previewUrl.isNullOrBlank()) {
-            PlayButton(
-                isPlaying = isPlaying,
-                onClick = onClick
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(track.album.image)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.music_icon),
+                error = painterResource(R.drawable.music_icon),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(45.dp).padding(end = 8.dp)
             )
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    text = track.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    modifier = Modifier.padding(bottom = 2.dp),
+                    text = track.artists,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "Popularity: ${track.popularity}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            if (!track.previewUrl.isNullOrBlank()) {
+                PlayButton(
+                    isPlaying = isPlaying,
+                    onClick = onClick
+                )
+            }
         }
     }
 }

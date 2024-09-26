@@ -4,22 +4,26 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -40,6 +44,7 @@ import com.example.spotify.presentation.ARTIST_SCREEN
 import com.example.spotify.presentation.components.AppBar
 import com.example.spotify.presentation.components.ErrorIcon
 import com.example.spotify.presentation.components.ProgressIndicator
+import com.example.spotify.presentation.components.TabRow
 import com.example.spotify.presentation.models.TopArtistsState
 
 /**
@@ -63,22 +68,18 @@ fun TopArtistsScreen(
     }
 
     Scaffold(
-        topBar = { AppBar { navController.popBackStack() } },
+        topBar = {
+            AppBar(
+                title = stringResource(id = R.string.fav_artists)
+            ) { navController.popBackStack() }
+        },
     ) {
         Column(modifier = Modifier.padding(it)) {
             TabRow(
-                selectedTabIndex = periods.indexOf(selectedPeriod)
-            ) {
-                periods.forEach { period ->
-                    Tab(
-                        modifier = Modifier.padding(top = 16.dp),
-                        selected = selectedPeriod == period,
-                        onClick = { viewModel.switchSelected(period) }
-                    ) {
-                        Text(period.nameValue)
-                    }
-                }
-            }
+                selectedPeriod = selectedPeriod,
+                periods = periods,
+                onSwitch = { period -> viewModel.switchSelected(period) }
+            )
             Crossfade(targetState = state, label = "crossfadeLabel") { topArtistsState ->
                 when (topArtistsState) {
                     is TopArtistsState.Idle -> {}
@@ -102,17 +103,9 @@ fun TopArtistsScreen(
                     }
 
                     is TopArtistsState.Success -> {
-                        Column(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .verticalScroll(rememberScrollState()),
-                        ) {
-                            topArtistsState.topArtists.forEachIndexed { index, artistInfo ->
-                                ArtistItem(artist = artistInfo, index = index) { id ->
-                                    navController.navigate("$ARTIST_SCREEN/$id")
-                                }
-                            }
-                        }
+                        FavoriteArtistsList(
+                            topArtistsState.topArtists
+                        ) { id -> navController.navigate("$ARTIST_SCREEN/$id") }
                     }
 
                 }
@@ -122,52 +115,108 @@ fun TopArtistsScreen(
 }
 
 @Composable
-fun ArtistItem(artist: ArtistInfo, index: Int, onClick: (String) -> Unit) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+fun FavoriteArtistsList(artists: List<ArtistInfo>, onClick: (String) -> Unit) {
+    var isFiltered by remember { mutableStateOf(false) }
+    var displayedArtists by remember { mutableStateOf(artists) }
+
+    Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick.invoke(artist.id) }
-            .padding(vertical = 4.dp).padding(end = 16.dp)
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         Text(
-            modifier = Modifier.width(36.dp),
-            color = MaterialTheme.colorScheme.onBackground,
+            text = stringResource(id = R.string.filter),
+            modifier = Modifier
+                .align(Alignment.End)
+                .clickable {
+                    displayedArtists = if (isFiltered) {
+                        artists
+                    } else {
+                        artists.sortedByDescending { it.popularity }
+                    }
+                    isFiltered = !isFiltered
+                },
+            color = if (isFiltered) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Center,
-            text = "${index + 1}.",
+            textAlign = TextAlign.End
         )
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(artist.image)
-                .crossfade(true)
-                .build(),
-            placeholder = painterResource(R.drawable.music_icon),
-            error = painterResource(R.drawable.music_icon),
-            alignment = Alignment.CenterStart,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.size(45.dp)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyColumn(
+            contentPadding = PaddingValues(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(displayedArtists.size) { index ->
+                ArtistItem(artist = displayedArtists[index], index = index + 1) { id ->
+                    onClick.invoke(id)
+
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ArtistItem(artist: ArtistInfo, index: Int, onClick: (String) -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick.invoke(artist.id) },
+        elevation = CardDefaults.cardElevation(3.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
         )
-        Column(
-            modifier = Modifier.padding(start = 8.dp),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                color = MaterialTheme.colorScheme.onBackground,
+                text = "$index.",
                 style = MaterialTheme.typography.bodyMedium,
-                text = artist.name,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(30.dp)
             )
-            Text(
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall,
-                text = artist.genres,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(artist.image)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.music_icon),
+                error = painterResource(R.drawable.music_icon),
+                alignment = Alignment.CenterStart,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(45.dp)
+                    .padding(end = 8.dp)
             )
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = artist.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "Popularity: ${artist.popularity}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "Genres: ${artist.genres}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

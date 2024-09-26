@@ -1,22 +1,16 @@
 package com.example.spotify.presentation.artist
 
 import androidx.activity.ComponentActivity
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -44,21 +38,17 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.spotify.R
 import com.example.spotify.domain.models.TrackInfo
-import com.example.spotify.presentation.components.PlayButton
 import com.example.spotify.presentation.components.ProgressIndicator
 import com.example.spotify.presentation.components.ScrollableAppBar
 import com.example.spotify.presentation.components.TrackItem
@@ -225,7 +215,9 @@ private fun TracksTabRow(
             Tab(
                 selected = selectedTabIndex == index,
                 onClick = { selectedTabIndex = index },
-                text = { Text(title) }
+                text = { Text(title) },
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -260,17 +252,12 @@ private fun TracksTabRow(
         }
 
         1 -> {
-            Spacer(modifier = Modifier.height(12.dp))
-            favTracks.forEachIndexed { index, track ->
-                val isPlaying = currentTrack == track
-                TrackItem(track = track, index = index, isPlaying) {
-                    if (isPlaying) {
-                        onStop.invoke()
-                    } else {
-                        onPlay.invoke(track)
-                    }
-                }
-            }
+            FavTracks(
+                tracks = favTracks,
+                currentTrack = currentTrack,
+                onPlay = { onPlay.invoke(it) },
+                onStop = { onStop.invoke() }
+            )
         }
     }
 }
@@ -303,69 +290,41 @@ private fun TopTracks(
 }
 
 @Composable
-private fun TrackItem(
-    track: TrackInfo,
-    isHighlighted: Boolean = false,
-    isPlaying: Boolean,
-    onClick: () -> Unit
+private fun FavTracks(
+    tracks: List<TrackInfo>,
+    currentTrack: TrackInfo?,
+    onPlay: (TrackInfo) -> Unit,
+    onStop: () -> Unit
 ) {
-    val targetColor = if (isHighlighted && track.isFavorite) {
-        MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-    } else {
-        MaterialTheme.colorScheme.background
-    }
+    var isFiltered by remember { mutableStateOf(false) }
+    var displayedTracks by remember { mutableStateOf(tracks) }
 
-    val animatedColor by animateColorAsState(
-        targetValue = targetColor,
-        animationSpec = tween(durationMillis = 500),
-        label = "animatedColor"
+    Text(
+        text = stringResource(id = R.string.filter),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                displayedTracks = if (isFiltered) {
+                    tracks
+                } else {
+                    tracks.sortedByDescending { it.popularity }
+                }
+                isFiltered = !isFiltered
+            }
+            .padding(end = 16.dp, top = 12.dp, bottom = 12.dp),
+        color = if (isFiltered) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+        style = MaterialTheme.typography.bodyMedium,
+        textAlign = TextAlign.End
     )
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .background(animatedColor)
-            .padding(vertical = 4.dp).padding(start = 16.dp)
-    ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(track.album.image)
-                .crossfade(true)
-                .build(),
-            placeholder = painterResource(R.drawable.music_icon),
-            error = painterResource(R.drawable.music_icon),
-            alignment = Alignment.CenterStart,
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier.size(45.dp)
-        )
-        Column(
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .weight(1f),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Text(
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyMedium,
-                text = track.name,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall,
-                text = track.artists,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        if (!track.previewUrl.isNullOrBlank()) {
-            PlayButton(
-                isPlaying = isPlaying,
-                onClick = onClick
-            )
+    displayedTracks.forEachIndexed { index, track ->
+        val isPlaying = currentTrack == track
+        TrackItem(track = track, index = index, isPlaying = isPlaying) {
+            if (isPlaying) {
+                onStop.invoke()
+            } else {
+                onPlay.invoke(track)
+            }
         }
     }
 }

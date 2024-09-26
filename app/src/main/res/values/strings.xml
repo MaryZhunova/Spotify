@@ -6,6 +6,7 @@
     <string name="tab_most_popular_tracks">Most Popular Tracks</string>
     <string name="tab_faves">My Faves</string>
     <string name="highlight">highlight my favorites</string>
+    <string name="filter">filter by popularity</string>
 
     //UserProfileSuccessScreen
     <string name="top_tracks">Top Tracks</string>
@@ -24,6 +25,10 @@
 
     //AuthScreen
     <string name="log_in">LOG IN</string>
+
+    //Top
+    <string name="fav_artists">Favorite Artists</string>
+    <string name="fav_tracks">Favorite Tracks</string>
 
 
     //Content description

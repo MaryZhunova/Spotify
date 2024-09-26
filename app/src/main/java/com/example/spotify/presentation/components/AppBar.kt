@@ -4,6 +4,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -21,16 +22,26 @@ import kotlinx.coroutines.launch
 /**
  * AppBar
  *
+ * @param title заголовок экрана
  * @param onClick обработка нажатия на иконку навигации
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBar(onClick: () -> Unit) {
+fun AppBar(
+    title: String,
+    onClick: () -> Unit
+) {
     var isButtonEnabled by remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
 
     TopAppBar(
-        title = {},
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        },
         navigationIcon = {
             IconButton(
                 onClick = {
@@ -38,7 +49,7 @@ fun AppBar(onClick: () -> Unit) {
                         onClick.invoke()
                         isButtonEnabled = false
                         scope.launch {
-                            //Throttling
+                            // Throttling
                             delay(1000)
                             isButtonEnabled = true
                         }
@@ -47,12 +58,13 @@ fun AppBar(onClick: () -> Unit) {
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.arrow),
-                    contentDescription = stringResource(id = R.string.arrow_icon)
+                    contentDescription = stringResource(id = R.string.arrow_icon),
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors().copy(
-            containerColor = MaterialTheme.colorScheme.primary.copy(0.5f)
+            containerColor = MaterialTheme.colorScheme.surface
         )
     )
 }
