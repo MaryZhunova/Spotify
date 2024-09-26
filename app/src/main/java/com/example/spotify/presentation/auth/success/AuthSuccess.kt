@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.example.spotify.R
 import com.example.spotify.domain.models.UserProfileInfo
 import com.example.spotify.presentation.TOP_ARTISTS_SCREEN
+import com.example.spotify.presentation.TOP_GENRES_SCREEN
 import com.example.spotify.presentation.TOP_TRACKS_SCREEN
 import com.example.spotify.presentation.components.ParallaxUserImage
 import com.example.spotify.presentation.components.UserImage
@@ -72,18 +73,39 @@ fun AuthSuccess(
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Button(onClick = { onTopClick.invoke(TOP_TRACKS_SCREEN) }) {
-                Text(text = stringResource(id = R.string.top_tracks))
-            }
 
-            Button(onClick = { onTopClick.invoke(TOP_ARTISTS_SCREEN) }) {
-                Text(text = stringResource(id = R.string.top_artists))
+        if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Buttons { onTopClick.invoke(it) }
+            }
+        } else {
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Buttons { onTopClick.invoke(it) }
             }
         }
+    }
+}
+
+@Composable
+private fun Buttons(
+    onClick: (String) -> Unit
+) {
+    Button(onClick = { onClick.invoke(TOP_TRACKS_SCREEN) }) {
+        Text(text = stringResource(id = R.string.top_tracks))
+    }
+
+    Button(onClick = { onClick.invoke(TOP_ARTISTS_SCREEN) }) {
+        Text(text = stringResource(id = R.string.top_artists))
+    }
+
+    Button(onClick = { onClick.invoke(TOP_GENRES_SCREEN) }) {
+        Text(text = stringResource(id = R.string.top_genres))
     }
 }
 

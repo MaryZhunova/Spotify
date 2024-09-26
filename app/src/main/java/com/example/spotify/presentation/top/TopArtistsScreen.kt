@@ -70,7 +70,7 @@ fun TopArtistsScreen(
     Scaffold(
         topBar = {
             AppBar(
-                title = stringResource(id = R.string.fav_artists)
+                title = stringResource(id = R.string.top_artists)
             ) { navController.popBackStack() }
         },
     ) {

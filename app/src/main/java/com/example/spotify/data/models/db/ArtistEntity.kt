@@ -3,6 +3,8 @@ package com.example.spotify.data.models.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.example.spotify.data.converter.ArtistListTypeConverter
 
 /**
  * Сущность таблицы исполнителей в базе данных
@@ -22,7 +24,8 @@ data class ArtistEntity(
     @ColumnInfo(FIELD_ARTIST_ID) val id: String,
     @ColumnInfo(FIELD_ARTIST_NAME) val name: String,
     @ColumnInfo(FIELD_ARTIST_POPULARITY) val popularity: Int,
-    @ColumnInfo(FIELD_ARTIST_GENRES) val genres: String,
+    @ColumnInfo(FIELD_ARTIST_GENRES)
+    @TypeConverters(ArtistListTypeConverter::class) val genres: List<String>,
     @ColumnInfo(FIELD_ARTIST_SMALL_IMAGE) val smallImage: String,
     @ColumnInfo(FIELD_ARTIST_BIG_IMAGE) val bigImage: String,
 )

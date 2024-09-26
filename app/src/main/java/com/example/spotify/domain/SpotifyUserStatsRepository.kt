@@ -46,4 +46,18 @@ interface SpotifyUserStatsRepository {
      * Очищает кэш и бд
      */
     suspend fun clear()
+
+    /**
+     * Получает список популярных треков пользователя
+     *
+     * @param timeRange период времени для получения треков
+     * @return информация о популярных треках в виде объекта  List<TrackInfo>
+     */
+    suspend fun getTopGenres(timeRange: String): List<TopGenre>
 }
+
+data class TopGenre(
+    val genre: String,
+    val numberOfArtists: Int,
+    val artistNames: List<String>
+)

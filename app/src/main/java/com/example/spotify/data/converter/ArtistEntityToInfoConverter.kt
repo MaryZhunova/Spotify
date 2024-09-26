@@ -18,7 +18,7 @@ class ArtistEntityToInfoConverter {
             id = from.id,
             name = from.name,
             popularity = from.popularity,
-            genres = from.genres,
+            genres = from.genres.joinToString { it },
             image = from.bigImage.takeIf { it.isNotBlank() } ?: from.smallImage
         )
 }

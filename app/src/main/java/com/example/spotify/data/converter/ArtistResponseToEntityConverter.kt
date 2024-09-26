@@ -18,7 +18,7 @@ class ArtistResponseToEntityConverter {
             id = from.id,
             name = from.name,
             popularity = from.popularity,
-            genres = from.genres.joinToString { it },
+            genres = from.genres,
             smallImage = from.images.lastOrNull()?.url.orEmpty(),
             bigImage = from.images.firstOrNull()?.url.orEmpty()
         )

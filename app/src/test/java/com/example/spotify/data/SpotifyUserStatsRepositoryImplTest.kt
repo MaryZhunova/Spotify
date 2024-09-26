@@ -123,7 +123,10 @@ class SpotifyUserStatsRepositoryImplTest {
         val trackInfo2 = mockk<TrackInfo>()
 
         every { userStatsStorage.getIdsList("${timeRange}_tracks") } returns idsList
-        every { trackDao.getByIds(*idsList.toTypedArray()) } returns listOf(trackEntity, trackEntity2)
+        every { trackDao.getByIds(*idsList.toTypedArray()) } returns listOf(
+            trackEntity,
+            trackEntity2
+        )
         every { trackEntityConverter.convert(trackEntity) } returns trackInfo
         every { trackEntityConverter.convert(trackEntity2) } returns trackInfo2
 
@@ -166,7 +169,7 @@ class SpotifyUserStatsRepositoryImplTest {
         val trackEntity = mockk<TrackEntity> {
             every { id } returns "1"
         }
-        val trackEntity2 = mockk<TrackEntity>{
+        val trackEntity2 = mockk<TrackEntity> {
             every { id } returns "2"
         }
         val trackInfo = mockk<TrackInfo>()
@@ -236,7 +239,10 @@ class SpotifyUserStatsRepositoryImplTest {
         val artistInfo2 = mockk<ArtistInfo>()
 
         coEvery { userStatsStorage.getIdsList("${timeRange}_artists") } returns idsList
-        coEvery { artistDao.getByIds(*idsList.toTypedArray()) } returns listOf(artistEntity, artistEntity2)
+        coEvery { artistDao.getByIds(*idsList.toTypedArray()) } returns listOf(
+            artistEntity,
+            artistEntity2
+        )
         every { artistEntityConverter.convert(artistEntity) } returns artistInfo
         every { artistEntityConverter.convert(artistEntity2) } returns artistInfo2
 
@@ -290,7 +296,12 @@ class SpotifyUserStatsRepositoryImplTest {
         coEvery { userStatsStorage.setIdsList("${timeRange}_artists", any()) } just Runs
         coEvery { authRepository.getAccessToken() } returns accessToken
         coEvery { apiMapper.getTopArtists(accessToken, timeRange, limit) } returns initialResponse
-        coEvery { apiMapper.getTopArtistsNextPage(accessToken, "next-url") } returns nextPageResponse
+        coEvery {
+            apiMapper.getTopArtistsNextPage(
+                accessToken,
+                "next-url"
+            )
+        } returns nextPageResponse
         every { artistResponseConverter.convert(artistResponse) } returns artistEntity
         every { artistResponseConverter.convert(artistResponse2) } returns artistEntity2
         every { artistEntityConverter.convert(artistEntity) } returns artistInfo
@@ -315,5 +326,79 @@ class SpotifyUserStatsRepositoryImplTest {
             artistEntityConverter.convert(artistEntity)
             artistEntityConverter.convert(artistEntity2)
         }
+    }
+
+    @Test
+    fun getTopGenresTest() = runTest {
+        val idsList = listOf("1", "2", "3", "4")
+        val timeRange = "short_term"
+        val artistEntity = mockk<ArtistEntity> {
+            every { id } returns "1"
+            every { genres } returns listOf("Rock")
+            every { name } returns "Taylor"
+        }
+        val artistEntity2 = mockk<ArtistEntity> {
+            every { id } returns "2"
+            every { genres } returns listOf("Rock", "Pop")
+            every { name } returns "Finneas"
+        }
+        val artistEntity3 = mockk<ArtistEntity> {
+            every { id } returns "3"
+            every { genres } returns listOf("Rock", "Pop", "Jazz")
+            every { name } returns "Lorde"
+        }
+        val artistEntity4 = mockk<ArtistEntity> {
+            every { id } returns "4"
+            every { genres } returns listOf("Rock", "Pop", "Jazz", "Rap")
+            every { name } returns "Kate"
+        }
+
+        coEvery { userStatsStorage.getIdsList("${timeRange}_artists") } returns idsList
+        coEvery { artistDao.getByIds(*idsList.toTypedArray()) } returns listOf(
+            artistEntity,
+            artistEntity2,
+            artistEntity3,
+            artistEntity4
+        )
+
+        val result = spotifyUserStatsRepository.getTopGenres(timeRange)
+
+        assertThat(result).hasSize(2)
+        result[0].apply {
+            assertThat(genre).isEqualTo("Rock")
+            assertThat(numberOfArtists).isEqualTo(4)
+            assertThat(artistNames).isEqualTo(listOf("Taylor", "Finneas", "Lorde", "Kate"))
+        }
+        result[1].apply {
+            assertThat(genre).isEqualTo("Pop")
+            assertThat(numberOfArtists).isEqualTo(3)
+            assertThat(artistNames).isEqualTo(listOf("Finneas", "Lorde", "Kate"))
+        }
+    }
+
+    @Test
+    fun `getTopGenresTest empty`() = runTest {
+        val idsList = listOf("1", "2")
+        val timeRange = "short_term"
+        val artistEntity = mockk<ArtistEntity> {
+            every { id } returns "1"
+            every { genres } returns listOf("Rock")
+            every { name } returns "Taylor"
+        }
+        val artistEntity2 = mockk<ArtistEntity> {
+            every { id } returns "2"
+            every { genres } returns listOf("Rock", "Pop")
+            every { name } returns "Finneas"
+        }
+
+        coEvery { userStatsStorage.getIdsList("${timeRange}_artists") } returns idsList
+        coEvery { artistDao.getByIds(*idsList.toTypedArray()) } returns listOf(
+            artistEntity,
+            artistEntity2
+        )
+
+        val result = spotifyUserStatsRepository.getTopGenres(timeRange)
+
+        assertThat(result).isEmpty()
     }
 }

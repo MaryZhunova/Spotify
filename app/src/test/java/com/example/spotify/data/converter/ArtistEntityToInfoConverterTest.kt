@@ -17,7 +17,7 @@ class ArtistEntityToInfoConverterTest {
             id = "123",
             name = "Artist Name",
             popularity = 80,
-            genres = "Pop, Rock",
+            genres = listOf("Pop", "Rock"),
             bigImage = "bigImageUrl",
             smallImage = "smallImageUrl"
         )
@@ -37,7 +37,7 @@ class ArtistEntityToInfoConverterTest {
             id = "123",
             name = "Artist Name",
             popularity = 80,
-            genres = "Pop, Rock",
+            genres = listOf("Pop", "Rock"),
             bigImage = "",
             smallImage = "smallImageUrl"
         )

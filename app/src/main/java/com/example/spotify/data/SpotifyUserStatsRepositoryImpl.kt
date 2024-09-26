@@ -13,6 +13,7 @@ import com.example.spotify.data.network.mappers.SpotifyUserStatsApiMapper
 import com.example.spotify.data.storage.SpotifyUserInfoStorage
 import com.example.spotify.data.storage.SpotifyUserStatsStorage
 import com.example.spotify.domain.SpotifyUserStatsRepository
+import com.example.spotify.domain.TopGenre
 import com.example.spotify.domain.auth.AuthRepository
 import com.example.spotify.domain.models.ArtistInfo
 import com.example.spotify.domain.models.TrackInfo
@@ -78,11 +79,7 @@ class SpotifyUserStatsRepositoryImpl @Inject constructor(
 
     override suspend fun getTopArtists(timeRange: String): List<ArtistInfo> =
         withContext(Dispatchers.IO) {
-            val entities = userStatsStorage.getIdsList(getArtistsCacheKey(timeRange))?.let { ids ->
-                val artists = artistDao.getByIds(*ids.toTypedArray())
-                artists.sortedBy { ids.indexOf(it.id) }
-            } ?: getTopArtistsInternal(timeRange)
-            return@withContext entities.map(artistEntityConverter::convert)
+            getTopArtistsEntities(timeRange).map(artistEntityConverter::convert)
         }
 
     override suspend fun clear() = withContext(Dispatchers.IO) {
@@ -91,6 +88,33 @@ class SpotifyUserStatsRepositoryImpl @Inject constructor(
         userStatsStorage.clear()
         userInfoStorage.clear()
     }
+
+    override suspend fun getTopGenres(timeRange: String): List<TopGenre> =
+        withContext(Dispatchers.IO) {
+            val artistEntities = getTopArtistsEntities(timeRange)
+
+            val genreMap = mutableMapOf<String, MutableList<String>>()
+
+            artistEntities.forEach { artist ->
+                artist.genres.forEach { genre ->
+                    genreMap.getOrPut(genre) { mutableListOf() }.add(artist.name)
+                }
+            }
+
+            val frequencyMap = genreMap.map { (genre, artists) -> genre to artists.size }.toMap()
+
+            return@withContext frequencyMap.mapNotNull { (genre, count) ->
+                if (count > 2) {
+                    TopGenre(
+                        genre = genre,
+                        numberOfArtists = count,
+                        artistNames = genreMap[genre] ?: emptyList()
+                    )
+                } else {
+                    null
+                }
+            }.sortedByDescending { it.numberOfArtists }
+        }
 
     private suspend fun getTopTracksInternal(timeRange: String): List<TrackEntity> {
         val token = authRepository.getAccessToken()
@@ -109,6 +133,13 @@ class SpotifyUserStatsRepositoryImpl @Inject constructor(
 
     private fun getTracksCacheKey(timeRange: String) = "${timeRange}_tracks"
 
+    private suspend fun getTopArtistsEntities(timeRange: String): List<ArtistEntity> =
+        userStatsStorage.getIdsList(getArtistsCacheKey(timeRange))?.let { ids ->
+            val artists = artistDao.getByIds(*ids.toTypedArray())
+            artists.sortedBy { ids.indexOf(it.id) }
+        } ?: getTopArtistsInternal(timeRange)
+
+
     private suspend fun getTopArtistsInternal(timeRange: String): List<ArtistEntity> =
         withContext(Dispatchers.IO) {
             val token = authRepository.getAccessToken()
@@ -121,7 +152,9 @@ class SpotifyUserStatsRepositoryImpl @Inject constructor(
                 .map(artistResponseConverter::convert)
                 .also { artists ->
                     artistDao.insertAll(*artists.toTypedArray())
-                    userStatsStorage.setIdsList(getArtistsCacheKey(timeRange), artists.map { it.id })
+                    userStatsStorage.setIdsList(
+                        getArtistsCacheKey(timeRange),
+                        artists.map { it.id })
                 }
         }
 

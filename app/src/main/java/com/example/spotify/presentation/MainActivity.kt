@@ -21,6 +21,7 @@ import com.example.spotify.presentation.top.TopArtistsScreen
 import com.example.spotify.presentation.top.TopTracksScreen
 import com.example.spotify.presentation.theme.SpotifyTheme
 import com.example.spotify.presentation.auth.AuthViewModel
+import com.example.spotify.presentation.top.TopGenresScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -71,6 +72,7 @@ fun SpotifyApp(
         }
         composable(TOP_TRACKS_SCREEN) { TopTracksScreen(navController = navController) }
         composable(TOP_ARTISTS_SCREEN) { TopArtistsScreen(navController = navController) }
+        composable(TOP_GENRES_SCREEN) { TopGenresScreen(navController = navController) }
         composable(
             route = "$ARTIST_SCREEN/{$ID_PARAM}",
             arguments = listOf(navArgument(ID_PARAM) {

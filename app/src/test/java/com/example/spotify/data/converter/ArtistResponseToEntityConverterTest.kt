@@ -30,7 +30,7 @@ class ArtistResponseToEntityConverterTest {
         assertThat(artistEntity.id).isEqualTo("123")
         assertThat(artistEntity.name).isEqualTo("Artist Name")
         assertThat(artistEntity.popularity).isEqualTo(90)
-        assertThat(artistEntity.genres).isEqualTo("Pop, Jazz")
+        assertThat(artistEntity.genres).isEqualTo(listOf("Pop", "Jazz"))
         assertThat(artistEntity.smallImage).isEqualTo("smallImageUrl")
         assertThat(artistEntity.bigImage).isEqualTo("bigImageUrl")
     }

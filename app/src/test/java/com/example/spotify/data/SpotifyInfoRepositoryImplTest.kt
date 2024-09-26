@@ -71,7 +71,7 @@ class SpotifyInfoRepositoryImplTest {
             id = artistId,
             name = "Artist Name",
             popularity = 100,
-            genres = "Genre",
+            genres = listOf("Pop", "Jazz"),
             smallImage = "image-url",
             bigImage = ""
         )
@@ -79,7 +79,7 @@ class SpotifyInfoRepositoryImplTest {
             id = artistId,
             name = "Artist Name",
             popularity = 100,
-            genres = "Genre",
+            genres = "Pop, Jazz",
             image = "image-url"
         )
         every { artistDao.getById(artistId) } returns artistEntity
@@ -90,7 +90,7 @@ class SpotifyInfoRepositoryImplTest {
         assertThat(result.id).isEqualTo(artistId)
         assertThat(result.name).isEqualTo("Artist Name")
         assertThat(result.popularity).isEqualTo(100)
-        assertThat(result.genres).isEqualTo("Genre")
+        assertThat(result.genres).isEqualTo("Pop, Jazz")
         assertThat(result.image).isEqualTo("image-url")
 
         verifySequence {

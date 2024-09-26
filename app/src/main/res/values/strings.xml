@@ -11,6 +11,7 @@
     //UserProfileSuccessScreen
     <string name="top_tracks">Top Tracks</string>
     <string name="top_artists">Top Artists</string>
+    <string name="top_genres">Top Genres</string>
     <string name="logout">Log out</string>
 
     //Errors
@@ -25,11 +26,6 @@
 
     //AuthScreen
     <string name="log_in">LOG IN</string>
-
-    //Top
-    <string name="fav_artists">Favorite Artists</string>
-    <string name="fav_tracks">Favorite Tracks</string>
-
 
     //Content description
     <string name="music_icon">music icon</string>
