@@ -36,15 +36,14 @@ class AuthRepositoryImpl @Inject constructor(
     private fun isAccessTokenExpired(token: AccessTokenInfo): Boolean =
         token.expiresAt < timeSource.getCurrentTime()
 
-    override suspend fun getAccessToken(): String = withContext(Dispatchers.IO) {
+    override fun getAccessToken(): String =
         getAccessTokenInternal() ?: throw NullAccessTokenException
-    }
 
     override fun clear() {
         tokenStorage.clear()
     }
 
-    private suspend fun getAccessTokenInternal(): String? {
+    private fun getAccessTokenInternal(): String? {
         val token = tokenStorage.getAccessToken() ?: return null
         return if (isAccessTokenExpired(token)) {
             token.refreshToken?.let { refreshAccessToken(it) }
@@ -53,10 +52,10 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun refreshAccessToken(refreshToken: String): String? =
+    private fun refreshAccessToken(refreshToken: String): String? =
         apiMapper.refreshAuthToken(refreshToken)?.also { newToken ->
             tokenStorage.storeAccessToken(accessTokenResponseConverter.convert(newToken))
         }?.accessToken
 }
 
-data object NullAccessTokenException: NullPointerException()
+data object NullAccessTokenException : NullPointerException()

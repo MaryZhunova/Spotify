@@ -14,7 +14,7 @@ interface SpotifyAuthApiMapper {
      * @param redirectUri URI для перенаправления после получения токена доступа
      * @return [AccessTokenResponse] с информацией о токене доступа или `null`, если запрос не удался
      */
-    suspend fun getAuthToken(accessCode: String, redirectUri: String): AccessTokenResponse?
+    fun getAuthToken(accessCode: String, redirectUri: String): AccessTokenResponse?
 
     /**
      * Обновляет токен доступа, используя токен обновления
@@ -22,5 +22,5 @@ interface SpotifyAuthApiMapper {
      * @param refreshToken токен обновления, используемый для получения нового токена доступа
      * @return [AccessTokenResponse] с новым токеном доступа или `null`, если запрос не удался
      */
-    suspend fun refreshAuthToken(refreshToken: String): AccessTokenResponse?
+    fun refreshAuthToken(refreshToken: String): AccessTokenResponse?
 }

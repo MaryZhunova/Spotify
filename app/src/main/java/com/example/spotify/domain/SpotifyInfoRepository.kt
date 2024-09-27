@@ -1,6 +1,6 @@
 package com.example.spotify.domain
 
-import com.example.spotify.domain.models.ArtistInfo
+import com.example.spotify.domain.models.AudioFeaturesInfo
 import com.example.spotify.domain.models.TrackInfo
 
 /**
@@ -11,19 +11,21 @@ interface SpotifyInfoRepository {
     /**
      * Получает информацию о топе треков исполнителя
      *
+     * @param accessCode токен доступа
      * @param id идентификатор исполнителя
      *
      * @return информация о топе треков исполнителя в виде списка объектов [TrackInfo]
      */
-    suspend fun getArtistsTopTracks(id: String): List<TrackInfo>
+    suspend fun getArtistsTopTracks(accessCode: String, id: String): List<TrackInfo>
 
     /**
-     * Получает информацию об исполнителе из бд
+     * Получает список с информацией о треках
      *
-     * @param id идентификатор исполнителя
+     * @param accessCode токен доступа
+     * @param ids список идентификаторов треков
      *
-     * @return информация о топе треков исполнителя в виде объекта [ArtistInfo]
+     * @return информация о треках в виде списка объектов [AudioFeaturesInfo]
      */
-    suspend fun getArtistsInfo(id: String): ArtistInfo
+    suspend fun getTracksAudioFeatures(accessCode: String, ids: List<String>): List<AudioFeaturesInfo>
 
 }

@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spotify.domain.SpotifyUserStatsRepository
+import com.example.spotify.domain.SpotifyInteractor
 import com.example.spotify.domain.models.TrackInfo
 import com.example.spotify.presentation.models.TimePeriods
 import com.example.spotify.presentation.models.TopTracksState
@@ -19,12 +19,12 @@ import javax.inject.Inject
  * ViewModel для управления данными о топ треках.
  *
  * @constructor
- * @param statsRepository репозиторий для получения информации о треках из Spotify
+ * @param spotifyInteractor интерактор для получения информации о треках и исполнителях
  * @param audioPlayerManager управляет воспроизведением треков
  */
 @HiltViewModel
 class TopTracksViewModel @Inject constructor(
-    private val statsRepository: SpotifyUserStatsRepository,
+    private val spotifyInteractor: SpotifyInteractor,
     private val audioPlayerManager: AudioPlayerManager
 ) : ViewModel() {
 
@@ -70,7 +70,7 @@ class TopTracksViewModel @Inject constructor(
             _topTracksState.value = TopTracksState.Success(savedInfo)
         } else {
             _topTracksState.value = TopTracksState.Loading
-            val info = statsRepository.getTopTracks(timeRange = period.strValue)
+            val info = spotifyInteractor.getTopTracks(timeRange = period.strValue)
             trackInfoItems.putIfAbsent(period, info)
             _topTracksState.value = TopTracksState.Success(info)
         }

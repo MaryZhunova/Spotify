@@ -1,6 +1,6 @@
 package com.example.spotify.presentation.models
 
-import com.example.spotify.domain.TopGenre
+import com.example.spotify.domain.models.GenreInfo
 
 /**
  * Состояния экрана топа треков пользователя
@@ -29,5 +29,5 @@ sealed interface TopGenresState {
      *
      * @property topTracks список треков
      */
-    data class Success(val topGenres: List<TopGenre>) : TopGenresState
+    data class Success(val genreInfos: List<GenreInfo>) : TopGenresState
 }

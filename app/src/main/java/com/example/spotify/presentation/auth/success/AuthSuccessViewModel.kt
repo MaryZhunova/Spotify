@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spotify.domain.SpotifyUserStatsRepository
+import com.example.spotify.domain.SpotifyInteractor
 import com.example.spotify.presentation.models.Button
 import com.example.spotify.presentation.models.DialogState
 import com.example.spotify.presentation.models.UserProfileState
@@ -19,12 +19,11 @@ import javax.inject.Inject
  * ViewModel для управления состоянием экрана успешной аутентификации
  *
  * @constructor
- * @param statsRepository репозиторий для получения информации
- * о пользователе и статистики по трекам и исполнителях из Spotify
+ * @param spotifyInteractor интерактор для получения информации о треках и исполнителях
  */
 @HiltViewModel
 class AuthSuccessViewModel @Inject constructor(
-    private val statsRepository: SpotifyUserStatsRepository
+    private val spotifyInteractor: SpotifyInteractor
 ) : ViewModel() {
 
     private val _userProfile = mutableStateOf<UserProfileState>(UserProfileState.Idle)
@@ -49,7 +48,7 @@ class AuthSuccessViewModel @Inject constructor(
            _userProfile.value = UserProfileState.Error(err)
         }
     ) {
-        val userInfo = statsRepository.getCurrentUserProfile()
+        val userInfo = spotifyInteractor.getCurrentUserProfile()
         _userProfile.value = UserProfileState.Success(userInfo)
     }
 

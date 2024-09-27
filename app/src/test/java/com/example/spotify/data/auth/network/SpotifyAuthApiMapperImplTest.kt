@@ -16,6 +16,7 @@ import org.junit.jupiter.api.AfterEach
 import retrofit2.Response
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import retrofit2.Call
 
 /**
  * Тесты для [SpotifyAuthApiMapperImpl]
@@ -46,9 +47,9 @@ class SpotifyAuthApiMapperImplTest {
             expiresIn = 3600,
             scope = "streaming"
         )
-        val response = Response.success(mockResponse)
-
-        coEvery { apiService.exchangeCodeForToken(any(), any(), any(), any()) } returns response
+        val mockCall = mockk<Call<AccessTokenResponse>>()
+        every { mockCall.execute() } returns Response.success(mockResponse)
+        coEvery { apiService.exchangeCodeForToken(any(), any(), any(), any()) } returns mockCall
 
         val result = mapper.getAuthToken(ACCESS_CODE, REDIRECT_URI)
 
@@ -66,7 +67,9 @@ class SpotifyAuthApiMapperImplTest {
     @Test
     fun `test getAuthToken with error response`() = runTest {
         val response = Response.error<AccessTokenResponse>(400, "".toResponseBody())
-        coEvery { apiService.exchangeCodeForToken(any(), any(), any(), any()) } returns response
+        val mockCall = mockk<Call<AccessTokenResponse>>()
+        every { mockCall.execute() } returns response
+        coEvery { apiService.exchangeCodeForToken(any(), any(), any(), any()) } returns mockCall
 
         val result = mapper.getAuthToken(ACCESS_CODE, REDIRECT_URI)
 
@@ -90,8 +93,9 @@ class SpotifyAuthApiMapperImplTest {
             expiresIn = 3600,
             scope = "streaming"
         )
-        val response = Response.success(mockResponse)
-        coEvery { apiService.refreshAuthToken(any(), any(), any()) } returns response
+        val mockCall = mockk<Call<AccessTokenResponse>>()
+        every { mockCall.execute() } returns Response.success(mockResponse)
+        coEvery { apiService.refreshAuthToken(any(), any(), any()) } returns mockCall
 
         val result = mapper.refreshAuthToken(REFRESH_TOKEN)
 
@@ -108,7 +112,9 @@ class SpotifyAuthApiMapperImplTest {
     @Test
     fun `test refreshAuthToken with error response`() = runTest {
         val response = Response.error<AccessTokenResponse>(400, "".toResponseBody())
-        coEvery { apiService.refreshAuthToken(any(), any(), any()) } returns response
+        val mockCall = mockk<Call<AccessTokenResponse>>()
+        every { mockCall.execute() } returns response
+        coEvery { apiService.refreshAuthToken(any(), any(), any()) } returns mockCall
 
         val result = mapper.refreshAuthToken(REFRESH_TOKEN)
 
@@ -124,7 +130,7 @@ class SpotifyAuthApiMapperImplTest {
     private companion object {
 
         const val AUTH_CODE = "code"
-        const val ACCESS_CODE= "sample_access_code"
+        const val ACCESS_CODE = "sample_access_code"
         const val REDIRECT_URI = "sample_redirect_uri"
         const val REFRESH_TOKEN = "sample_refresh_token"
 

@@ -1,21 +1,19 @@
 package com.example.spotify.data
 
-import com.example.spotify.data.converter.ArtistEntityToInfoConverter
+import com.example.spotify.data.converter.AudioFeaturesResponseToInfoConverter
 import com.example.spotify.data.converter.TrackResponseToInfoConverter
-import com.example.spotify.data.db.ArtistDao
-import com.example.spotify.data.models.db.ArtistEntity
 import com.example.spotify.data.models.network.ArtistsTopTracksResponse
+import com.example.spotify.data.models.network.AudioFeaturesListResponse
+import com.example.spotify.data.models.network.AudioFeaturesResponse
 import com.example.spotify.data.models.network.TrackResponse
 import com.example.spotify.data.network.mappers.SpotifyInfoApiMapper
-import com.example.spotify.domain.auth.AuthRepository
-import com.example.spotify.domain.models.ArtistInfo
+import com.example.spotify.domain.models.AudioFeaturesInfo
 import com.example.spotify.domain.models.TrackInfo
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verifySequence
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -27,75 +25,89 @@ import org.junit.jupiter.api.Test
 class SpotifyInfoRepositoryImplTest {
 
     private val apiMapper: SpotifyInfoApiMapper = mockk()
-    private val authRepository: AuthRepository = mockk()
     private val trackInfoConverter: TrackResponseToInfoConverter = mockk()
-    private val artistConverter: ArtistEntityToInfoConverter = mockk()
-    private val artistDao: ArtistDao = mockk()
+    private val audioFeaturesConverter: AudioFeaturesResponseToInfoConverter = mockk()
 
     private val spotifyInfoRepository = SpotifyInfoRepositoryImpl(
         apiMapper,
-        authRepository,
         trackInfoConverter,
-        artistConverter,
-        artistDao
+        audioFeaturesConverter
     )
 
     @Test
     fun getArtistsTopTracksTest() = runTest {
         val artistId = "artist-id"
         val accessToken = "access-token"
-        val trackResponse = mockk<TrackResponse>()
+        val trackResponse = mockk<TrackResponse> {
+            every { id } returns "1"
+        }
         val apiResponse = mockk<ArtistsTopTracksResponse> {
             every { tracks } returns listOf(trackResponse)
         }
-        val info = mockk<TrackInfo>()
-        coEvery { authRepository.getAccessToken() } returns accessToken
+        val info = mockk<TrackInfo> {
+            every {
+                copy(
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any()
+                )
+            } returns this
+        }
+
+        val featuresResponse = mockk<AudioFeaturesResponse>()
+        val featuresApiResponse = mockk<AudioFeaturesListResponse> {
+            every { audioFeatures } returns listOf(featuresResponse)
+        }
+        val featuresInfo = mockk<AudioFeaturesInfo> {
+            every { id } returns "1"
+        }
+        coEvery { apiMapper.getTracksAudioFeatures(accessToken, "1") } returns featuresApiResponse
         coEvery { apiMapper.getArtistsTopTracks(accessToken, artistId) } returns apiResponse
         every { trackInfoConverter.convert(any()) } returns info
+        every { audioFeaturesConverter.convert(any()) } returns featuresInfo
 
-        val result = spotifyInfoRepository.getArtistsTopTracks(artistId)
+        val result = spotifyInfoRepository.getArtistsTopTracks(accessToken, artistId)
 
         assertThat(result).isEqualTo(listOf(info))
 
         coVerifySequence {
-            authRepository.getAccessToken()
             apiMapper.getArtistsTopTracks(accessToken, artistId)
+            apiMapper.getTracksAudioFeatures(accessToken, "1")
+            audioFeaturesConverter.convert(featuresResponse)
             trackInfoConverter.convert(trackResponse)
         }
     }
 
     @Test
-    fun getArtistsInfoTest() = runTest {
-        val artistId = "artist-id"
-        val artistEntity = ArtistEntity(
-            id = artistId,
-            name = "Artist Name",
-            popularity = 100,
-            genres = listOf("Pop", "Jazz"),
-            smallImage = "image-url",
-            bigImage = ""
-        )
-        val artistInfo = ArtistInfo(
-            id = artistId,
-            name = "Artist Name",
-            popularity = 100,
-            genres = "Pop, Jazz",
-            image = "image-url"
-        )
-        every { artistDao.getById(artistId) } returns artistEntity
-        every { artistConverter.convert(artistEntity) } returns artistInfo
-
-        val result = spotifyInfoRepository.getArtistsInfo(artistId)
-
-        assertThat(result.id).isEqualTo(artistId)
-        assertThat(result.name).isEqualTo("Artist Name")
-        assertThat(result.popularity).isEqualTo(100)
-        assertThat(result.genres).isEqualTo("Pop, Jazz")
-        assertThat(result.image).isEqualTo("image-url")
-
-        verifySequence {
-            artistDao.getById(artistId)
-            artistConverter.convert(artistEntity)
+    fun getTracksAudioFeaturesTest() = runTest {
+        val accessToken = "access-token"
+        val trackId = "1"
+        val featuresResponse = mockk<AudioFeaturesResponse>()
+        val featuresApiResponse = mockk<AudioFeaturesListResponse> {
+            every { audioFeatures } returns listOf(featuresResponse)
         }
+        val featuresInfo = mockk<AudioFeaturesInfo> {
+            every { id } returns trackId
+        }
+        coEvery { apiMapper.getTracksAudioFeatures(accessToken, trackId) } returns featuresApiResponse
+        every { audioFeaturesConverter.convert(any()) } returns featuresInfo
+
+        val result = spotifyInfoRepository.getTracksAudioFeatures(accessToken, listOf(trackId))
+
+        assertThat(result).isEqualTo(listOf(featuresInfo))
+
+        coVerifySequence {
+            apiMapper.getTracksAudioFeatures(accessToken, trackId)
+            audioFeaturesConverter.convert(featuresResponse)
+        }
+
     }
 }

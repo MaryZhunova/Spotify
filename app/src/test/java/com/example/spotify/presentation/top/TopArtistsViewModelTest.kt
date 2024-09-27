@@ -1,6 +1,6 @@
 package com.example.spotify.presentation.top
 
-import com.example.spotify.domain.SpotifyUserStatsRepository
+import com.example.spotify.domain.SpotifyInteractor
 import com.example.spotify.domain.models.ArtistInfo
 import com.example.spotify.presentation.models.TimePeriods
 import com.example.spotify.presentation.models.TopArtistsState
@@ -26,9 +26,9 @@ import org.junit.jupiter.params.provider.CsvSource
 @OptIn(ExperimentalCoroutinesApi::class)
 class TopArtistsViewModelTest {
 
-    private val statsRepository: SpotifyUserStatsRepository = mockk()
+    private val spotifyInteractor: SpotifyInteractor = mockk()
 
-    private val viewModel = TopArtistsViewModel(statsRepository)
+    private val viewModel = TopArtistsViewModel(spotifyInteractor)
 
     private val testDispatcher = StandardTestDispatcher()
 
@@ -47,7 +47,7 @@ class TopArtistsViewModelTest {
     fun fetchTopArtists() = runTest {
         val artist = mockk<ArtistInfo>()
         val info = listOf(artist)
-        coEvery { statsRepository.getTopArtists("long_term") } returns info
+        coEvery { spotifyInteractor.getTopArtists("long_term") } returns info
 
         viewModel.fetchTopArtists(TimePeriods.LONG).join()
 
@@ -60,14 +60,14 @@ class TopArtistsViewModelTest {
         viewModel.fetchTopArtists(TimePeriods.LONG).join()
 
         coVerify(exactly = 1) {
-            statsRepository.getTopArtists("long_term")
+            spotifyInteractor.getTopArtists("long_term")
         }
     }
 
     @Test
     fun `fetchTopArtists error`() = runTest {
         val error = Exception()
-        coEvery { statsRepository.getTopArtists("long_term") } throws error
+        coEvery { spotifyInteractor.getTopArtists("long_term") } throws error
 
         viewModel.fetchTopArtists(TimePeriods.LONG).join()
 
@@ -77,7 +77,7 @@ class TopArtistsViewModelTest {
         }
 
         coVerify(exactly = 1) {
-            statsRepository.getTopArtists("long_term")
+            spotifyInteractor.getTopArtists("long_term")
         }
     }
 

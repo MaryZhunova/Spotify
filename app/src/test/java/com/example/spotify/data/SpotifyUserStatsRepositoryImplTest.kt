@@ -17,7 +17,6 @@ import com.example.spotify.data.models.network.UserProfileResponse
 import com.example.spotify.data.network.mappers.SpotifyUserStatsApiMapper
 import com.example.spotify.data.storage.SpotifyUserInfoStorage
 import com.example.spotify.data.storage.SpotifyUserStatsStorage
-import com.example.spotify.domain.auth.AuthRepository
 import com.example.spotify.domain.models.ArtistInfo
 import com.example.spotify.domain.models.TrackInfo
 import com.example.spotify.domain.models.UserProfileInfo
@@ -44,7 +43,6 @@ class SpotifyUserStatsRepositoryImplTest {
     private val trackEntityConverter: TrackEntityToInfoConverter = mockk()
     private val artistResponseConverter: ArtistResponseToEntityConverter = mockk()
     private val artistEntityConverter: ArtistEntityToInfoConverter = mockk()
-    private val authRepository: AuthRepository = mockk()
     private val artistDao: ArtistDao = mockk()
     private val trackDao: TrackDao = mockk()
     private val userStatsStorage: SpotifyUserStatsStorage = mockk()
@@ -57,7 +55,6 @@ class SpotifyUserStatsRepositoryImplTest {
         trackEntityConverter,
         artistResponseConverter,
         artistEntityConverter,
-        authRepository,
         artistDao,
         trackDao,
         userStatsStorage,
@@ -70,7 +67,7 @@ class SpotifyUserStatsRepositoryImplTest {
 
         every { userInfoStorage.getCurrentUserInfo() } returns userProfileInfo
 
-        val result = spotifyUserStatsRepository.getCurrentUserProfile()
+        val result = spotifyUserStatsRepository.getCurrentUserProfile("accessCode")
 
         assertThat(result).isEqualTo(userProfileInfo)
 
@@ -78,7 +75,6 @@ class SpotifyUserStatsRepositoryImplTest {
             userInfoStorage.getCurrentUserInfo()
         }
         coVerify(inverse = true) {
-            authRepository.getAccessToken()
             apiMapper.getCurrentUserProfile(any())
             userProfileConverter.convert(any())
         }
@@ -92,17 +88,15 @@ class SpotifyUserStatsRepositoryImplTest {
 
         every { userInfoStorage.getCurrentUserInfo() } returns null
         every { userInfoStorage.setCurrentUserInfo(any()) } just Runs
-        coEvery { authRepository.getAccessToken() } returns accessToken
         coEvery { apiMapper.getCurrentUserProfile(accessToken) } returns userProfileResponse
         every { userProfileConverter.convert(userProfileResponse) } returns userProfileInfo
 
-        val result = spotifyUserStatsRepository.getCurrentUserProfile()
+        val result = spotifyUserStatsRepository.getCurrentUserProfile(accessToken)
 
         assertThat(result).isEqualTo(userProfileInfo)
 
         coVerifySequence {
             userInfoStorage.getCurrentUserInfo()
-            authRepository.getAccessToken()
             apiMapper.getCurrentUserProfile(accessToken)
             userProfileConverter.convert(userProfileResponse)
             userInfoStorage.setCurrentUserInfo(userProfileInfo)
@@ -130,7 +124,7 @@ class SpotifyUserStatsRepositoryImplTest {
         every { trackEntityConverter.convert(trackEntity) } returns trackInfo
         every { trackEntityConverter.convert(trackEntity2) } returns trackInfo2
 
-        val result = spotifyUserStatsRepository.getTopTracks(timeRange)
+        val result = spotifyUserStatsRepository.getTopTracks("accessCode", timeRange)
 
         assertThat(result).hasSize(2)
         assertThat(result[0]).isEqualTo(trackInfo)
@@ -143,7 +137,6 @@ class SpotifyUserStatsRepositoryImplTest {
             trackEntityConverter.convert(trackEntity2)
         }
         coVerify(inverse = true) {
-            authRepository.getAccessToken()
             apiMapper.getTopTracks(any(), any(), any())
             apiMapper.getTopTracksNextPage(any(), any())
             trackResponseConverter.convert(any())
@@ -177,7 +170,6 @@ class SpotifyUserStatsRepositoryImplTest {
 
         every { userStatsStorage.getIdsList("${timeRange}_tracks") } returns null
         coEvery { userStatsStorage.setIdsList("${timeRange}_tracks", any()) } just Runs
-        coEvery { authRepository.getAccessToken() } returns accessToken
         coEvery { apiMapper.getTopTracks(accessToken, timeRange, limit) } returns initialResponse
         coEvery { apiMapper.getTopTracksNextPage(accessToken, "next-url") } returns nextPageResponse
         every { trackResponseConverter.convert(trackResponse) } returns trackEntity
@@ -186,7 +178,7 @@ class SpotifyUserStatsRepositoryImplTest {
         every { trackEntityConverter.convert(trackEntity2) } returns trackInfo2
         every { trackDao.insertAll(*anyVararg()) } just Runs
 
-        val result = spotifyUserStatsRepository.getTopTracks(timeRange)
+        val result = spotifyUserStatsRepository.getTopTracks(accessToken, timeRange)
 
         assertThat(result).hasSize(2)
         assertThat(result[0]).isEqualTo(trackInfo)
@@ -194,7 +186,6 @@ class SpotifyUserStatsRepositoryImplTest {
 
         coVerifySequence {
             userStatsStorage.getIdsList("${timeRange}_tracks")
-            authRepository.getAccessToken()
             apiMapper.getTopTracks(accessToken, timeRange, limit)
             apiMapper.getTopTracksNextPage(accessToken, "next-url")
             trackResponseConverter.convert(trackResponse)
@@ -246,7 +237,7 @@ class SpotifyUserStatsRepositoryImplTest {
         every { artistEntityConverter.convert(artistEntity) } returns artistInfo
         every { artistEntityConverter.convert(artistEntity2) } returns artistInfo2
 
-        val result = spotifyUserStatsRepository.getTopArtists(timeRange)
+        val result = spotifyUserStatsRepository.getTopArtists("accessCode", timeRange)
 
         assertThat(result).hasSize(2)
         assertThat(result[0]).isEqualTo(artistInfo)
@@ -260,7 +251,6 @@ class SpotifyUserStatsRepositoryImplTest {
         }
 
         coVerify(inverse = true) {
-            authRepository.getAccessToken()
             apiMapper.getTopArtists(any(), any(), any())
             apiMapper.getTopArtistsNextPage(any(), any())
             artistResponseConverter.convert(any())
@@ -294,7 +284,6 @@ class SpotifyUserStatsRepositoryImplTest {
 
         coEvery { userStatsStorage.getIdsList("${timeRange}_artists") } returns null
         coEvery { userStatsStorage.setIdsList("${timeRange}_artists", any()) } just Runs
-        coEvery { authRepository.getAccessToken() } returns accessToken
         coEvery { apiMapper.getTopArtists(accessToken, timeRange, limit) } returns initialResponse
         coEvery {
             apiMapper.getTopArtistsNextPage(
@@ -308,7 +297,7 @@ class SpotifyUserStatsRepositoryImplTest {
         every { artistEntityConverter.convert(artistEntity2) } returns artistInfo2
         every { artistDao.insertAll(*anyVararg()) } just Runs
 
-        val result = spotifyUserStatsRepository.getTopArtists(timeRange)
+        val result = spotifyUserStatsRepository.getTopArtists(accessToken, timeRange)
 
         assertThat(result).hasSize(2)
         assertThat(result[0]).isEqualTo(artistInfo)
@@ -316,7 +305,6 @@ class SpotifyUserStatsRepositoryImplTest {
 
         coVerifySequence {
             userStatsStorage.getIdsList("${timeRange}_artists")
-            authRepository.getAccessToken()
             apiMapper.getTopArtists(accessToken, timeRange, limit)
             apiMapper.getTopArtistsNextPage(accessToken, "next-url")
             artistResponseConverter.convert(artistResponse)
@@ -361,7 +349,7 @@ class SpotifyUserStatsRepositoryImplTest {
             artistEntity4
         )
 
-        val result = spotifyUserStatsRepository.getTopGenres(timeRange)
+        val result = spotifyUserStatsRepository.getTopGenres("accessCode", timeRange)
 
         assertThat(result).hasSize(2)
         result[0].apply {
@@ -397,7 +385,7 @@ class SpotifyUserStatsRepositoryImplTest {
             artistEntity2
         )
 
-        val result = spotifyUserStatsRepository.getTopGenres(timeRange)
+        val result = spotifyUserStatsRepository.getTopGenres("accessCode", timeRange)
 
         assertThat(result).isEmpty()
     }

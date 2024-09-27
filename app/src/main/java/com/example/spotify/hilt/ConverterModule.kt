@@ -2,6 +2,7 @@ package com.example.spotify.hilt
 
 import com.example.spotify.data.converter.ArtistEntityToInfoConverter
 import com.example.spotify.data.converter.ArtistResponseToEntityConverter
+import com.example.spotify.data.converter.AudioFeaturesResponseToInfoConverter
 import com.example.spotify.data.converter.TrackEntityToInfoConverter
 import com.example.spotify.data.converter.TrackResponseToEntityConverter
 import com.example.spotify.data.converter.TrackResponseToInfoConverter
@@ -54,5 +55,11 @@ object ConverterModule {
     @Singleton
     fun provideArtistResponseToEntityConverter(): ArtistResponseToEntityConverter {
         return ArtistResponseToEntityConverter()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAudioFeaturesResponseToInfoConverter(): AudioFeaturesResponseToInfoConverter {
+        return AudioFeaturesResponseToInfoConverter()
     }
 }

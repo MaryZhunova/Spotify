@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.spotify.BuildConfig
+import com.example.spotify.domain.SpotifyInteractor
 import com.example.spotify.domain.SpotifyUserStatsRepository
 import com.example.spotify.domain.auth.AuthRepository
 import com.example.spotify.presentation.models.AuthError
@@ -26,11 +27,12 @@ import javax.inject.Inject
  *
  * @constructor
  * @param authRepository репозиторий для хранения токенов доступа
+ * @param spotifyInteractor интерактор для получения информации о треках и исполнителях
  */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val statsRepository: SpotifyUserStatsRepository
+    private val spotifyInteractor: SpotifyInteractor
 ) : ViewModel() {
 
     private val _authState = mutableStateOf<AuthState>(AuthState.Loading)
@@ -107,7 +109,7 @@ class AuthViewModel @Inject constructor(
      */
     fun logout() = viewModelScope.launch {
         authRepository.clear()
-        statsRepository.clear()
+        spotifyInteractor.clear()
         _authState.value = AuthState.Idle
     }
 

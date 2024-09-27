@@ -1,6 +1,6 @@
 package com.example.spotify.presentation.top
 
-import com.example.spotify.domain.SpotifyUserStatsRepository
+import com.example.spotify.domain.SpotifyInteractor
 import com.example.spotify.domain.models.TrackInfo
 import com.example.spotify.presentation.models.TimePeriods
 import com.example.spotify.presentation.models.TopTracksState
@@ -32,10 +32,10 @@ import org.junit.jupiter.params.provider.CsvSource
 @OptIn(ExperimentalCoroutinesApi::class)
 class TopTracksViewModelTest {
 
-    private val statsRepository: SpotifyUserStatsRepository = mockk()
+    private val spotifyInteractor: SpotifyInteractor = mockk()
     private val audioPlayerManager: AudioPlayerManager = mockk()
 
-    private val viewModel = TopTracksViewModel(statsRepository, audioPlayerManager)
+    private val viewModel = TopTracksViewModel(spotifyInteractor, audioPlayerManager)
 
     private val testDispatcher = StandardTestDispatcher()
 
@@ -54,7 +54,7 @@ class TopTracksViewModelTest {
     fun fetchTopTracksTest() = runTest {
         val track = mockk<TrackInfo>()
         val info = listOf(track)
-        coEvery { statsRepository.getTopTracks("long_term") } returns info
+        coEvery { spotifyInteractor.getTopTracks("long_term") } returns info
 
         viewModel.fetchTopTracks(TimePeriods.LONG).join()
 
@@ -67,14 +67,14 @@ class TopTracksViewModelTest {
         viewModel.fetchTopTracks(TimePeriods.LONG).join()
 
         coVerify(exactly = 1) {
-            statsRepository.getTopTracks("long_term")
+            spotifyInteractor.getTopTracks("long_term")
         }
     }
 
     @Test
     fun `fetchTopTracksTest error`() = runTest {
         val error = Exception()
-        coEvery { statsRepository.getTopTracks("long_term") } throws error
+        coEvery { spotifyInteractor.getTopTracks("long_term") } throws error
 
         viewModel.fetchTopTracks(TimePeriods.LONG).join()
 
@@ -84,7 +84,7 @@ class TopTracksViewModelTest {
         }
 
         coVerify(exactly = 1) {
-            statsRepository.getTopTracks("long_term")
+            spotifyInteractor.getTopTracks("long_term")
         }
     }
 

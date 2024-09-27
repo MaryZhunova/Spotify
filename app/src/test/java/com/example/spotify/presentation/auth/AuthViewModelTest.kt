@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager.NameNotFoundException
 import androidx.activity.result.ActivityResultLauncher
-import com.example.spotify.domain.SpotifyUserStatsRepository
+import com.example.spotify.domain.SpotifyInteractor
 import com.example.spotify.domain.auth.AuthRepository
 import com.example.spotify.presentation.models.AuthError
 import com.example.spotify.presentation.models.AuthState
@@ -40,12 +40,12 @@ class AuthViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val authRepository: AuthRepository = mockk()
-    private val statsRepository: SpotifyUserStatsRepository = mockk()
+    private val spotifyInteractor: SpotifyInteractor = mockk()
     private val activity: Activity = mockk()
     private val authLauncher: ActivityResultLauncher<Intent> = mockk()
     private val request = mockk<AuthorizationRequest>()
 
-    private val viewModel = AuthViewModel(authRepository, statsRepository)
+    private val viewModel = AuthViewModel(authRepository, spotifyInteractor)
 
     @BeforeEach
     fun setUp() {
@@ -165,7 +165,7 @@ class AuthViewModelTest {
     @Test
     fun `logout should clear repositories and set state to Idle`() = runTest(testDispatcher) {
         every { authRepository.clear() } just Runs
-        coEvery { statsRepository.clear() } just Runs
+        coEvery { spotifyInteractor.clear() } just Runs
 
         viewModel.logout().join()
 
@@ -173,7 +173,7 @@ class AuthViewModelTest {
 
         coVerify {
             authRepository.clear()
-            statsRepository.clear()
+            spotifyInteractor.clear()
         }
     }
 }

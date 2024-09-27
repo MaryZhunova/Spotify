@@ -39,5 +39,6 @@ class TrackEntityToInfoConverterTest {
         assertThat(trackInfo.isExplicit).isTrue()
         assertThat(trackInfo.isPlayable).isTrue()
         assertThat(trackInfo.popularity).isEqualTo(75)
+        assertThat(trackInfo.audioFeatures).isNull()
     }
 }

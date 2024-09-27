@@ -4,8 +4,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spotify.domain.SpotifyUserStatsRepository
-import com.example.spotify.domain.TopGenre
+import com.example.spotify.domain.SpotifyInteractor
+import com.example.spotify.domain.models.GenreInfo
 import com.example.spotify.presentation.models.TimePeriods
 import com.example.spotify.presentation.models.TopGenresState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,16 +17,16 @@ import javax.inject.Inject
  * ViewModel для управления данными о топ жанрах.
  *
  * @constructor
- * @param statsRepository репозиторий для получения информации о жанрах из Spotify
+ * @param spotifyInteractor интерактор для получения информации о треках и исполнителях
  */
 @HiltViewModel
 class TopGenresViewModel @Inject constructor(
-    private val statsRepository: SpotifyUserStatsRepository,
+    private val spotifyInteractor: SpotifyInteractor
 ) : ViewModel() {
 
     private val _topGenresState = mutableStateOf<TopGenresState>(TopGenresState.Idle)
 
-    private val genresInfoItems = mutableMapOf<TimePeriods, List<TopGenre>>()
+    private val genresInfoItems = mutableMapOf<TimePeriods, List<GenreInfo>>()
 
     private val _selectedPeriod = mutableStateOf(TimePeriods.SHORT)
 
@@ -55,7 +55,7 @@ class TopGenresViewModel @Inject constructor(
             _topGenresState.value = TopGenresState.Success(savedInfo)
         } else {
             _topGenresState.value = TopGenresState.Loading
-            val info = statsRepository.getTopGenres(timeRange = period.strValue)
+            val info = spotifyInteractor.getTopGenres(timeRange = period.strValue)
             genresInfoItems.putIfAbsent(period, info)
             _topGenresState.value = TopGenresState.Success(info)
         }

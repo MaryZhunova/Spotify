@@ -25,7 +25,8 @@ data class TrackInfo(
     val isExplicit: Boolean,
     val isPlayable: Boolean,
     val popularity: Int,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val audioFeatures: AudioFeaturesInfo? = null
 )
 
 /**

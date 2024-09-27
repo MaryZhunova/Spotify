@@ -5,10 +5,8 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.spotify.R
-import com.example.spotify.domain.TopGenre
+import com.example.spotify.domain.models.GenreInfo
 import com.example.spotify.presentation.models.TimePeriods
 import com.example.spotify.presentation.components.AppBar
 import com.example.spotify.presentation.components.ErrorIcon
@@ -96,7 +94,7 @@ fun TopGenresScreen(
                     }
 
                     is TopGenresState.Success -> {
-                        TopGenresList(topTracksState.topGenres)
+                        TopGenresList(topTracksState.genreInfos)
                     }
                 }
 
@@ -106,14 +104,14 @@ fun TopGenresScreen(
 }
 
 @Composable
-fun TopGenresList(topGenres: List<TopGenre>) {
+fun TopGenresList(genreInfos: List<GenreInfo>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         LazyColumn {
-            items(topGenres) { topGenre ->
+            items(genreInfos) { topGenre ->
                 GenreItem(topGenre)
             }
         }
@@ -121,7 +119,7 @@ fun TopGenresList(topGenres: List<TopGenre>) {
 }
 
 @Composable
-private fun GenreItem(topGenre: TopGenre) {
+private fun GenreItem(genreInfo: GenreInfo) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Card(
@@ -141,19 +139,19 @@ private fun GenreItem(topGenre: TopGenre) {
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = topGenre.genre,
+                modifier = Modifier.padding(bottom = 2.dp),
+                text = genreInfo.genre,
                 style = MaterialTheme.typography.titleMedium,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
             Text(
-                text = "${topGenre.numberOfArtists} Artists",
+                modifier = Modifier.padding(bottom = 8.dp),
+                text = "${genreInfo.numberOfArtists} Artists",
                 style = MaterialTheme.typography.bodySmall
             )
-            Spacer(modifier = Modifier.height(8.dp))
-
             Text(
-                text = "Artists: ${topGenre.artistNames.joinToString(", ")}",
+                text = "Artists: ${genreInfo.artistNames.joinToString(", ")}",
                 style = MaterialTheme.typography.bodyMedium,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = if (isExpanded) Int.MAX_VALUE else 2

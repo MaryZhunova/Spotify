@@ -1,6 +1,6 @@
 package com.example.spotify.presentation.auth.success
 
-import com.example.spotify.domain.SpotifyUserStatsRepository
+import com.example.spotify.domain.SpotifyInteractor
 import com.example.spotify.domain.models.UserProfileInfo
 import com.example.spotify.presentation.models.DialogState
 import com.example.spotify.presentation.models.UserProfileState
@@ -25,8 +25,8 @@ import org.junit.jupiter.api.Test
 class AuthSuccessViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val statsRepository: SpotifyUserStatsRepository = mockk()
-    private val viewModel = AuthSuccessViewModel(statsRepository)
+    private val spotifyInteractor: SpotifyInteractor = mockk()
+    private val viewModel = AuthSuccessViewModel(spotifyInteractor)
 
     @BeforeEach
     fun setUp() {
@@ -43,14 +43,14 @@ class AuthSuccessViewModelTest {
         val userProfile = mockk<UserProfileInfo>()
         val userProfileState = UserProfileState.Success(userProfile)
 
-        coEvery { statsRepository.getCurrentUserProfile() } returns userProfile
+        coEvery { spotifyInteractor.getCurrentUserProfile() } returns userProfile
 
         viewModel.loadUserProfile().join()
 
         assertThat(viewModel.userProfile.value).isEqualTo(userProfileState)
 
         coVerify {
-            statsRepository.getCurrentUserProfile()
+            spotifyInteractor.getCurrentUserProfile()
         }
     }
 
@@ -59,14 +59,14 @@ class AuthSuccessViewModelTest {
         val exception = RuntimeException("Error fetching user profile")
         val errorState = UserProfileState.Error(exception)
 
-        coEvery { statsRepository.getCurrentUserProfile() } throws exception
+        coEvery { spotifyInteractor.getCurrentUserProfile() } throws exception
 
         viewModel.loadUserProfile().join()
 
         assertThat(viewModel.userProfile.value).isEqualTo(errorState)
 
         coVerify {
-            statsRepository.getCurrentUserProfile()
+            spotifyInteractor.getCurrentUserProfile()
         }
     }
 

@@ -4,8 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.spotify.domain.SpotifyInfoRepository
-import com.example.spotify.domain.SpotifyUserStatsRepository
+import com.example.spotify.domain.SpotifyInteractor
 import com.example.spotify.domain.models.ArtistInfo
 import com.example.spotify.domain.models.TrackInfo
 import com.example.spotify.utils.AudioPlayerManager
@@ -19,14 +18,12 @@ import javax.inject.Inject
  * ViewModel для управления данными об исполнителе
  *
  * @constructor
- * @param infoRepository репозиторий для получения информации о треках и исполнителях из Spotify
- * @param userRepository репозиторий для получения информации о пользователе и его статистике
+ * @param spotifyInteractor интерактор для получения информации о треках и исполнителях
  * @param audioPlayerManager управляет воспроизведением треков
  */
 @HiltViewModel
 class ArtistViewModel @Inject constructor(
-    private val infoRepository: SpotifyInfoRepository,
-    private val userRepository: SpotifyUserStatsRepository,
+    private val spotifyInteractor: SpotifyInteractor,
     private val audioPlayerManager: AudioPlayerManager
 ) : ViewModel() {
     private val _topTracks = mutableStateOf<List<TrackInfo>>(emptyList())
@@ -91,9 +88,9 @@ class ArtistViewModel @Inject constructor(
         }
     ) {
         _isLoading.value = true
-        _topTracks.value = infoRepository.getArtistsTopTracks(id)
-        _artist.value = infoRepository.getArtistsInfo(id)
-        _favoriteTracks.value = userRepository.getTopTracksByArtistId(id)
+        _topTracks.value = spotifyInteractor.getArtistsTopTracks(id)
+        _artist.value = spotifyInteractor.getArtistsInfo(id)
+        _favoriteTracks.value = spotifyInteractor.getTopTracksByArtistId(id)
         _isLoading.value = false
     }
 

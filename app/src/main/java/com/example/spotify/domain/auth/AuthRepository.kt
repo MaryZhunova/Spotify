@@ -19,7 +19,7 @@ interface AuthRepository {
      *
      * @return текущий токен доступа в виде строки
      */
-    suspend fun getAccessToken(): String
+    fun getAccessToken(): String
 
     /**
      * Очищает все данные, связанные с токенами доступа

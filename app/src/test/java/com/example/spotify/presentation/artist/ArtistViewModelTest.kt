@@ -1,11 +1,9 @@
 package com.example.spotify.presentation.artist
 
-import com.example.spotify.domain.SpotifyInfoRepository
-import com.example.spotify.domain.SpotifyUserStatsRepository
+import com.example.spotify.domain.SpotifyInteractor
 import com.example.spotify.domain.models.ArtistInfo
 import com.example.spotify.domain.models.TrackInfo
 import com.example.spotify.utils.AudioPlayerManager
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -37,8 +35,7 @@ import java.util.stream.Stream
 @ExperimentalCoroutinesApi
 class ArtistViewModelTest {
 
-    private val infoRepository: SpotifyInfoRepository = mockk()
-    private val userRepository: SpotifyUserStatsRepository = mockk()
+    private val spotifyInteractor: SpotifyInteractor = mockk()
     private val audioPlayerManager: AudioPlayerManager = mockk()
 
     private lateinit var viewModel: ArtistViewModel
@@ -46,7 +43,7 @@ class ArtistViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(StandardTestDispatcher())
-        viewModel = ArtistViewModel(infoRepository, userRepository, audioPlayerManager)
+        viewModel = ArtistViewModel(spotifyInteractor, audioPlayerManager)
     }
 
     @AfterEach
@@ -62,9 +59,9 @@ class ArtistViewModelTest {
     ) = runTest {
         val artistId = "artist-id"
         val artistInfo = mockk<ArtistInfo>()
-        coEvery { infoRepository.getArtistsTopTracks(artistId) } returns topTracks
-        coEvery { infoRepository.getArtistsInfo(artistId) } returns artistInfo
-        coEvery { userRepository.getTopTracksByArtistId(artistId) } returns favoriteTracks
+        coEvery { spotifyInteractor.getArtistsTopTracks(artistId) } returns topTracks
+        coEvery { spotifyInteractor.getArtistsInfo(artistId) } returns artistInfo
+        coEvery { spotifyInteractor.getTopTracksByArtistId(artistId) } returns favoriteTracks
 
         viewModel.fetchTracksAndArtist(artistId).join()
 
@@ -74,9 +71,9 @@ class ArtistViewModelTest {
         assertThat(viewModel.isLoading.value).isFalse()
 
         coVerifySequence {
-            infoRepository.getArtistsTopTracks(artistId)
-            infoRepository.getArtistsInfo(artistId)
-            userRepository.getTopTracksByArtistId(artistId)
+            spotifyInteractor.getArtistsTopTracks(artistId)
+            spotifyInteractor.getArtistsInfo(artistId)
+            spotifyInteractor.getTopTracksByArtistId(artistId)
         }
     }
 
@@ -91,9 +88,9 @@ class ArtistViewModelTest {
             every { isFavorite } returns isFav
         })
         val favoriteTracks = listOf(mockk<TrackInfo>())
-        coEvery { infoRepository.getArtistsTopTracks(artistId) } returns topTracks
-        coEvery { infoRepository.getArtistsInfo(artistId) } returns artistInfo
-        coEvery { userRepository.getTopTracksByArtistId(artistId) } returns favoriteTracks
+        coEvery { spotifyInteractor.getArtistsTopTracks(artistId) } returns topTracks
+        coEvery { spotifyInteractor.getArtistsInfo(artistId) } returns artistInfo
+        coEvery { spotifyInteractor.getTopTracksByArtistId(artistId) } returns favoriteTracks
 
         viewModel.fetchTracksAndArtist(artistId).join()
 
