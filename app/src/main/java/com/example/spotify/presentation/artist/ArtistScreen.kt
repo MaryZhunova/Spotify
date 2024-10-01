@@ -1,8 +1,9 @@
 package com.example.spotify.presentation.artist
 
-import androidx.activity.ComponentActivity
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,20 +39,21 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.spotify.R
 import com.example.spotify.domain.models.TrackInfo
+import com.example.spotify.presentation.components.AppBar
+import com.example.spotify.presentation.components.ErrorIcon
 import com.example.spotify.presentation.components.ProgressIndicator
 import com.example.spotify.presentation.components.ScrollableAppBar
 import com.example.spotify.presentation.components.TrackItem
+import com.example.spotify.presentation.models.ArtistScreenState
 import kotlinx.coroutines.launch
 
 /**
@@ -63,38 +65,28 @@ import kotlinx.coroutines.launch
 @Composable
 fun ArtistScreen(
     navController: NavController,
-    id: String
+    id: String,
+    changeStatusBarIconColor: (Boolean) -> Unit
 ) {
     val viewModel: ArtistViewModel = hiltViewModel()
 
+    val state by viewModel.state
     val topTracks by viewModel.topTracks
     val artist by viewModel.artist
-    val isLoading by viewModel.isLoading
     val isHighlighted by viewModel.isFavoriteHighlighted
     val favoriteTracks by viewModel.favoriteTracks
     val currentTrack by viewModel.currentTrack.collectAsState()
 
+    val isDark = isSystemInDarkTheme()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(id) {
         viewModel.fetchTracksAndArtist(id)
     }
-    val context = LocalContext.current
-    val activity = context as? ComponentActivity
-    val window = activity?.window
 
-    val isDark = isSystemInDarkTheme()
-
-    DisposableEffect(Unit) {
-        window?.let {
-            WindowCompat.getInsetsController(it, it.decorView).apply {
-                isAppearanceLightStatusBars = false
-            }
-        }
-        onDispose {
-            window?.let {
-                WindowCompat.getInsetsController(it, it.decorView).isAppearanceLightStatusBars =
-                    !isDark
-            }
-        }
+    DisposableEffect(navController.currentBackStackEntry) {
+        onDispose { viewModel.reset() }
     }
 
     val toolbarHeight = 250.dp
@@ -119,71 +111,98 @@ fun ArtistScreen(
         toolbarHeight + toolbarOffsetHeightPx.floatValue.toDp()
     }
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
-
-
     Box(
         Modifier
             .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
+            .navigationBarsPadding()
     ) {
-        Column(
-            modifier = Modifier
-                .navigationBarsPadding()
-                .padding(top = maxOffsetHeightPx)
-                .verticalScroll(scrollScope)
-        ) {
-            if (isLoading) {
-                Spacer(modifier = Modifier.height(12.dp))
-                ProgressIndicator()
-            } else {
-                if (favoriteTracks.isNotEmpty()) {
-                    val snackbarMessage = stringResource(id = R.string.no_faves_snackbar)
-                    var isSnackbarShowing by remember { mutableStateOf(false) }
+        Crossfade(targetState = state, label = "label") { screenState ->
+            when (screenState) {
+                is ArtistScreenState.Idle -> {
+                    changeStatusBarIconColor.invoke(!isDark)
+                }
+                is ArtistScreenState.Loading -> {
+                    changeStatusBarIconColor.invoke(!isDark)
+                    AppBar(bgColor = MaterialTheme.colorScheme.background) { navController.popBackStack() }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    ProgressIndicator()
+                }
+                is ArtistScreenState.Fail -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        ErrorIcon()
+                        Text(
+                            modifier = Modifier.padding(bottom = 36.dp),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = MaterialTheme.colorScheme.error,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
+                            text = screenState.error.message
+                                ?: stringResource(id = R.string.request_failed)
+                        )
+                    }
+                    AppBar(bgColor = MaterialTheme.colorScheme.background) { navController.popBackStack() }
+                }
+                is ArtistScreenState.Success -> {
+                    changeStatusBarIconColor.invoke(false)
+                    Column(
+                        modifier = Modifier
+                            .padding(top = maxOffsetHeightPx)
+                            .verticalScroll(scrollScope)
+                    ) {
+                        if (favoriteTracks.isNotEmpty()) {
+                            val snackbarMessage = stringResource(id = R.string.no_faves_snackbar)
+                            var isSnackbarShowing by remember { mutableStateOf(false) }
 
-                    TracksTabRow(
-                        topTracks = topTracks,
-                        favTracks = favoriteTracks,
-                        currentTrack = currentTrack,
-                        isHighlighted = isHighlighted,
-                        onHighlightedChange = {
-                            if (!viewModel.changeIsHighlightedState()) {
-                                if (!isSnackbarShowing) {
-                                    isSnackbarShowing = true
-                                    coroutineScope.launch {
-                                        snackbarHostState.showSnackbar(snackbarMessage).also {
-                                            isSnackbarShowing = false
+                            TracksTabRow(
+                                topTracks = topTracks,
+                                favTracks = favoriteTracks,
+                                currentTrack = currentTrack,
+                                isHighlighted = isHighlighted,
+                                onHighlightedChange = {
+                                    if (!viewModel.changeIsHighlightedState()) {
+                                        if (!isSnackbarShowing) {
+                                            isSnackbarShowing = true
+                                            coroutineScope.launch {
+                                                snackbarHostState.showSnackbar(snackbarMessage).also {
+                                                    isSnackbarShowing = false
+                                                }
+                                            }
                                         }
                                     }
-                                }
-                            }
-                        },
-                        onPlay = { viewModel.play(it) },
-                        onStop = { viewModel.stop() }
-                    )
-                } else {
-                    TopTracks(
-                        topTracks = topTracks,
-                        currentTrack = currentTrack,
-                        onPlay = { viewModel.play(it) },
-                        onStop = { viewModel.stop() }
+                                },
+                                onPlay = { viewModel.play(it) },
+                                onStop = { viewModel.stop() }
+                            )
+                        } else {
+                            TopTracks(
+                                topTracks = topTracks,
+                                currentTrack = currentTrack,
+                                onPlay = { viewModel.play(it) },
+                                onStop = { viewModel.stop() }
+                            )
+                        }
+                    }
+                    ScrollableAppBar(
+                        title = artist?.name.orEmpty(),
+                        backgroundImage = artist?.image.orEmpty(),
+                        scrollableAppBarHeight = toolbarHeight,
+                        toolbarOffsetHeightPx = toolbarOffsetHeightPx,
+                        onClick = {
+                            navController.popBackStack()
+                        }
                     )
                 }
             }
         }
-        ScrollableAppBar(
-            title = artist?.name.orEmpty(),
-            backgroundImage = artist?.image.orEmpty(),
-            scrollableAppBarHeight = toolbarHeight,
-            toolbarOffsetHeightPx = toolbarOffsetHeightPx,
-            onClick = { navController.popBackStack() }
-        )
         SnackbarHost(
             hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
 }

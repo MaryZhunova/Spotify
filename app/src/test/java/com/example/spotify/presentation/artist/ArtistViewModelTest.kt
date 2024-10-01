@@ -3,6 +3,7 @@ package com.example.spotify.presentation.artist
 import com.example.spotify.domain.SpotifyInteractor
 import com.example.spotify.domain.models.ArtistInfo
 import com.example.spotify.domain.models.TrackInfo
+import com.example.spotify.presentation.models.ArtistScreenState
 import com.example.spotify.utils.AudioPlayerManager
 import com.google.common.truth.Truth.assertThat
 import io.mockk.Runs
@@ -68,7 +69,7 @@ class ArtistViewModelTest {
         assertThat(viewModel.topTracks.value).isEqualTo(topTracks)
         assertThat(viewModel.artist.value).isEqualTo(artistInfo)
         assertThat(viewModel.favoriteTracks.value).isEqualTo(favoriteTracks)
-        assertThat(viewModel.isLoading.value).isFalse()
+        assertThat(viewModel.state.value).isInstanceOf(ArtistScreenState.Success::class.java)
 
         coVerifySequence {
             spotifyInteractor.getArtistsTopTracks(artistId)
@@ -77,11 +78,30 @@ class ArtistViewModelTest {
         }
     }
 
+    @Test
+    fun `fetchTracksAndArtistTest error`() = runTest {
+        val artistId = "artist-id"
+        val error = Exception()
+        coEvery { spotifyInteractor.getArtistsTopTracks(artistId) } throws error
+
+        viewModel.fetchTracksAndArtist(artistId).join()
+
+        assertThat(viewModel.topTracks.value).isEmpty()
+        assertThat(viewModel.artist.value).isNull()
+        assertThat(viewModel.favoriteTracks.value).isEmpty()
+        assertThat(viewModel.state.value).isInstanceOf(ArtistScreenState.Fail::class.java)
+        (viewModel.state.value as ArtistScreenState.Fail).apply {
+            assertThat(this.error).isEqualTo(error)
+        }
+
+        coVerifySequence {
+            spotifyInteractor.getArtistsTopTracks(artistId)
+        }
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
-    fun changeIsHighlightedStateTest(
-        isFav: Boolean
-    ) = runTest {
+    fun changeIsHighlightedStateTest(isFav: Boolean) = runTest {
         val artistId = "artist-id"
         val artistInfo = mockk<ArtistInfo>()
         val topTracks = listOf(mockk<TrackInfo> {

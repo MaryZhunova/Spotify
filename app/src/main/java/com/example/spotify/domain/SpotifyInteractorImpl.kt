@@ -64,7 +64,8 @@ class SpotifyInteractorImpl @Inject constructor(
     }
 
     private suspend fun List<TrackInfo>.addAudioFeatures(): List<TrackInfo> {
-        val featuresList = infoRepository.getTracksAudioFeatures(accessCode, this.map { it.id })
+        val tracks = this.takeIf { it.isNotEmpty() } ?: return emptyList()
+        val featuresList = infoRepository.getTracksAudioFeatures(accessCode, tracks.map { it.id })
         return this.map { track -> track.copy(audioFeatures = featuresList.firstOrNull { it.id == track.id }) }
     }
 }

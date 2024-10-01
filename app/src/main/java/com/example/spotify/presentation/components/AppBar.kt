@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.example.spotify.R
@@ -28,7 +29,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(
-    title: String,
+    title: String = "",
+    bgColor: Color = MaterialTheme.colorScheme.surface,
     onClick: () -> Unit
 ) {
     var isButtonEnabled by remember { mutableStateOf(true) }
@@ -64,7 +66,7 @@ fun AppBar(
             }
         },
         colors = TopAppBarDefaults.topAppBarColors().copy(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = bgColor
         )
     )
 }

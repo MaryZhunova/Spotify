@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.spotify.domain.SpotifyInteractor
 import com.example.spotify.domain.models.ArtistInfo
 import com.example.spotify.domain.models.TrackInfo
+import com.example.spotify.presentation.models.ArtistScreenState
 import com.example.spotify.utils.AudioPlayerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -26,15 +27,21 @@ class ArtistViewModel @Inject constructor(
     private val spotifyInteractor: SpotifyInteractor,
     private val audioPlayerManager: AudioPlayerManager
 ) : ViewModel() {
+    private val _state = mutableStateOf<ArtistScreenState>(ArtistScreenState.Idle)
+
     private val _topTracks = mutableStateOf<List<TrackInfo>>(emptyList())
 
     private val _favoriteTracks = mutableStateOf<List<TrackInfo>>(emptyList())
 
     private val _artist = mutableStateOf<ArtistInfo?>(null)
 
-    private val _isLoading = mutableStateOf(false)
-
     private val _isFavoriteHighlighted = mutableStateOf(false)
+
+    /**
+     * Состояние экрана
+     */
+    val state: State<ArtistScreenState>
+        get() = _state
 
     /**
      * Список популярный треков исполнителя
@@ -53,12 +60,6 @@ class ArtistViewModel @Inject constructor(
      */
     val artist: State<ArtistInfo?>
         get() = _artist
-
-    /**
-     * Состояние загрузки данных
-     */
-    val isLoading: State<Boolean>
-        get() = _isLoading
 
     /**
      * Выделены ли любимые треки пользователя среди популярных
@@ -84,14 +85,14 @@ class ArtistViewModel @Inject constructor(
      */
     fun fetchTracksAndArtist(id: String) = viewModelScope.launch(
         CoroutineExceptionHandler { _, err ->
-            //todo
+            _state.value = ArtistScreenState.Fail(error = err)
         }
     ) {
-        _isLoading.value = true
+        _state.value = ArtistScreenState.Loading
         _topTracks.value = spotifyInteractor.getArtistsTopTracks(id)
         _artist.value = spotifyInteractor.getArtistsInfo(id)
         _favoriteTracks.value = spotifyInteractor.getTopTracksByArtistId(id)
-        _isLoading.value = false
+        _state.value = ArtistScreenState.Success
     }
 
     /**
@@ -118,4 +119,11 @@ class ArtistViewModel @Inject constructor(
      * Остановить воспроизведение
      */
     fun stop() = audioPlayerManager.stop()
+
+    /**
+     * Сброс состояния экрана
+     */
+    fun reset() {
+        _state.value = ArtistScreenState.Idle
+    }
 }
