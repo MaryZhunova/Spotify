@@ -66,7 +66,7 @@ class ArtistDaoTest {
             id = "1",
             name = "Duplicate Artist 1",
             popularity = 90,
-            genres = "Jazz, Blues",
+            genres = listOf("Jazz", "Blues"),
             smallImage = "http://example.com/small2.jpg",
             bigImage = "http://example.com/big2.jpg"
         )
@@ -94,7 +94,7 @@ class ArtistDaoTest {
             id = "1",
             name = "Artist 1",
             popularity = 85,
-            genres = "Pop, Rock",
+            genres = listOf("Pop", "Rock"),
             smallImage = "http://example.com/small1.jpg",
             bigImage = "http://example.com/big1.jpg"
         )
@@ -102,7 +102,7 @@ class ArtistDaoTest {
             id = "2",
             name = "Artist 2",
             popularity = 90,
-            genres = "Jazz, Blues",
+            genres = listOf("Jazz", "Blues"),
             smallImage = "http://example.com/small2.jpg",
             bigImage = "http://example.com/big2.jpg"
         )

@@ -11,9 +11,7 @@ import com.example.spotify.domain.models.TrackInfo
  * @constructor
  * @param trackDao DAO для работы с таблицей треков в базе данных
  */
-class TrackResponseToInfoConverter(
-    private val trackDao: TrackDao
-) {
+class TrackResponseToInfoConverter(private val trackDao: TrackDao) {
 
     /**
      * Конвертирует [TrackResponse] в [TrackInfo]

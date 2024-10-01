@@ -3,8 +3,16 @@ package com.example.spotify.data.converter
 import com.example.spotify.data.models.network.AudioFeaturesResponse
 import com.example.spotify.domain.models.AudioFeaturesInfo
 
+/**
+ * Конвертер сетевой модели [AudioFeaturesResponse] в модель [AudioFeaturesInfo]
+ */
 class AudioFeaturesResponseToInfoConverter {
 
+    /**
+     * Конвертирует [AudioFeaturesResponse] в [AudioFeaturesInfo]
+     *
+     * @param from данные для конвертации
+     */
     fun convert(from: AudioFeaturesResponse): AudioFeaturesInfo =
         AudioFeaturesInfo(
             acousticness = from.acousticness,

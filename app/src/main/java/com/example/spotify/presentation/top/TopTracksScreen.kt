@@ -58,10 +58,8 @@ fun TopTracksScreen(
 
     Scaffold(
         topBar = {
-            AppBar(
-                title = stringResource(id = R.string.top_tracks)
-            ) { navController.popBackStack() }
-        },
+            AppBar(title = stringResource(id = R.string.top_tracks)) { navController.popBackStack() }
+        }
     ) {
         Column(modifier = Modifier.padding(it)) {
             TabRow(
@@ -121,7 +119,7 @@ private fun TracksList(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 16.dp)
+            .padding(top = 16.dp)
     ) {
         Text(
             text = stringResource(id = R.string.filter),

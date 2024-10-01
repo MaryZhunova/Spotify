@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -59,9 +60,7 @@ fun TopGenresScreen(
 
     Scaffold(
         topBar = {
-            AppBar(
-                title = stringResource(id = R.string.top_genres)
-            ) { navController.popBackStack() }
+            AppBar(title = stringResource(id = R.string.top_genres)) { navController.popBackStack() }
         },
     ) {
         Column(modifier = Modifier.padding(it)) {
@@ -70,7 +69,6 @@ fun TopGenresScreen(
                 periods = periods,
                 onSwitch = { period -> viewModel.switchSelected(period) }
             )
-
             Crossfade(targetState = state, label = "crossfadeLabel") { topTracksState ->
                 when (topTracksState) {
                     is TopGenresState.Idle -> {}
@@ -92,7 +90,6 @@ fun TopGenresScreen(
                             )
                         }
                     }
-
                     is TopGenresState.Success -> {
                         TopGenresList(topTracksState.genreInfos)
                     }
@@ -108,9 +105,11 @@ fun TopGenresList(genreInfos: List<GenreInfo>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(start = 16.dp, end = 16.dp)
     ) {
-        LazyColumn {
+        LazyColumn(
+            contentPadding = PaddingValues(vertical = 16.dp)
+        ) {
             items(genreInfos) { topGenre ->
                 GenreItem(topGenre)
             }
