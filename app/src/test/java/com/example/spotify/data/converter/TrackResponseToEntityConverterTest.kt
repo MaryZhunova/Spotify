@@ -1,9 +1,9 @@
 package com.example.spotify.data.converter
 
 import com.example.spotify.domain.models.AlbumInfo
-import com.example.spotify.data.models.network.Album
-import com.example.spotify.data.models.network.Artist
-import com.example.spotify.data.models.network.Image
+import com.example.spotify.data.models.network.AlbumResponse
+import com.example.spotify.data.models.network.ShortArtistResponse
+import com.example.spotify.data.models.network.ImageResponse
 import com.example.spotify.data.models.network.TrackResponse
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -17,12 +17,12 @@ class TrackResponseToEntityConverterTest {
 
     @Test
     fun convertTest() {
-        val albumResponse = Album(
+        val albumResponse = AlbumResponse(
             id = "album1",
             name = "Album Name",
             images = listOf(
-                Image(url = "imageUrl1"),
-                Image(url = "imageUrl2")
+                ImageResponse(url = "imageUrl1"),
+                ImageResponse(url = "imageUrl2")
             ),
             releaseDate = "1981-12",
             releaseDatePrecision = "month",
@@ -38,8 +38,8 @@ class TrackResponseToEntityConverterTest {
             previewUrl = "https://example.com/preview",
             duration = 180,
             artists = listOf(
-                Artist(id = "artist1", name = "Artist 1"),
-                Artist(id = "artist2", name = "Artist 2")
+                ShortArtistResponse(id = "artist1", name = "Artist 1"),
+                ShortArtistResponse(id = "artist2", name = "Artist 2")
             ),
             album = albumResponse,
             isExplicit = true,
@@ -63,7 +63,7 @@ class TrackResponseToEntityConverterTest {
 
     @Test
     fun `convertTest if empty album images`() {
-        val albumResponse = Album(
+        val albumResponse = AlbumResponse(
             id = "album1",
             name = "Album Name",
             images = emptyList(),
@@ -81,8 +81,8 @@ class TrackResponseToEntityConverterTest {
             previewUrl = "https://example.com/preview",
             duration = 180,
             artists = listOf(
-                Artist(id = "artist1", name = "Artist 1"),
-                Artist(id = "artist2", name = "Artist 2")
+                ShortArtistResponse(id = "artist1", name = "Artist 1"),
+                ShortArtistResponse(id = "artist2", name = "Artist 2")
             ),
             album = albumResponse,
             isExplicit = true,

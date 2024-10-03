@@ -2,6 +2,8 @@ package com.example.spotify.hilt
 
 import android.content.Context
 import com.example.spotify.data.storage.FileStorageImpl
+import com.example.spotify.data.storage.SpotifyInfoStorage
+import com.example.spotify.data.storage.SpotifyInfoStorageImpl
 import com.example.spotify.data.storage.SpotifyUserInfoStorage
 import com.example.spotify.data.storage.SpotifyUserInfoStorageImpl
 import com.example.spotify.data.storage.SpotifyUserStatsStorage
@@ -24,10 +26,11 @@ object StorageModule {
 
     private const val USER_CACHE_NAME = "user_data"
     private const val USER_STATS_CACHE_NAME = "user_stats_data"
+    private const val INFO_CACHE_NAME = "info"
 
     @Provides
     @Singleton
-    fun provideSpotifyInfoStorage(
+    fun provideSpotifyUserStatsStorage(
         @ApplicationContext context: Context,
         timeSource: TimeSource
     ): SpotifyUserStatsStorage {
@@ -52,5 +55,19 @@ object StorageModule {
             .build(context, timeSource)
 
         return SpotifyUserInfoStorageImpl(fileStorage)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSpotifyInfoStorage(
+        @ApplicationContext context: Context,
+        timeSource: TimeSource
+    ): SpotifyInfoStorage {
+
+        val fileStorage = FileStorageImpl.Builder()
+            .setDirectoryName(INFO_CACHE_NAME)
+            .build(context, timeSource)
+
+        return SpotifyInfoStorageImpl(fileStorage)
     }
 }

@@ -1,7 +1,7 @@
 package com.example.spotify.data.converter
 
 import com.example.spotify.data.models.network.ArtistResponse
-import com.example.spotify.data.models.network.Image
+import com.example.spotify.data.models.network.ImageResponse
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -20,8 +20,8 @@ class ArtistResponseToEntityConverterTest {
             popularity = 90,
             genres = listOf("Pop", "Jazz"),
             images = listOf(
-                Image(url = "bigImageUrl"),
-                Image(url = "smallImageUrl")
+                ImageResponse(url = "bigImageUrl"),
+                ImageResponse(url = "smallImageUrl")
             )
         )
 
@@ -59,7 +59,7 @@ class ArtistResponseToEntityConverterTest {
             popularity = 90,
             genres = listOf("Pop", "Jazz"),
             images = listOf(
-                Image(url = "onlyImageUrl")
+                ImageResponse(url = "onlyImageUrl")
             )
         )
 

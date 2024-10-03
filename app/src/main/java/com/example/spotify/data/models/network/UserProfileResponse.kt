@@ -16,16 +16,7 @@ data class UserProfileResponse(
     @SerializedName("id") val id: String,
     @SerializedName("display_name") val displayName: String,
     @SerializedName("email") val email: String,
-    @SerializedName("images") val images: List<Image>,
+    @SerializedName("images") val images: List<ImageResponse>,
     @SerializedName("country") val country: String,
     @SerializedName("product") val product: String
-)
-
-/**
- * Изображение
- *
- * @property url URL изображения
- */
-data class Image(
-    @SerializedName("url") val url: String
 )

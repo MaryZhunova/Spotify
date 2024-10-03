@@ -3,15 +3,12 @@ package com.example.spotify.presentation
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +27,7 @@ import com.example.spotify.presentation.top.TopArtistsScreen
 import com.example.spotify.presentation.top.TopTracksScreen
 import com.example.spotify.presentation.theme.SpotifyTheme
 import com.example.spotify.presentation.auth.AuthViewModel
+import com.example.spotify.presentation.playlist.PlaylistScreen
 import com.example.spotify.presentation.top.TopGenresScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
@@ -89,6 +87,7 @@ fun SpotifyApp(
                 navController = navController
             )
         }
+        composable(PLAYLIST_SCREEN) { PlaylistScreen(navController = navController) }
         composable(TOP_TRACKS_SCREEN) { TopTracksScreen(navController = navController) }
         composable(TOP_ARTISTS_SCREEN) { TopArtistsScreen(navController = navController) }
         composable(TOP_GENRES_SCREEN) { TopGenresScreen(navController = navController) }

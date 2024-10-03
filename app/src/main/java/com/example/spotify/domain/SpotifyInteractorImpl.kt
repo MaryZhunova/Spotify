@@ -49,13 +49,11 @@ class SpotifyInteractorImpl @Inject constructor(
 
     override suspend fun getTopArtists(timeRange: String): List<ArtistInfo> =
         withContext(Dispatchers.IO) {
-            val accessCode = authRepository.getAccessToken()
             statsRepository.getTopArtists(accessCode, timeRange)
         }
 
     override suspend fun getTopGenres(timeRange: String): List<GenreInfo> =
         withContext(Dispatchers.IO) {
-            val accessCode = authRepository.getAccessToken()
             statsRepository.getTopGenres(accessCode, timeRange)
         }
 
@@ -63,9 +61,41 @@ class SpotifyInteractorImpl @Inject constructor(
         statsRepository.clear()
     }
 
+    override suspend fun searchTracks(query: String): List<TrackInfo> =
+        withContext(Dispatchers.IO) {
+            infoRepository.search(accessCode, SEARCH_TYPE_TRACK, query).tracks
+        }
+
+    override suspend fun searchArtists(query: String): List<ArtistInfo> =
+        withContext(Dispatchers.IO) {
+            infoRepository.search(accessCode, SEARCH_TYPE_ARTIST, query).artists
+        }
+
+    override suspend fun searchGenres(): List<String> = withContext(Dispatchers.IO) {
+        runCatching { infoRepository.searchGenres(accessCode) }.getOrDefault(emptyList())
+    }
+
+    override suspend fun createPlaylist(
+        genres: List<String>,
+        artists: List<ArtistInfo>,
+        tracks: List<TrackInfo>
+    ): List<TrackInfo> = withContext(Dispatchers.IO) {
+        infoRepository.createPlaylist(
+            accessCode = accessCode,
+            genres = genres,
+            artists = artists.map { it.id },
+            tracks = tracks.map { it.id }
+        )
+    }
+
     private suspend fun List<TrackInfo>.addAudioFeatures(): List<TrackInfo> {
         val tracks = this.takeIf { it.isNotEmpty() } ?: return emptyList()
         val featuresList = infoRepository.getTracksAudioFeatures(accessCode, tracks.map { it.id })
         return this.map { track -> track.copy(audioFeatures = featuresList.firstOrNull { it.id == track.id }) }
+    }
+
+    private companion object {
+        const val SEARCH_TYPE_TRACK = "track"
+        const val SEARCH_TYPE_ARTIST = "artist"
     }
 }

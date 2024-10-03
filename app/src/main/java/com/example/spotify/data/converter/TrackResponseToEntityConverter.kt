@@ -2,7 +2,7 @@ package com.example.spotify.data.converter
 
 import com.example.spotify.data.models.db.TrackEntity
 import com.example.spotify.domain.models.AlbumInfo
-import com.example.spotify.data.models.network.Album
+import com.example.spotify.data.models.network.AlbumResponse
 import com.example.spotify.data.models.network.TrackResponse
 
 /**
@@ -29,7 +29,7 @@ class TrackResponseToEntityConverter {
             popularity = from.popularity
         )
 
-    private fun convertAlbum(from: Album): AlbumInfo =
+    private fun convertAlbum(from: AlbumResponse): AlbumInfo =
         AlbumInfo(
             id = from.id,
             name = from.name,

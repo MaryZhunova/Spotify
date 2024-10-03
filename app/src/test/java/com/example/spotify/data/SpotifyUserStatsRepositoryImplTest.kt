@@ -10,8 +10,7 @@ import com.example.spotify.data.db.TrackDao
 import com.example.spotify.data.models.db.ArtistEntity
 import com.example.spotify.data.models.db.TrackEntity
 import com.example.spotify.data.models.network.ArtistResponse
-import com.example.spotify.data.models.network.TopArtistsResponse
-import com.example.spotify.data.models.network.TopTracksResponse
+import com.example.spotify.data.models.network.PaginatedResponse
 import com.example.spotify.data.models.network.TrackResponse
 import com.example.spotify.data.models.network.UserProfileResponse
 import com.example.spotify.data.network.mappers.SpotifyUserStatsApiMapper
@@ -151,11 +150,11 @@ class SpotifyUserStatsRepositoryImplTest {
         val accessToken = "access-token"
         val trackResponse = mockk<TrackResponse>()
         val trackResponse2 = mockk<TrackResponse>()
-        val initialResponse = mockk<TopTracksResponse> {
+        val initialResponse = mockk<PaginatedResponse<TrackResponse>> {
             every { items } returns listOf(trackResponse)
             every { next } returns "next-url"
         }
-        val nextPageResponse = mockk<TopTracksResponse> {
+        val nextPageResponse = mockk<PaginatedResponse<TrackResponse>> {
             every { items } returns listOf(trackResponse2)
             every { next } returns null
         }
@@ -265,11 +264,11 @@ class SpotifyUserStatsRepositoryImplTest {
         val accessToken = "access-token"
         val artistResponse = mockk<ArtistResponse>()
         val artistResponse2 = mockk<ArtistResponse>()
-        val initialResponse = mockk<TopArtistsResponse> {
+        val initialResponse = mockk<PaginatedResponse<ArtistResponse>> {
             every { items } returns listOf(artistResponse)
             every { next } returns "next-url"
         }
-        val nextPageResponse = mockk<TopArtistsResponse> {
+        val nextPageResponse = mockk<PaginatedResponse<ArtistResponse>> {
             every { items } returns listOf(artistResponse2)
             every { next } returns null
         }

@@ -1,7 +1,8 @@
 package com.example.spotify.data.network.mappers
 
-import com.example.spotify.data.models.network.TopArtistsResponse
-import com.example.spotify.data.models.network.TopTracksResponse
+import com.example.spotify.data.models.network.ArtistResponse
+import com.example.spotify.data.models.network.PaginatedResponse
+import com.example.spotify.data.models.network.TrackResponse
 import com.example.spotify.data.models.network.UserProfileResponse
 import com.example.spotify.data.network.api.SpotifyUserStatsApiService
 import com.google.common.truth.Truth.assertThat
@@ -75,8 +76,8 @@ class SpotifyUserStatsApiMapperImplTest {
         val accessToken = "access_token"
         val timeRange = "short_term"
         val limit = 10
-        val mockResponse = mockk<TopTracksResponse>()
-        val mockCall = mockk<Call<TopTracksResponse>>()
+        val mockResponse = mockk<PaginatedResponse<TrackResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<TrackResponse>>>()
         every { mockCall.execute() } returns Response.success(mockResponse)
         coEvery { apiService.getTopTracks(any(), any(), any()) } returns mockCall
 
@@ -91,7 +92,7 @@ class SpotifyUserStatsApiMapperImplTest {
         val accessToken = "access_token"
         val timeRange = "short_term"
         val limit = 10
-        val mockCall = mockk<Call<TopTracksResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<TrackResponse>>>()
         every { mockCall.execute() } returns Response.success(null)
         coEvery { apiService.getTopTracks(any(), any(), any()) } returns mockCall
 
@@ -109,7 +110,7 @@ class SpotifyUserStatsApiMapperImplTest {
         val accessToken = "access_token"
         val timeRange = "short_term"
         val limit = 10
-        val mockCall = mockk<Call<TopTracksResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<TrackResponse>>>()
         every { mockCall.execute() } returns Response.error(500, "error".toResponseBody())
         coEvery { apiService.getTopTracks(any(), any(), any()) } returns mockCall
 
@@ -125,8 +126,8 @@ class SpotifyUserStatsApiMapperImplTest {
     fun `test getTopTracksNextPage with successful response`() = runTest {
         val accessToken = "access_token"
         val url = "http://example.com/next"
-        val mockResponse = mockk<TopTracksResponse>()
-        val mockCall = mockk<Call<TopTracksResponse>>()
+        val mockResponse = mockk<PaginatedResponse<TrackResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<TrackResponse>>>()
         every { mockCall.execute() } returns Response.success(mockResponse)
         coEvery { apiService.getTopTracksNextPage(any(), any()) } returns mockCall
 
@@ -140,7 +141,7 @@ class SpotifyUserStatsApiMapperImplTest {
     fun `test getTopTracksNextPage with successful response but null body`() = runTest {
         val accessToken = "access_token"
         val url = "http://example.com/next"
-        val mockCall = mockk<Call<TopTracksResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<TrackResponse>>>()
         every { mockCall.execute() } returns Response.success(null)
         coEvery { apiService.getTopTracksNextPage(any(), any()) } returns mockCall
 
@@ -157,7 +158,7 @@ class SpotifyUserStatsApiMapperImplTest {
     fun `test getTopTracksNextPage with error response`() = runTest {
         val accessToken = "access_token"
         val url = "http://example.com/next"
-        val mockCall = mockk<Call<TopTracksResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<TrackResponse>>>()
         every { mockCall.execute() } returns Response.error(500, "error".toResponseBody())
         coEvery { apiService.getTopTracksNextPage(any(), any()) } returns mockCall
 
@@ -174,8 +175,8 @@ class SpotifyUserStatsApiMapperImplTest {
         val accessToken = "access_token"
         val timeRange = "short_term"
         val limit = 10
-        val mockResponse = mockk<TopArtistsResponse>()
-        val mockCall = mockk<Call<TopArtistsResponse>>()
+        val mockResponse = mockk<PaginatedResponse<ArtistResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<ArtistResponse>>>()
         every { mockCall.execute() } returns Response.success(mockResponse)
         coEvery { apiService.getTopArtists(any(), any(), any()) } returns mockCall
 
@@ -190,7 +191,7 @@ class SpotifyUserStatsApiMapperImplTest {
         val accessToken = "access_token"
         val timeRange = "short_term"
         val limit = 10
-        val mockCall = mockk<Call<TopArtistsResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<ArtistResponse>>>()
         every { mockCall.execute() } returns Response.success(null)
         coEvery { apiService.getTopArtists(any(), any(), any()) } returns mockCall
 
@@ -208,7 +209,7 @@ class SpotifyUserStatsApiMapperImplTest {
         val accessToken = "access_token"
         val timeRange = "short_term"
         val limit = 10
-        val mockCall = mockk<Call<TopArtistsResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<ArtistResponse>>>()
         every { mockCall.execute() } returns Response.error(500, "error".toResponseBody())
         coEvery { apiService.getTopArtists(any(), any(), any()) } returns mockCall
 
@@ -224,8 +225,8 @@ class SpotifyUserStatsApiMapperImplTest {
     fun `test getTopArtistsNextPage with successful response`() = runTest {
         val accessToken = "access_token"
         val url = "http://example.com/next"
-        val mockResponse = mockk<TopArtistsResponse>()
-        val mockCall = mockk<Call<TopArtistsResponse>>()
+        val mockResponse = mockk<PaginatedResponse<ArtistResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<ArtistResponse>>>()
         every { mockCall.execute() } returns Response.success(mockResponse)
         coEvery { apiService.getTopArtistsNextPage(any(), any()) } returns mockCall
 
@@ -239,7 +240,7 @@ class SpotifyUserStatsApiMapperImplTest {
     fun `test getTopArtistsNextPage with successful response but null body`() = runTest {
         val accessToken = "access_token"
         val url = "http://example.com/next"
-        val mockCall = mockk<Call<TopArtistsResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<ArtistResponse>>>()
         every { mockCall.execute() } returns Response.success(null)
         coEvery { apiService.getTopArtistsNextPage(any(), any()) } returns mockCall
 
@@ -256,7 +257,7 @@ class SpotifyUserStatsApiMapperImplTest {
     fun `test getTopArtistsNextPage with error response`() = runTest {
         val accessToken = "access_token"
         val url = "http://example.com/next"
-        val mockCall = mockk<Call<TopArtistsResponse>>()
+        val mockCall = mockk<Call<PaginatedResponse<ArtistResponse>>>()
         every { mockCall.execute() } returns Response.error(500, "error".toResponseBody())
         coEvery { apiService.getTopArtistsNextPage(any(), any()) } returns mockCall
 

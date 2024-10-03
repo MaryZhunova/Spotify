@@ -59,7 +59,7 @@ interface SpotifyInteractor {
      * @param timeRange период времени для получения топа исполнителей
      * @return информация о топ исполнителях в виде списка [ArtistInfo]
      */
-    suspend fun getTopArtists(timeRange: String):  List<ArtistInfo>
+    suspend fun getTopArtists(timeRange: String): List<ArtistInfo>
 
     /**
      * Получает список популярных треков пользователя
@@ -74,4 +74,15 @@ interface SpotifyInteractor {
      */
     suspend fun clear()
 
+    suspend fun searchTracks(query: String): List<TrackInfo>
+
+    suspend fun searchArtists(query: String): List<ArtistInfo>
+
+    suspend fun searchGenres(): List<String>
+
+    suspend fun createPlaylist(
+        genres: List<String>,
+        artists: List<ArtistInfo>,
+        tracks: List<TrackInfo>
+    ): List<TrackInfo>
 }

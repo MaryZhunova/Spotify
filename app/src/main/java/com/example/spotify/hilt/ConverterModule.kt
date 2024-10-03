@@ -2,7 +2,9 @@ package com.example.spotify.hilt
 
 import com.example.spotify.data.converter.ArtistEntityToInfoConverter
 import com.example.spotify.data.converter.ArtistResponseToEntityConverter
+import com.example.spotify.data.converter.ArtistResponseToInfoConverter
 import com.example.spotify.data.converter.AudioFeaturesResponseToInfoConverter
+import com.example.spotify.data.converter.SearchResponseToInfoConverter
 import com.example.spotify.data.converter.TrackEntityToInfoConverter
 import com.example.spotify.data.converter.TrackResponseToEntityConverter
 import com.example.spotify.data.converter.TrackResponseToInfoConverter
@@ -29,14 +31,14 @@ object ConverterModule {
 
     @Provides
     @Singleton
-    fun provideTrackEntityToInfoConverter(): TrackEntityToInfoConverter {
-        return TrackEntityToInfoConverter()
+    fun provideTrackResponseToEntityConverter(): TrackResponseToEntityConverter {
+        return TrackResponseToEntityConverter()
     }
 
     @Provides
     @Singleton
-    fun provideTrackResponseToEntityConverter(): TrackResponseToEntityConverter {
-        return TrackResponseToEntityConverter()
+    fun provideTrackEntityToInfoConverter(): TrackEntityToInfoConverter {
+        return TrackEntityToInfoConverter()
     }
 
     @Provides
@@ -47,14 +49,29 @@ object ConverterModule {
 
     @Provides
     @Singleton
+    fun provideArtistResponseToEntityConverter(): ArtistResponseToEntityConverter {
+        return ArtistResponseToEntityConverter()
+    }
+
+    @Provides
+    @Singleton
     fun provideTopArtistsEntityToInfoConverter(): ArtistEntityToInfoConverter {
         return ArtistEntityToInfoConverter()
     }
 
     @Provides
     @Singleton
-    fun provideArtistResponseToEntityConverter(): ArtistResponseToEntityConverter {
-        return ArtistResponseToEntityConverter()
+    fun provideArtistResponseToInfoConverter(): ArtistResponseToInfoConverter {
+        return ArtistResponseToInfoConverter()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSearchResponseToInfoConverter(
+        trackInfoConverter: TrackResponseToInfoConverter,
+        artistInfoConverter: ArtistResponseToInfoConverter
+    ): SearchResponseToInfoConverter {
+        return SearchResponseToInfoConverter(trackInfoConverter, artistInfoConverter)
     }
 
     @Provides

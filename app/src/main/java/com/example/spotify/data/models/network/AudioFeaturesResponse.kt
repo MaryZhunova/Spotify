@@ -3,15 +3,6 @@ package com.example.spotify.data.models.network
 import com.google.gson.annotations.SerializedName
 
 /**
- * Ответ, содержащий список аудиохарактеристик треков.
- *
- * @property audioFeatures Список объектов [AudioFeaturesResponse], представляющих аудиохарактеристики треков.
- */
-data class AudioFeaturesListResponse(
-    @SerializedName("audio_features") val audioFeatures: List<AudioFeaturesResponse>
-)
-
-/**
  * Аудиохарактеристики трека.
  *
  * @property acousticness Уровень акустичности трека (диапазон: 0 - 1).

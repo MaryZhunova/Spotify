@@ -1,9 +1,11 @@
 package com.example.spotify.utils
 
 import android.media.MediaPlayer
+import android.util.Log
 import com.example.spotify.domain.models.TrackInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.io.IOException
 
 /**
  * Управляет воспроизведением треков
@@ -35,15 +37,23 @@ class AudioPlayerManager {
                 setOnCompletionListener {
                     _currentTrack.value = null
                 }
+                setOnErrorListener { _, _, _ ->
+                    stop()
+                    true
+                }
             }
         }
 
-        mediaPlayer?.apply {
-            reset()
-            setDataSource(track.previewUrl)
-            prepareAsync()
-            setOnPreparedListener { start() }
-            _currentTrack.value = track
+        try {
+            mediaPlayer?.apply {
+                reset()
+                setDataSource(track.previewUrl)
+                prepareAsync()
+                setOnPreparedListener { start() }
+                _currentTrack.value = track
+            }
+        } catch (e: IOException) {
+            Log.d("AudioPlayerManager", "${e.message}")
         }
     }
 
@@ -51,8 +61,12 @@ class AudioPlayerManager {
      * Останавливает воспроизведение текущего трека.
      */
     fun stop() {
-        mediaPlayer?.stop()
-        mediaPlayer?.reset()
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.stop()
+            }
+            it.reset()
+        }
         _currentTrack.value = null
     }
 
@@ -61,9 +75,14 @@ class AudioPlayerManager {
      * Останавливает воспроизведение и очищает текущий трек.
      */
     fun release() {
-        mediaPlayer?.stop()
-        _currentTrack.value = null
-        mediaPlayer?.release()
+        mediaPlayer?.apply {
+            if (isPlaying) {
+                stop()
+            }
+            reset()
+            release()
+        }
         mediaPlayer = null
+        _currentTrack.value = null
     }
 }

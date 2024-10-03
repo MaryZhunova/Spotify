@@ -1,7 +1,8 @@
 package com.example.spotify.data.network.mappers
 
-import com.example.spotify.data.models.network.TopArtistsResponse
-import com.example.spotify.data.models.network.TopTracksResponse
+import com.example.spotify.data.models.network.ArtistResponse
+import com.example.spotify.data.models.network.PaginatedResponse
+import com.example.spotify.data.models.network.TrackResponse
 import com.example.spotify.data.models.network.UserProfileResponse
 import com.example.spotify.data.network.api.SpotifyUserStatsApiService
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +34,7 @@ class SpotifyUserStatsApiMapperImpl @Inject constructor(
         accessToken: String,
         timeRange: String,
         limit: Int
-    ): TopTracksResponse = withContext(Dispatchers.IO) {
+    ): PaginatedResponse<TrackResponse> = withContext(Dispatchers.IO) {
         val response = apiService.getTopTracks(
             token = "Bearer $accessToken",
             timeRange = timeRange,
@@ -49,7 +50,7 @@ class SpotifyUserStatsApiMapperImpl @Inject constructor(
     override suspend fun getTopTracksNextPage(
         accessToken: String,
         url: String
-    ): TopTracksResponse =
+    ): PaginatedResponse<TrackResponse> =
         withContext(Dispatchers.IO) {
             val response = apiService.getTopTracksNextPage(
                 token = "Bearer $accessToken",
@@ -66,7 +67,7 @@ class SpotifyUserStatsApiMapperImpl @Inject constructor(
         accessToken: String,
         timeRange: String,
         limit: Int
-    ): TopArtistsResponse = withContext(Dispatchers.IO) {
+    ): PaginatedResponse<ArtistResponse> = withContext(Dispatchers.IO) {
         val response = apiService.getTopArtists(
             token = "Bearer $accessToken",
             timeRange = timeRange,
@@ -82,7 +83,7 @@ class SpotifyUserStatsApiMapperImpl @Inject constructor(
     override suspend fun getTopArtistsNextPage(
         accessToken: String,
         url: String
-    ): TopArtistsResponse = withContext(Dispatchers.IO) {
+    ): PaginatedResponse<ArtistResponse> = withContext(Dispatchers.IO) {
         val response = apiService.getTopArtistsNextPage(
             token = "Bearer $accessToken",
             url = url

@@ -10,6 +10,7 @@
 
     //UserProfileSuccessScreen
     <string name="top_tracks">Top Tracks</string>
+    <string name="custom_playlist">Custom Playlist</string>
     <string name="top_artists">Top Artists</string>
     <string name="top_genres">Top Genres</string>
     <string name="logout">Log out</string>

@@ -1,12 +1,14 @@
 package com.example.spotify.data
 
 import com.example.spotify.data.converter.AudioFeaturesResponseToInfoConverter
+import com.example.spotify.data.converter.SearchResponseToInfoConverter
 import com.example.spotify.data.converter.TrackResponseToInfoConverter
-import com.example.spotify.data.models.network.ArtistsTopTracksResponse
+import com.example.spotify.data.models.network.TrackListResponse
 import com.example.spotify.data.models.network.AudioFeaturesListResponse
 import com.example.spotify.data.models.network.AudioFeaturesResponse
 import com.example.spotify.data.models.network.TrackResponse
 import com.example.spotify.data.network.mappers.SpotifyInfoApiMapper
+import com.example.spotify.data.storage.SpotifyInfoStorage
 import com.example.spotify.domain.models.AudioFeaturesInfo
 import com.example.spotify.domain.models.TrackInfo
 import com.google.common.truth.Truth.assertThat
@@ -27,11 +29,15 @@ class SpotifyInfoRepositoryImplTest {
     private val apiMapper: SpotifyInfoApiMapper = mockk()
     private val trackInfoConverter: TrackResponseToInfoConverter = mockk()
     private val audioFeaturesConverter: AudioFeaturesResponseToInfoConverter = mockk()
+    private val searchResponseToInfoConverter: SearchResponseToInfoConverter = mockk()
+    private val infoStorage: SpotifyInfoStorage = mockk()
 
     private val spotifyInfoRepository = SpotifyInfoRepositoryImpl(
         apiMapper,
         trackInfoConverter,
-        audioFeaturesConverter
+        audioFeaturesConverter,
+        searchResponseToInfoConverter,
+        infoStorage
     )
 
     @Test
@@ -41,7 +47,7 @@ class SpotifyInfoRepositoryImplTest {
         val trackResponse = mockk<TrackResponse> {
             every { id } returns "1"
         }
-        val apiResponse = mockk<ArtistsTopTracksResponse> {
+        val apiResponse = mockk<TrackListResponse> {
             every { tracks } returns listOf(trackResponse)
         }
         val info = mockk<TrackInfo> {

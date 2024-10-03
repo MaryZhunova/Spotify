@@ -34,7 +34,7 @@ import java.util.stream.Stream
  * Тесты [ArtistViewModel]
  */
 @ExperimentalCoroutinesApi
-class ArtistViewModelTest {
+class ShortArtistResponseViewModelTest {
 
     private val spotifyInteractor: SpotifyInteractor = mockk()
     private val audioPlayerManager: AudioPlayerManager = mockk()

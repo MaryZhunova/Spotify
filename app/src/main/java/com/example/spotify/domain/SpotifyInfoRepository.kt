@@ -1,6 +1,7 @@
 package com.example.spotify.domain
 
 import com.example.spotify.domain.models.AudioFeaturesInfo
+import com.example.spotify.domain.models.SearchInfo
 import com.example.spotify.domain.models.TrackInfo
 
 /**
@@ -28,4 +29,14 @@ interface SpotifyInfoRepository {
      */
     suspend fun getTracksAudioFeatures(accessCode: String, ids: List<String>): List<AudioFeaturesInfo>
 
+    suspend fun search(accessCode: String, type: String, query: String): SearchInfo
+
+    suspend fun searchGenres(accessCode: String): List<String>
+
+    suspend fun createPlaylist(
+        accessCode: String,
+        artists: List<String>,
+        genres: List<String>,
+        tracks: List<String>
+    ): List<TrackInfo>
 }

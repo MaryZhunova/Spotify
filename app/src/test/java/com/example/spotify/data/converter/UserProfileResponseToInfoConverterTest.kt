@@ -1,7 +1,7 @@
 package com.example.spotify.data.converter
 
 import com.example.spotify.domain.models.UserProfileInfo
-import com.example.spotify.data.models.network.Image
+import com.example.spotify.data.models.network.ImageResponse
 import com.example.spotify.data.models.network.UserProfileResponse
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -21,7 +21,7 @@ class UserProfileResponseToInfoConverterTest {
             displayName = "John Doe",
             email = "john.doe@example.com",
             images = listOf(
-                Image(url = "http://example.com/image.jpg")
+                ImageResponse(url = "http://example.com/image.jpg")
             ),
             country = "US",
             product = "premium"
@@ -74,7 +74,7 @@ class UserProfileResponseToInfoConverterTest {
             id = "123",
             displayName = "John Doe",
             email = "john.doe@example.com",
-            images = listOf(Image(url = "http://example.com/image.jpg")),
+            images = listOf(ImageResponse(url = "http://example.com/image.jpg")),
             country = "ZZ",
             product = "premium"
         )

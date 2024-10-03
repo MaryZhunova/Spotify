@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.spotify.R
 import com.example.spotify.domain.models.UserProfileInfo
+import com.example.spotify.presentation.PLAYLIST_SCREEN
 import com.example.spotify.presentation.TOP_ARTISTS_SCREEN
 import com.example.spotify.presentation.TOP_GENRES_SCREEN
 import com.example.spotify.presentation.TOP_TRACKS_SCREEN
@@ -106,6 +107,10 @@ private fun Buttons(
 
     Button(onClick = { onClick.invoke(TOP_GENRES_SCREEN) }) {
         Text(text = stringResource(id = R.string.top_genres))
+    }
+
+    Button(onClick = { onClick.invoke(PLAYLIST_SCREEN) }) {
+        Text(text = stringResource(id = R.string.custom_playlist))
     }
 }
 

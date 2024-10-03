@@ -1,6 +1,6 @@
 package com.example.spotify.data.network.mappers
 
-import com.example.spotify.data.models.network.ArtistsTopTracksResponse
+import com.example.spotify.data.models.network.TrackListResponse
 import com.example.spotify.data.models.network.AudioFeaturesListResponse
 import com.example.spotify.data.network.api.SpotifyInfoApiService
 import com.google.common.truth.Truth.assertThat
@@ -28,8 +28,8 @@ class SpotifyInfoApiMapperImplTest {
     fun `test getArtistsTopTracks with successful response`() = runTest {
         val accessToken = "access_token"
         val artistId = "artist_id"
-        val mockResponse = mockk<ArtistsTopTracksResponse>()
-        val mockCall = mockk<Call<ArtistsTopTracksResponse>>()
+        val mockResponse = mockk<TrackListResponse>()
+        val mockCall = mockk<Call<TrackListResponse>>()
         every { mockCall.execute() } returns Response.success(mockResponse)
         coEvery { apiService.getArtistsTopTracks(any(), any()) } returns mockCall
 
@@ -43,7 +43,7 @@ class SpotifyInfoApiMapperImplTest {
     fun `test getArtistsTopTracks with successful response but null body`() = runTest {
         val accessToken = "access_token"
         val artistId = "artist_id"
-        val mockCall = mockk<Call<ArtistsTopTracksResponse>>()
+        val mockCall = mockk<Call<TrackListResponse>>()
         every { mockCall.execute() } returns Response.success(null)
         coEvery { apiService.getArtistsTopTracks(any(), any()) } returns mockCall
 
@@ -60,7 +60,7 @@ class SpotifyInfoApiMapperImplTest {
     fun `test getArtistsTopTracks with error response`() = runTest {
         val accessToken = "access_token"
         val artistId = "artist_id"
-        val mockCall = mockk<Call<ArtistsTopTracksResponse>>()
+        val mockCall = mockk<Call<TrackListResponse>>()
         every { mockCall.execute() } returns Response.error(500, "error".toResponseBody())
         coEvery { apiService.getArtistsTopTracks(any(), any()) } returns mockCall
 

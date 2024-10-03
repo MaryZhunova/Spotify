@@ -1,9 +1,9 @@
 package com.example.spotify.data.converter
 
 import com.example.spotify.data.db.TrackDao
-import com.example.spotify.data.models.network.Album
-import com.example.spotify.data.models.network.Artist
-import com.example.spotify.data.models.network.Image
+import com.example.spotify.data.models.network.AlbumResponse
+import com.example.spotify.data.models.network.ShortArtistResponse
+import com.example.spotify.data.models.network.ImageResponse
 import com.example.spotify.data.models.network.TrackResponse
 import com.example.spotify.domain.models.AlbumInfo
 import com.google.common.truth.Truth.assertThat
@@ -23,17 +23,17 @@ class TrackResponseToInfoConverterTest {
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
     fun `convert should return correct TrackInfo`(isInDB: Boolean) {
-        val albumResponse = Album(
+        val albumResponse = AlbumResponse(
             id = "album_id",
             name = "Album Name",
             images = listOf(
-                Image(url = "http://example.com/image1"),
-                Image(url = "http://example.com/image2")
+                ImageResponse(url = "http://example.com/image1"),
+                ImageResponse(url = "http://example.com/image2")
             ),
             releaseDate = "12.12.12",
             releaseDatePrecision = "day"
         )
-        val artist = Artist(
+        val shortArtistResponse = ShortArtistResponse(
             id = "artist_id",
             name = "Artist Name",
         )
@@ -42,7 +42,7 @@ class TrackResponseToInfoConverterTest {
             name = "Track Name",
             previewUrl = "http://example.com/preview",
             duration = 180000,
-            artists = listOf(artist),
+            artists = listOf(shortArtistResponse),
             album = albumResponse,
             isExplicit = true,
             isPlayable = true,

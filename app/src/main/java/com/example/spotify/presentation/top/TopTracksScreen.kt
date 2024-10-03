@@ -107,7 +107,7 @@ fun TopTracksScreen(
 
 
 @Composable
-private fun TracksList(
+fun TracksList(
     tracks: List<TrackInfo>,
     currentTrack: TrackInfo?,
     onPlay: (TrackInfo) -> Unit,

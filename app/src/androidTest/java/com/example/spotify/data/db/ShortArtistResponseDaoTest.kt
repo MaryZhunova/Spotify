@@ -15,7 +15,7 @@ import org.junit.runner.RunWith
  * Тесты [ArtistDao]
  */
 @RunWith(AndroidJUnit4::class)
-class ArtistDaoTest {
+class ShortArtistResponseDaoTest {
 
     private lateinit var db: SpotifyDatabase
     private lateinit var artistDao: ArtistDao
